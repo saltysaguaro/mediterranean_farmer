@@ -1,6 +1,6 @@
 {
-  "title": "Mediterranean Olive (Olea europaea) Climate Suitability",
-  "subtitle": "Olive (Olea europaea) \u00b7 terraclimate \u00b7 1991-2020",
+  "title": "Mediterranean Basin",
+  "subtitle": "",
   "crop": {
     "name": "olive",
     "display_name": "Olive (Olea europaea)",
@@ -77,6 +77,10 @@
       "label": "Total Suitability",
       "unit": "score",
       "climatology_file": "data/crops/olive/rasters/total_score/total_score_climatology.tif",
+      "climatology_display_files": {
+        "categorical": "data/crops/olive/rasters/total_score/total_score_climatology_categorical.webp",
+        "continuous": "data/crops/olive/rasters/total_score/total_score_climatology_continuous.webp"
+      },
       "year_files": {
         "1991": "data/crops/olive/rasters/total_score/total_score_1991.tif",
         "1992": "data/crops/olive/rasters/total_score/total_score_1992.tif",
@@ -108,22 +112,6 @@
         "2018": "data/crops/olive/rasters/total_score/total_score_2018.tif",
         "2019": "data/crops/olive/rasters/total_score/total_score_2019.tif",
         "2020": "data/crops/olive/rasters/total_score/total_score_2020.tif"
-      },
-      "display_range": [
-        0.0,
-        100.0
-      ],
-      "categorical_breaks": [
-        25.0,
-        50.0,
-        75.0,
-        85.0,
-        90.0,
-        95.0
-      ],
-      "climatology_display_files": {
-        "categorical": "data/crops/olive/rasters/total_score/total_score_climatology_categorical.webp",
-        "continuous": "data/crops/olive/rasters/total_score/total_score_climatology_continuous.webp"
       },
       "year_display_files": {
         "1991": {
@@ -246,12 +234,28 @@
           "categorical": "data/crops/olive/rasters/total_score/total_score_2020_categorical.webp",
           "continuous": "data/crops/olive/rasters/total_score/total_score_2020_continuous.webp"
         }
-      }
+      },
+      "display_range": [
+        0.0,
+        100.0
+      ],
+      "categorical_breaks": [
+        25.0,
+        50.0,
+        75.0,
+        85.0,
+        90.0,
+        95.0
+      ]
     },
     "temperature_score": {
       "label": "Temperature Score",
       "unit": "score",
       "climatology_file": "data/crops/olive/rasters/temperature_score/temperature_score_climatology.tif",
+      "climatology_display_files": {
+        "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_climatology_categorical.webp",
+        "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_climatology_continuous.webp"
+      },
       "year_files": {
         "1991": "data/crops/olive/rasters/temperature_score/temperature_score_1991.tif",
         "1992": "data/crops/olive/rasters/temperature_score/temperature_score_1992.tif",
@@ -283,22 +287,6 @@
         "2018": "data/crops/olive/rasters/temperature_score/temperature_score_2018.tif",
         "2019": "data/crops/olive/rasters/temperature_score/temperature_score_2019.tif",
         "2020": "data/crops/olive/rasters/temperature_score/temperature_score_2020.tif"
-      },
-      "display_range": [
-        0.0,
-        100.0
-      ],
-      "categorical_breaks": [
-        25.0,
-        50.0,
-        75.0,
-        85.0,
-        90.0,
-        95.0
-      ],
-      "climatology_display_files": {
-        "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_climatology_categorical.webp",
-        "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_climatology_continuous.webp"
       },
       "year_display_files": {
         "1991": {
@@ -421,12 +409,28 @@
           "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2020_categorical.webp",
           "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2020_continuous.webp"
         }
-      }
+      },
+      "display_range": [
+        0.0,
+        100.0
+      ],
+      "categorical_breaks": [
+        25.0,
+        50.0,
+        75.0,
+        85.0,
+        90.0,
+        95.0
+      ]
     },
     "precipitation_score": {
       "label": "Precipitation Score",
       "unit": "score",
       "climatology_file": "data/crops/olive/rasters/precipitation_score/precipitation_score_climatology.tif",
+      "climatology_display_files": {
+        "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_climatology_categorical.webp",
+        "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_climatology_continuous.webp"
+      },
       "year_files": {
         "1991": "data/crops/olive/rasters/precipitation_score/precipitation_score_1991.tif",
         "1992": "data/crops/olive/rasters/precipitation_score/precipitation_score_1992.tif",
@@ -458,22 +462,6 @@
         "2018": "data/crops/olive/rasters/precipitation_score/precipitation_score_2018.tif",
         "2019": "data/crops/olive/rasters/precipitation_score/precipitation_score_2019.tif",
         "2020": "data/crops/olive/rasters/precipitation_score/precipitation_score_2020.tif"
-      },
-      "display_range": [
-        0.0,
-        100.0
-      ],
-      "categorical_breaks": [
-        25.0,
-        50.0,
-        75.0,
-        85.0,
-        90.0,
-        95.0
-      ],
-      "climatology_display_files": {
-        "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_climatology_categorical.webp",
-        "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_climatology_continuous.webp"
       },
       "year_display_files": {
         "1991": {
@@ -596,12 +584,28 @@
           "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2020_categorical.webp",
           "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2020_continuous.webp"
         }
-      }
+      },
+      "display_range": [
+        0.0,
+        100.0
+      ],
+      "categorical_breaks": [
+        25.0,
+        50.0,
+        75.0,
+        85.0,
+        90.0,
+        95.0
+      ]
     },
     "humidity_score": {
       "label": "Humidity Score",
       "unit": "score",
       "climatology_file": "data/crops/olive/rasters/humidity_score/humidity_score_climatology.tif",
+      "climatology_display_files": {
+        "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_climatology_categorical.webp",
+        "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_climatology_continuous.webp"
+      },
       "year_files": {
         "1991": "data/crops/olive/rasters/humidity_score/humidity_score_1991.tif",
         "1992": "data/crops/olive/rasters/humidity_score/humidity_score_1992.tif",
@@ -633,22 +637,6 @@
         "2018": "data/crops/olive/rasters/humidity_score/humidity_score_2018.tif",
         "2019": "data/crops/olive/rasters/humidity_score/humidity_score_2019.tif",
         "2020": "data/crops/olive/rasters/humidity_score/humidity_score_2020.tif"
-      },
-      "display_range": [
-        0.0,
-        100.0
-      ],
-      "categorical_breaks": [
-        25.0,
-        50.0,
-        75.0,
-        85.0,
-        90.0,
-        95.0
-      ],
-      "climatology_display_files": {
-        "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_climatology_categorical.webp",
-        "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_climatology_continuous.webp"
       },
       "year_display_files": {
         "1991": {
@@ -771,7 +759,19 @@
           "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2020_categorical.webp",
           "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2020_continuous.webp"
         }
-      }
+      },
+      "display_range": [
+        0.0,
+        100.0
+      ],
+      "categorical_breaks": [
+        25.0,
+        50.0,
+        75.0,
+        85.0,
+        90.0,
+        95.0
+      ]
     }
   }
 }

@@ -117,6 +117,7 @@ function buildMap() {
   const [west, south, east, north] = state.manifest.bounds;
   state.bounds = L.latLngBounds([[south, west], [north, east]]);
   state.map = L.map("map", {
+    crs: L.CRS.EPSG4326,
     zoomControl: true,
     attributionControl: false,
     preferCanvas: true,
@@ -273,6 +274,7 @@ async function renderActiveRaster() {
   if (rasterInfo.displayUrl) {
     state.currentGeoraster = null;
     state.displayLayer = L.imageOverlay(rasterInfo.displayUrl, state.bounds, {
+      className: "score-overlay",
       pane: "suitability-pane",
       opacity: 1,
       interactive: false,
