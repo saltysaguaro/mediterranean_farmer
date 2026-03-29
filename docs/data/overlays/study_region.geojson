@@ -1,0 +1,31 @@
+{
+  "type": "FeatureCollection",
+  "name": "mediterranean_basin_agriculture_envelope",
+  "crs": {
+    "type": "name",
+    "properties": {
+      "name": "EPSG:4326"
+    }
+  },
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Mediterranean Basin Analysis Extent",
+        "definition": "Configured bounding rectangle for Mediterranean suitability analysis; land masking is applied separately to exclude ocean and sea."
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [-10.75, 18.5],
+            [40.75, 18.5],
+            [40.75, 48.75],
+            [-10.75, 48.75],
+            [-10.75, 18.5]
+          ]
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,273 @@
+{
+  "title": "Mediterranean Human Comfort Climate Suitability",
+  "subtitle": "Human Comfort \u00b7 terraclimate \u00b7 1991-2020",
+  "crop": {
+    "name": "human_comfort",
+    "display_name": "Human Comfort",
+    "version": "1.0.0"
+  },
+  "available_crops": [
+    {
+      "crop_name": "human_comfort",
+      "display_name": "Human Comfort",
+      "version": "1.0.0",
+      "has_outputs": true,
+      "manifest_path": "data/manifests/human_comfort.json"
+    },
+    {
+      "crop_name": "olive",
+      "display_name": "Olive (Olea europaea)",
+      "version": "1.0.0",
+      "has_outputs": true,
+      "manifest_path": "data/manifest.json"
+    }
+  ],
+  "provider": {
+    "provider": "terraclimate",
+    "variables": [
+      "ppt",
+      "tmin",
+      "tmax",
+      "vap"
+    ],
+    "bbox": [
+      -10.75,
+      18.5,
+      40.75,
+      48.75
+    ],
+    "subset_cache_key": "w10p75_s18p5_e40p75_n48p75",
+    "time_window": "1991-2020"
+  },
+  "default_view": {
+    "mode": "annual_climatology",
+    "layer": "total_score",
+    "display_mode": "categorical"
+  },
+  "map": {
+    "default_center": [
+      18.0,
+      36.5
+    ],
+    "default_zoom": 4
+  },
+  "bounds": [
+    -10.75,
+    18.5,
+    40.75,
+    48.75
+  ],
+  "overlays": {
+    "study_region": "data/overlays/study_region.geojson",
+    "cities": "data/overlays/cities.geojson",
+    "countries": "data/overlays/countries.geojson"
+  },
+  "sources": [
+    {
+      "title": "TerraClimate variables and access",
+      "url": "https://www.climatologylab.org/terraclimate-variables.html"
+    },
+    {
+      "title": "TerraClimate paper",
+      "url": "https://www.nature.com/articles/sdata2017191"
+    }
+  ],
+  "annual_layers": {
+    "total_score": {
+      "label": "Total Suitability",
+      "unit": "score",
+      "climatology_file": "data/crops/human_comfort/rasters/total_score/total_score_climatology.tif",
+      "year_files": {
+        "1991": "data/crops/human_comfort/rasters/total_score/total_score_1991.tif",
+        "1992": "data/crops/human_comfort/rasters/total_score/total_score_1992.tif",
+        "1993": "data/crops/human_comfort/rasters/total_score/total_score_1993.tif",
+        "1994": "data/crops/human_comfort/rasters/total_score/total_score_1994.tif",
+        "1995": "data/crops/human_comfort/rasters/total_score/total_score_1995.tif",
+        "1996": "data/crops/human_comfort/rasters/total_score/total_score_1996.tif",
+        "1997": "data/crops/human_comfort/rasters/total_score/total_score_1997.tif",
+        "1998": "data/crops/human_comfort/rasters/total_score/total_score_1998.tif",
+        "1999": "data/crops/human_comfort/rasters/total_score/total_score_1999.tif",
+        "2000": "data/crops/human_comfort/rasters/total_score/total_score_2000.tif",
+        "2001": "data/crops/human_comfort/rasters/total_score/total_score_2001.tif",
+        "2002": "data/crops/human_comfort/rasters/total_score/total_score_2002.tif",
+        "2003": "data/crops/human_comfort/rasters/total_score/total_score_2003.tif",
+        "2004": "data/crops/human_comfort/rasters/total_score/total_score_2004.tif",
+        "2005": "data/crops/human_comfort/rasters/total_score/total_score_2005.tif",
+        "2006": "data/crops/human_comfort/rasters/total_score/total_score_2006.tif",
+        "2007": "data/crops/human_comfort/rasters/total_score/total_score_2007.tif",
+        "2008": "data/crops/human_comfort/rasters/total_score/total_score_2008.tif",
+        "2009": "data/crops/human_comfort/rasters/total_score/total_score_2009.tif",
+        "2010": "data/crops/human_comfort/rasters/total_score/total_score_2010.tif",
+        "2011": "data/crops/human_comfort/rasters/total_score/total_score_2011.tif",
+        "2012": "data/crops/human_comfort/rasters/total_score/total_score_2012.tif",
+        "2013": "data/crops/human_comfort/rasters/total_score/total_score_2013.tif",
+        "2014": "data/crops/human_comfort/rasters/total_score/total_score_2014.tif",
+        "2015": "data/crops/human_comfort/rasters/total_score/total_score_2015.tif",
+        "2016": "data/crops/human_comfort/rasters/total_score/total_score_2016.tif",
+        "2017": "data/crops/human_comfort/rasters/total_score/total_score_2017.tif",
+        "2018": "data/crops/human_comfort/rasters/total_score/total_score_2018.tif",
+        "2019": "data/crops/human_comfort/rasters/total_score/total_score_2019.tif",
+        "2020": "data/crops/human_comfort/rasters/total_score/total_score_2020.tif"
+      },
+      "display_range": [
+        0.0,
+        100.0
+      ],
+      "categorical_breaks": [
+        25.0,
+        50.0,
+        75.0,
+        85.0,
+        90.0,
+        95.0
+      ]
+    },
+    "temperature_score": {
+      "label": "Temperature Score",
+      "unit": "score",
+      "climatology_file": "data/crops/human_comfort/rasters/temperature_score/temperature_score_climatology.tif",
+      "year_files": {
+        "1991": "data/crops/human_comfort/rasters/temperature_score/temperature_score_1991.tif",
+        "1992": "data/crops/human_comfort/rasters/temperature_score/temperature_score_1992.tif",
+        "1993": "data/crops/human_comfort/rasters/temperature_score/temperature_score_1993.tif",
+        "1994": "data/crops/human_comfort/rasters/temperature_score/temperature_score_1994.tif",
+        "1995": "data/crops/human_comfort/rasters/temperature_score/temperature_score_1995.tif",
+        "1996": "data/crops/human_comfort/rasters/temperature_score/temperature_score_1996.tif",
+        "1997": "data/crops/human_comfort/rasters/temperature_score/temperature_score_1997.tif",
+        "1998": "data/crops/human_comfort/rasters/temperature_score/temperature_score_1998.tif",
+        "1999": "data/crops/human_comfort/rasters/temperature_score/temperature_score_1999.tif",
+        "2000": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2000.tif",
+        "2001": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2001.tif",
+        "2002": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2002.tif",
+        "2003": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2003.tif",
+        "2004": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2004.tif",
+        "2005": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2005.tif",
+        "2006": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2006.tif",
+        "2007": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2007.tif",
+        "2008": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2008.tif",
+        "2009": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2009.tif",
+        "2010": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2010.tif",
+        "2011": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2011.tif",
+        "2012": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2012.tif",
+        "2013": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2013.tif",
+        "2014": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2014.tif",
+        "2015": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2015.tif",
+        "2016": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2016.tif",
+        "2017": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2017.tif",
+        "2018": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2018.tif",
+        "2019": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2019.tif",
+        "2020": "data/crops/human_comfort/rasters/temperature_score/temperature_score_2020.tif"
+      },
+      "display_range": [
+        0.0,
+        100.0
+      ],
+      "categorical_breaks": [
+        25.0,
+        50.0,
+        75.0,
+        85.0,
+        90.0,
+        95.0
+      ]
+    },
+    "precipitation_score": {
+      "label": "Precipitation Score",
+      "unit": "score",
+      "climatology_file": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_climatology.tif",
+      "year_files": {
+        "1991": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_1991.tif",
+        "1992": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_1992.tif",
+        "1993": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_1993.tif",
+        "1994": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_1994.tif",
+        "1995": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_1995.tif",
+        "1996": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_1996.tif",
+        "1997": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_1997.tif",
+        "1998": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_1998.tif",
+        "1999": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_1999.tif",
+        "2000": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2000.tif",
+        "2001": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2001.tif",
+        "2002": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2002.tif",
+        "2003": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2003.tif",
+        "2004": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2004.tif",
+        "2005": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2005.tif",
+        "2006": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2006.tif",
+        "2007": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2007.tif",
+        "2008": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2008.tif",
+        "2009": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2009.tif",
+        "2010": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2010.tif",
+        "2011": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2011.tif",
+        "2012": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2012.tif",
+        "2013": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2013.tif",
+        "2014": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2014.tif",
+        "2015": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2015.tif",
+        "2016": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2016.tif",
+        "2017": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2017.tif",
+        "2018": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2018.tif",
+        "2019": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2019.tif",
+        "2020": "data/crops/human_comfort/rasters/precipitation_score/precipitation_score_2020.tif"
+      },
+      "display_range": [
+        0.0,
+        100.0
+      ],
+      "categorical_breaks": [
+        25.0,
+        50.0,
+        75.0,
+        85.0,
+        90.0,
+        95.0
+      ]
+    },
+    "humidity_score": {
+      "label": "Humidity Score",
+      "unit": "score",
+      "climatology_file": "data/crops/human_comfort/rasters/humidity_score/humidity_score_climatology.tif",
+      "year_files": {
+        "1991": "data/crops/human_comfort/rasters/humidity_score/humidity_score_1991.tif",
+        "1992": "data/crops/human_comfort/rasters/humidity_score/humidity_score_1992.tif",
+        "1993": "data/crops/human_comfort/rasters/humidity_score/humidity_score_1993.tif",
+        "1994": "data/crops/human_comfort/rasters/humidity_score/humidity_score_1994.tif",
+        "1995": "data/crops/human_comfort/rasters/humidity_score/humidity_score_1995.tif",
+        "1996": "data/crops/human_comfort/rasters/humidity_score/humidity_score_1996.tif",
+        "1997": "data/crops/human_comfort/rasters/humidity_score/humidity_score_1997.tif",
+        "1998": "data/crops/human_comfort/rasters/humidity_score/humidity_score_1998.tif",
+        "1999": "data/crops/human_comfort/rasters/humidity_score/humidity_score_1999.tif",
+        "2000": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2000.tif",
+        "2001": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2001.tif",
+        "2002": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2002.tif",
+        "2003": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2003.tif",
+        "2004": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2004.tif",
+        "2005": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2005.tif",
+        "2006": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2006.tif",
+        "2007": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2007.tif",
+        "2008": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2008.tif",
+        "2009": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2009.tif",
+        "2010": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2010.tif",
+        "2011": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2011.tif",
+        "2012": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2012.tif",
+        "2013": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2013.tif",
+        "2014": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2014.tif",
+        "2015": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2015.tif",
+        "2016": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2016.tif",
+        "2017": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2017.tif",
+        "2018": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2018.tif",
+        "2019": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2019.tif",
+        "2020": "data/crops/human_comfort/rasters/humidity_score/humidity_score_2020.tif"
+      },
+      "display_range": [
+        0.0,
+        100.0
+      ],
+      "categorical_breaks": [
+        25.0,
+        50.0,
+        75.0,
+        85.0,
+        90.0,
+        95.0
+      ]
+    }
+  }
+}

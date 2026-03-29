@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mediterranean Crop Climate Suitability</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="./style.css">
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="panel">
+        <div class="panel-header">
+          <p class="eyebrow">Mediterranean Basin</p>
+          <h1 id="title">Crop Climate Suitability</h1>
+          <p id="subtitle" class="subtitle">Loading manifest and rasters…</p>
+        </div>
+
+        <div class="control-grid">
+          <label class="field">
+            <span>Crop</span>
+            <select id="crop-select"></select>
+          </label>
+
+          <label class="field">
+            <span>View</span>
+            <select id="mode-select">
+              <option value="annual_climatology">30-Year Annual Climatology</option>
+              <option value="yearly">Yearly Annual Scores</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Score Layer</span>
+            <select id="layer-select">
+              <option value="total_score">Total Suitability</option>
+              <option value="temperature_score">Temperature Score</option>
+              <option value="precipitation_score">Precipitation Score</option>
+              <option value="humidity_score">Humidity Score</option>
+            </select>
+          </label>
+
+          <label class="field">
+            <span>Color Scale</span>
+            <select id="display-mode-select">
+              <option value="categorical">Score Bands</option>
+              <option value="continuous">Continuous</option>
+            </select>
+          </label>
+
+          <label class="field slider-field" id="year-field">
+            <span>Year <strong id="year-value"></strong></span>
+            <input id="year-slider" type="range">
+          </label>
+
+          <button id="reset-view" class="button" type="button">Reset View</button>
+        </div>
+
+        <section class="info-card">
+          <h2>Interaction</h2>
+          <p>Click any land grid cell to inspect total and factor scores together with the grid-cell center coordinates.</p>
+        </section>
+
+        <section class="info-card">
+          <h2>Sources</h2>
+          <ul id="sources-list" class="source-list"></ul>
+        </section>
+      </aside>
+
+      <main class="map-shell">
+        <div id="map"></div>
+        <div class="map-banner">
+          <p id="map-mode">Loading…</p>
+          <p id="map-range">Score scale</p>
+        </div>
+        <div class="legend" id="legend">
+          <p id="legend-title">Loading legend…</p>
+          <div id="legend-body"></div>
+        </div>
+      </main>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/geotiff/dist-browser/geotiff.min.js"></script>
+    <script src="https://unpkg.com/georaster/dist/georaster.browser.bundle.min.js"></script>
+    <script src="https://unpkg.com/georaster-layer-for-leaflet/dist/georaster-layer-for-leaflet.min.js"></script>
+    <script src="./app.js"></script>
+  </body>
+</html>

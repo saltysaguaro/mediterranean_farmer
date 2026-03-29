@@ -1,0 +1,355 @@
+:root {
+  --sand: #efe3cc;
+  --stone: #d8c9ad;
+  --olive: #42533b;
+  --olive-deep: #243027;
+  --terracotta: #b85a24;
+  --rust: #8b3516;
+  --cream: #f7f2e8;
+  --ink: #1f2720;
+  --shadow: rgba(24, 29, 23, 0.18);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: "Manrope", sans-serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(255, 255, 255, 0.55), transparent 34%),
+    linear-gradient(135deg, #e1d5bb 0%, #d6c2a0 35%, #cab894 100%);
+}
+
+body {
+  min-height: 100vh;
+}
+
+.shell {
+  display: grid;
+  grid-template-columns: minmax(310px, 360px) 1fr;
+  min-height: 100vh;
+}
+
+.panel {
+  padding: 1.5rem 1.35rem;
+  background: linear-gradient(180deg, rgba(247, 242, 232, 0.94), rgba(239, 227, 204, 0.92));
+  backdrop-filter: blur(14px);
+  border-right: 1px solid rgba(66, 83, 59, 0.16);
+  box-shadow: 0 0 24px var(--shadow);
+  overflow-y: auto;
+}
+
+.panel-header {
+  margin-bottom: 1.4rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.45rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 0.74rem;
+  font-weight: 700;
+  color: rgba(66, 83, 59, 0.7);
+}
+
+h1,
+h2 {
+  font-family: "Fraunces", serif;
+}
+
+h1 {
+  margin: 0;
+  font-size: 2rem;
+  line-height: 1.04;
+  color: var(--olive-deep);
+}
+
+.subtitle {
+  margin: 0.65rem 0 0;
+  color: rgba(31, 39, 32, 0.72);
+  line-height: 1.5;
+}
+
+.control-grid {
+  display: grid;
+  gap: 0.95rem;
+  margin-bottom: 1.2rem;
+}
+
+.field,
+.toggle {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.field span,
+.toggle span {
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  color: rgba(31, 39, 32, 0.78);
+}
+
+select,
+input[type="range"],
+.button {
+  width: 100%;
+  border: 1px solid rgba(66, 83, 59, 0.2);
+  border-radius: 14px;
+  background: rgba(255, 253, 248, 0.88);
+  color: var(--ink);
+  font-size: 0.95rem;
+  padding: 0.8rem 0.95rem;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+
+select:focus,
+input[type="range"]:focus,
+.button:focus {
+  outline: 2px solid rgba(184, 90, 36, 0.3);
+  outline-offset: 1px;
+}
+
+.slider-field input {
+  padding: 0.3rem 0;
+}
+
+.toggle {
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.5rem 0.1rem 0;
+}
+
+.toggle input {
+  accent-color: var(--terracotta);
+  transform: scale(1.15);
+}
+
+.button {
+  cursor: pointer;
+  border: none;
+  color: var(--cream);
+  font-weight: 700;
+  background:
+    linear-gradient(135deg, var(--terracotta), var(--rust));
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(139, 53, 22, 0.22);
+}
+
+.info-card {
+  margin-top: 1rem;
+  padding: 1rem 1rem 0.95rem;
+  border-radius: 18px;
+  background: rgba(255, 251, 244, 0.7);
+  border: 1px solid rgba(66, 83, 59, 0.14);
+}
+
+.info-card h2 {
+  margin: 0 0 0.55rem;
+  font-size: 1.08rem;
+}
+
+.info-card p {
+  margin: 0;
+  line-height: 1.55;
+  color: rgba(31, 39, 32, 0.78);
+}
+
+.source-list {
+  margin: 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.source-list a {
+  color: var(--rust);
+  text-decoration: none;
+}
+
+.source-list a:hover {
+  text-decoration: underline;
+}
+
+.map-shell {
+  position: relative;
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.08));
+}
+
+#map {
+  width: 100%;
+  height: 100vh;
+}
+
+.map-banner,
+.legend {
+  position: absolute;
+  z-index: 500;
+  background: rgba(24, 29, 23, 0.7);
+  color: var(--cream);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 30px rgba(19, 24, 18, 0.18);
+}
+
+.map-banner {
+  top: 1.1rem;
+  left: 1.1rem;
+  padding: 0.9rem 1rem;
+  border-radius: 16px;
+  min-width: 260px;
+}
+
+.map-banner p {
+  margin: 0;
+}
+
+#map-mode {
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+#map-range {
+  margin-top: 0.2rem;
+  color: rgba(247, 242, 232, 0.84);
+  font-size: 0.88rem;
+}
+
+.legend {
+  right: 1.1rem;
+  bottom: 1.1rem;
+  padding: 0.75rem 0.85rem 0.8rem;
+  border-radius: 16px;
+  min-width: 260px;
+}
+
+#legend-title {
+  margin: 0 0 0.55rem;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+#legend-body {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.legend-gradient {
+  height: 13px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #fff7bc 0%, #fec44f 36%, #fe9929 66%, #d95f0e 84%, #993404 100%);
+}
+
+.legend-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.82rem;
+  margin-top: 0.45rem;
+  color: rgba(247, 242, 232, 0.85);
+}
+
+.legend-item {
+  display: grid;
+  grid-template-columns: 16px 1fr;
+  gap: 0.55rem;
+  align-items: center;
+  font-size: 0.82rem;
+  color: rgba(247, 242, 232, 0.88);
+}
+
+.legend-swatch {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+}
+
+.city-label {
+  background: transparent;
+  border: none;
+  color: #2d322c;
+  font-weight: 700;
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 8px rgba(255, 255, 255, 0.85);
+  white-space: nowrap;
+}
+
+.city-label.major {
+  font-size: 0.88rem;
+}
+
+.city-label.local {
+  font-size: 0.74rem;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 16px;
+  background: rgba(249, 244, 236, 0.96);
+  color: var(--ink);
+}
+
+.leaflet-popup-content {
+  margin: 0.95rem 1rem;
+  line-height: 1.45;
+}
+
+.popup-title {
+  margin: 0 0 0.35rem;
+  font-family: "Fraunces", serif;
+  font-size: 1rem;
+}
+
+.popup-grid {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.leaflet-control-zoom a {
+  background: rgba(255, 252, 247, 0.92);
+  color: var(--olive-deep);
+  border: none;
+}
+
+@media (max-width: 980px) {
+  .shell {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    min-height: auto;
+    max-height: 44vh;
+  }
+
+  #map,
+  .map-shell {
+    min-height: 56vh;
+    height: 56vh;
+  }
+
+  .map-banner {
+    top: 0.85rem;
+    left: 0.85rem;
+    right: 0.85rem;
+    min-width: auto;
+  }
+
+  .legend {
+    left: 0.85rem;
+    right: 0.85rem;
+    min-width: auto;
+  }
+}
