@@ -6,8 +6,9 @@ const state = {
   countryLayer: null,
   majorCitiesLayer: null,
   localCitiesLayer: null,
-  rasterLayer: null,
+  displayLayer: null,
   currentGeoraster: null,
+  currentDataRasterUrl: null,
   rasterCache: new Map(),
   renderToken: 0,
 };
@@ -71,8 +72,8 @@ async function loadManifest(url) {
 }
 
 function setupText() {
-  controls.title.textContent = state.manifest.title;
-  controls.subtitle.textContent = state.manifest.subtitle || `${state.manifest.crop.display_name}, version ${state.manifest.crop.version}`;
+  controls.title.textContent = "Mediterranean Basin";
+  controls.subtitle.textContent = "";
   controls.sourcesList.innerHTML = "";
 
   state.manifest.sources.forEach((source) => {
@@ -129,7 +130,6 @@ function buildMap() {
   state.map.fitBounds(state.bounds, { padding: [18, 18] });
   state.map.on("zoomend", () => {
     updateCityVisibility();
-    requestRender();
   });
   state.map.on("click", handleMapClick);
 }
@@ -169,10 +169,40 @@ async function handleCropChange() {
     return;
   }
 
+  const priorView = captureControlState();
   state.rasterCache.clear();
   await loadManifest(manifestPath);
-  resetView();
+  restoreControlState(priorView);
   await renderActiveRaster();
+}
+
+function captureControlState() {
+  return {
+    mode: controls.modeSelect.value,
+    layer: controls.layerSelect.value,
+    displayMode: controls.displayModeSelect.value,
+    year: controls.yearSlider.value,
+  };
+}
+
+function restoreControlState(viewState) {
+  if (!viewState) return;
+  if ([...controls.modeSelect.options].some((option) => option.value === viewState.mode)) {
+    controls.modeSelect.value = viewState.mode;
+  }
+  if ([...controls.layerSelect.options].some((option) => option.value === viewState.layer)) {
+    controls.layerSelect.value = viewState.layer;
+  }
+  if ([...controls.displayModeSelect.options].some((option) => option.value === viewState.displayMode)) {
+    controls.displayModeSelect.value = viewState.displayMode;
+  }
+  const year = Number(viewState.year);
+  const minYear = Number(controls.yearSlider.min);
+  const maxYear = Number(controls.yearSlider.max);
+  if (Number.isFinite(year) && year >= minYear && year <= maxYear) {
+    controls.yearSlider.value = String(year);
+  }
+  syncVisibleControls();
 }
 
 async function loadOverlays() {
@@ -234,39 +264,51 @@ function updateCityVisibility() {
 async function renderActiveRaster() {
   const renderToken = ++state.renderToken;
   const rasterInfo = activeRasterInfo();
-  const georaster = await loadGeoraster(rasterInfo.url);
-  if (renderToken !== state.renderToken) return;
+  state.currentDataRasterUrl = rasterInfo.dataUrl;
 
-  if (state.rasterLayer) {
-    state.map.removeLayer(state.rasterLayer);
+  if (state.displayLayer) {
+    state.map.removeLayer(state.displayLayer);
   }
 
-  state.currentGeoraster = georaster;
-  const baseResolution = Math.round(Math.max(window.innerWidth, window.innerHeight) * window.devicePixelRatio);
-  const categoricalMode = controls.displayModeSelect.value === "categorical";
-  const nativeResolution = Math.max(georaster.width || 0, georaster.height || 0);
-  const rasterResolution = categoricalMode
-    ? Math.max(960, nativeResolution)
-    : Math.max(640, Math.min(1280, baseResolution));
-  state.rasterLayer = new GeoRasterLayer({
-    georaster,
-    pane: "suitability-pane",
-    opacity: 1,
-    resolution: rasterResolution,
-    resampleMethod: "nearest",
-    pixelValuesToColorFn: (pixelValues) => rasterColor(
-      pixelValues[0],
-      georaster.noDataValue,
-      rasterInfo.range,
-      rasterInfo.breaks,
-      controls.displayModeSelect.value,
-    ),
-  });
+  if (rasterInfo.displayUrl) {
+    state.currentGeoraster = null;
+    state.displayLayer = L.imageOverlay(rasterInfo.displayUrl, state.bounds, {
+      pane: "suitability-pane",
+      opacity: 1,
+      interactive: false,
+    });
+  } else {
+    const georaster = await loadGeoraster(rasterInfo.dataUrl);
+    if (renderToken !== state.renderToken) return;
+    state.currentGeoraster = georaster;
+    const baseResolution = Math.round(Math.max(window.innerWidth, window.innerHeight) * window.devicePixelRatio);
+    const categoricalMode = controls.displayModeSelect.value === "categorical";
+    const nativeResolution = Math.max(georaster.width || 0, georaster.height || 0);
+    const rasterResolution = categoricalMode
+      ? Math.max(960, nativeResolution)
+      : Math.max(640, Math.min(1280, baseResolution));
+    state.displayLayer = new GeoRasterLayer({
+      georaster,
+      pane: "suitability-pane",
+      opacity: 1,
+      resolution: rasterResolution,
+      resampleMethod: "nearest",
+      pixelValuesToColorFn: (pixelValues) => rasterColor(
+        pixelValues[0],
+        georaster.noDataValue,
+        rasterInfo.range,
+        rasterInfo.breaks,
+        controls.displayModeSelect.value,
+      ),
+    });
+  }
 
-  state.rasterLayer.addTo(state.map);
+  if (renderToken !== state.renderToken) return;
+  state.displayLayer.addTo(state.map);
   controls.mapMode.textContent = rasterInfo.title;
   controls.mapRange.textContent = `${rasterInfo.label} · ${controls.displayModeSelect.value === "categorical" ? "fixed score bands" : formatRange(rasterInfo.range)} ${rasterInfo.unit}`;
   updateLegend(rasterInfo);
+  warmDataRaster(rasterInfo.dataUrl);
 }
 
 function activeRasterInfo() {
@@ -275,10 +317,12 @@ function activeRasterInfo() {
   const mode = controls.modeSelect.value;
   const year = controls.yearSlider.value;
   if (mode === "yearly") {
+    const yearDisplayFiles = layerInfo.year_display_files || {};
     return {
       title: `${layerInfo.label} · ${year}`,
       label: layerInfo.label,
-      url: layerInfo.year_files[year],
+      dataUrl: layerInfo.year_files[year],
+      displayUrl: yearDisplayFiles[year] ? yearDisplayFiles[year][controls.displayModeSelect.value] : null,
       unit: layerInfo.unit,
       range: layerInfo.display_range,
       breaks: layerInfo.categorical_breaks || [],
@@ -287,7 +331,8 @@ function activeRasterInfo() {
   return {
     title: `30-Year ${layerInfo.label}`,
     label: layerInfo.label,
-    url: layerInfo.climatology_file,
+    dataUrl: layerInfo.climatology_file,
+    displayUrl: layerInfo.climatology_display_files ? layerInfo.climatology_display_files[controls.displayModeSelect.value] : null,
     unit: layerInfo.unit,
     range: layerInfo.display_range,
     breaks: layerInfo.categorical_breaks || [],
@@ -338,9 +383,10 @@ function resetView() {
 }
 
 async function handleMapClick(event) {
-  if (!state.currentGeoraster) return;
   const info = activeRasterInfo();
-  const selectedCell = sampleGeorasterCell(state.currentGeoraster, event.latlng.lng, event.latlng.lat);
+  const georaster = await activeGeoraster();
+  if (!georaster) return;
+  const selectedCell = sampleGeorasterCell(georaster, event.latlng.lng, event.latlng.lat);
   if (!selectedCell) return;
 
   const details = await sampleAnnualDetails(selectedCell.centerLat, selectedCell.centerLng);
@@ -404,6 +450,17 @@ function sampleGeorasterCell(georaster, lng, lat) {
   };
 }
 
+async function activeGeoraster() {
+  const url = state.currentDataRasterUrl || activeRasterInfo().dataUrl;
+  if (!url) return null;
+  if (state.currentGeoraster && state.rasterCache.get(url) === state.currentGeoraster) {
+    return state.currentGeoraster;
+  }
+  const georaster = await loadGeoraster(url);
+  state.currentGeoraster = georaster;
+  return georaster;
+}
+
 async function loadGeoraster(url) {
   if (state.rasterCache.has(url)) {
     return state.rasterCache.get(url);
@@ -416,6 +473,18 @@ async function loadGeoraster(url) {
   const georaster = await parseGeoraster(buffer);
   state.rasterCache.set(url, georaster);
   return georaster;
+}
+
+function warmDataRaster(url) {
+  if (!url || state.rasterCache.has(url)) return;
+  const preload = () => {
+    loadGeoraster(url).catch(() => {});
+  };
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(preload, { timeout: 1200 });
+    return;
+  }
+  window.setTimeout(preload, 0);
 }
 
 function rasterColor(value, noDataValue, range, breaks, displayMode) {

@@ -120,7 +120,133 @@
         85.0,
         90.0,
         95.0
-      ]
+      ],
+      "climatology_display_files": {
+        "categorical": "data/crops/olive/rasters/total_score/total_score_climatology_categorical.webp",
+        "continuous": "data/crops/olive/rasters/total_score/total_score_climatology_continuous.webp"
+      },
+      "year_display_files": {
+        "1991": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_1991_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_1991_continuous.webp"
+        },
+        "1992": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_1992_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_1992_continuous.webp"
+        },
+        "1993": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_1993_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_1993_continuous.webp"
+        },
+        "1994": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_1994_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_1994_continuous.webp"
+        },
+        "1995": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_1995_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_1995_continuous.webp"
+        },
+        "1996": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_1996_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_1996_continuous.webp"
+        },
+        "1997": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_1997_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_1997_continuous.webp"
+        },
+        "1998": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_1998_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_1998_continuous.webp"
+        },
+        "1999": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_1999_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_1999_continuous.webp"
+        },
+        "2000": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2000_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2000_continuous.webp"
+        },
+        "2001": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2001_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2001_continuous.webp"
+        },
+        "2002": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2002_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2002_continuous.webp"
+        },
+        "2003": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2003_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2003_continuous.webp"
+        },
+        "2004": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2004_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2004_continuous.webp"
+        },
+        "2005": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2005_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2005_continuous.webp"
+        },
+        "2006": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2006_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2006_continuous.webp"
+        },
+        "2007": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2007_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2007_continuous.webp"
+        },
+        "2008": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2008_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2008_continuous.webp"
+        },
+        "2009": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2009_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2009_continuous.webp"
+        },
+        "2010": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2010_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2010_continuous.webp"
+        },
+        "2011": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2011_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2011_continuous.webp"
+        },
+        "2012": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2012_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2012_continuous.webp"
+        },
+        "2013": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2013_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2013_continuous.webp"
+        },
+        "2014": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2014_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2014_continuous.webp"
+        },
+        "2015": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2015_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2015_continuous.webp"
+        },
+        "2016": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2016_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2016_continuous.webp"
+        },
+        "2017": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2017_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2017_continuous.webp"
+        },
+        "2018": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2018_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2018_continuous.webp"
+        },
+        "2019": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2019_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2019_continuous.webp"
+        },
+        "2020": {
+          "categorical": "data/crops/olive/rasters/total_score/total_score_2020_categorical.webp",
+          "continuous": "data/crops/olive/rasters/total_score/total_score_2020_continuous.webp"
+        }
+      }
     },
     "temperature_score": {
       "label": "Temperature Score",
@@ -169,7 +295,133 @@
         85.0,
         90.0,
         95.0
-      ]
+      ],
+      "climatology_display_files": {
+        "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_climatology_categorical.webp",
+        "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_climatology_continuous.webp"
+      },
+      "year_display_files": {
+        "1991": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_1991_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_1991_continuous.webp"
+        },
+        "1992": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_1992_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_1992_continuous.webp"
+        },
+        "1993": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_1993_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_1993_continuous.webp"
+        },
+        "1994": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_1994_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_1994_continuous.webp"
+        },
+        "1995": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_1995_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_1995_continuous.webp"
+        },
+        "1996": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_1996_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_1996_continuous.webp"
+        },
+        "1997": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_1997_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_1997_continuous.webp"
+        },
+        "1998": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_1998_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_1998_continuous.webp"
+        },
+        "1999": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_1999_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_1999_continuous.webp"
+        },
+        "2000": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2000_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2000_continuous.webp"
+        },
+        "2001": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2001_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2001_continuous.webp"
+        },
+        "2002": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2002_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2002_continuous.webp"
+        },
+        "2003": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2003_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2003_continuous.webp"
+        },
+        "2004": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2004_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2004_continuous.webp"
+        },
+        "2005": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2005_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2005_continuous.webp"
+        },
+        "2006": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2006_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2006_continuous.webp"
+        },
+        "2007": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2007_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2007_continuous.webp"
+        },
+        "2008": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2008_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2008_continuous.webp"
+        },
+        "2009": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2009_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2009_continuous.webp"
+        },
+        "2010": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2010_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2010_continuous.webp"
+        },
+        "2011": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2011_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2011_continuous.webp"
+        },
+        "2012": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2012_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2012_continuous.webp"
+        },
+        "2013": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2013_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2013_continuous.webp"
+        },
+        "2014": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2014_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2014_continuous.webp"
+        },
+        "2015": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2015_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2015_continuous.webp"
+        },
+        "2016": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2016_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2016_continuous.webp"
+        },
+        "2017": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2017_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2017_continuous.webp"
+        },
+        "2018": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2018_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2018_continuous.webp"
+        },
+        "2019": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2019_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2019_continuous.webp"
+        },
+        "2020": {
+          "categorical": "data/crops/olive/rasters/temperature_score/temperature_score_2020_categorical.webp",
+          "continuous": "data/crops/olive/rasters/temperature_score/temperature_score_2020_continuous.webp"
+        }
+      }
     },
     "precipitation_score": {
       "label": "Precipitation Score",
@@ -218,7 +470,133 @@
         85.0,
         90.0,
         95.0
-      ]
+      ],
+      "climatology_display_files": {
+        "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_climatology_categorical.webp",
+        "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_climatology_continuous.webp"
+      },
+      "year_display_files": {
+        "1991": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_1991_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_1991_continuous.webp"
+        },
+        "1992": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_1992_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_1992_continuous.webp"
+        },
+        "1993": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_1993_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_1993_continuous.webp"
+        },
+        "1994": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_1994_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_1994_continuous.webp"
+        },
+        "1995": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_1995_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_1995_continuous.webp"
+        },
+        "1996": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_1996_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_1996_continuous.webp"
+        },
+        "1997": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_1997_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_1997_continuous.webp"
+        },
+        "1998": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_1998_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_1998_continuous.webp"
+        },
+        "1999": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_1999_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_1999_continuous.webp"
+        },
+        "2000": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2000_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2000_continuous.webp"
+        },
+        "2001": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2001_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2001_continuous.webp"
+        },
+        "2002": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2002_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2002_continuous.webp"
+        },
+        "2003": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2003_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2003_continuous.webp"
+        },
+        "2004": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2004_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2004_continuous.webp"
+        },
+        "2005": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2005_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2005_continuous.webp"
+        },
+        "2006": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2006_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2006_continuous.webp"
+        },
+        "2007": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2007_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2007_continuous.webp"
+        },
+        "2008": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2008_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2008_continuous.webp"
+        },
+        "2009": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2009_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2009_continuous.webp"
+        },
+        "2010": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2010_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2010_continuous.webp"
+        },
+        "2011": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2011_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2011_continuous.webp"
+        },
+        "2012": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2012_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2012_continuous.webp"
+        },
+        "2013": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2013_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2013_continuous.webp"
+        },
+        "2014": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2014_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2014_continuous.webp"
+        },
+        "2015": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2015_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2015_continuous.webp"
+        },
+        "2016": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2016_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2016_continuous.webp"
+        },
+        "2017": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2017_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2017_continuous.webp"
+        },
+        "2018": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2018_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2018_continuous.webp"
+        },
+        "2019": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2019_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2019_continuous.webp"
+        },
+        "2020": {
+          "categorical": "data/crops/olive/rasters/precipitation_score/precipitation_score_2020_categorical.webp",
+          "continuous": "data/crops/olive/rasters/precipitation_score/precipitation_score_2020_continuous.webp"
+        }
+      }
     },
     "humidity_score": {
       "label": "Humidity Score",
@@ -267,7 +645,133 @@
         85.0,
         90.0,
         95.0
-      ]
+      ],
+      "climatology_display_files": {
+        "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_climatology_categorical.webp",
+        "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_climatology_continuous.webp"
+      },
+      "year_display_files": {
+        "1991": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_1991_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_1991_continuous.webp"
+        },
+        "1992": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_1992_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_1992_continuous.webp"
+        },
+        "1993": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_1993_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_1993_continuous.webp"
+        },
+        "1994": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_1994_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_1994_continuous.webp"
+        },
+        "1995": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_1995_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_1995_continuous.webp"
+        },
+        "1996": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_1996_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_1996_continuous.webp"
+        },
+        "1997": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_1997_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_1997_continuous.webp"
+        },
+        "1998": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_1998_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_1998_continuous.webp"
+        },
+        "1999": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_1999_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_1999_continuous.webp"
+        },
+        "2000": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2000_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2000_continuous.webp"
+        },
+        "2001": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2001_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2001_continuous.webp"
+        },
+        "2002": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2002_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2002_continuous.webp"
+        },
+        "2003": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2003_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2003_continuous.webp"
+        },
+        "2004": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2004_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2004_continuous.webp"
+        },
+        "2005": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2005_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2005_continuous.webp"
+        },
+        "2006": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2006_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2006_continuous.webp"
+        },
+        "2007": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2007_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2007_continuous.webp"
+        },
+        "2008": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2008_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2008_continuous.webp"
+        },
+        "2009": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2009_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2009_continuous.webp"
+        },
+        "2010": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2010_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2010_continuous.webp"
+        },
+        "2011": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2011_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2011_continuous.webp"
+        },
+        "2012": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2012_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2012_continuous.webp"
+        },
+        "2013": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2013_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2013_continuous.webp"
+        },
+        "2014": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2014_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2014_continuous.webp"
+        },
+        "2015": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2015_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2015_continuous.webp"
+        },
+        "2016": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2016_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2016_continuous.webp"
+        },
+        "2017": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2017_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2017_continuous.webp"
+        },
+        "2018": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2018_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2018_continuous.webp"
+        },
+        "2019": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2019_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2019_continuous.webp"
+        },
+        "2020": {
+          "categorical": "data/crops/olive/rasters/humidity_score/humidity_score_2020_categorical.webp",
+          "continuous": "data/crops/olive/rasters/humidity_score/humidity_score_2020_continuous.webp"
+        }
+      }
     }
   }
 }
