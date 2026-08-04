@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0",
+  "policy_id": "local-safe-v1",
+  "minimum_free_reserve_bytes": 21474836480,
+  "maximum_volume_used_fraction": 0.8,
+  "processing_peak_multiplier": 3.0,
+  "maximum_local_backfill_years": 1,
+  "maximum_acquisition_partition_bytes": 536870912,
+  "acquisition_receipt_reservation_bytes": 65536,
+  "fixture_partition_reservation_bytes": 16777216,
+  "normalization_working_reservation_bytes": 1073741824,
+  "normalization_output_reservation_bytes": 536870912,
+  "managed_directories": {
+    "raw": {
+      "path": "data/raw",
+      "maximum_bytes": 3221225472,
+      "retention": "Archive externally after monthly products validate; keep at most one full-year proof locally."
+    },
+    "canonical": {
+      "path": "data/canonical",
+      "maximum_bytes": 5368709120,
+      "retention": "Keep monthly canonical arrays locally only within quota; immutable archives belong in object storage."
+    },
+    "published": {
+      "path": "data/published",
+      "maximum_bytes": 5368709120,
+      "retention": "Monthly serving products only; daily arrays are forbidden."
+    },
+    "composite_cache": {
+      "path": "data/cache",
+      "maximum_bytes": 2147483648,
+      "retention": "Evict by lifecycle policy; cache contents are reproducible and never authoritative."
+    },
+    "tiles": {
+      "path": "data/tiles",
+      "maximum_bytes": 2147483648,
+      "retention": "Evict by lifecycle policy; cache contents are reproducible and never authoritative."
+    }
+  },
+  "annual_estimates": {
+    "daily_utci_source_bytes": 2523293286,
+    "monthly_spei_source_bytes": 83047219,
+    "monthly_canonical_utci_spei_bytes": 83047219,
+    "basis": "Conservative uncompressed planning estimates for the common 0.25-degree grid; not measured provider compression."
+  },
+  "temporal_retention": {
+    "utci_source_frequency": "daily maximum",
+    "utci_published_frequency": "monthly median of daily maximum",
+    "spei_source_frequency": "provider monthly SPEI-3",
+    "spei_published_frequency": "monthly",
+    "daily_source_policy": "Archive outside local serving storage after checksum and monthly-product validation.",
+    "serving_store_policy": "Monthly layers only; selected UI months receive equal weight."
+  },
+  "cache_policy": {
+    "maximum_precomputed_month_masks": 17,
+    "prewarm_month_masks": [
+      "001",
+      "002",
+      "004",
+      "008",
+      "010",
+      "020",
+      "040",
+      "080",
+      "100",
+      "200",
+      "400",
+      "800",
+      "803",
+      "01c",
+      "0e0",
+      "700",
+      "fff"
+    ],
+    "arbitrary_month_masks": "on_demand_only",
+    "automatic_deletion": false
+  },
+  "object_storage_required_before_multi_year_backfill": true
+}

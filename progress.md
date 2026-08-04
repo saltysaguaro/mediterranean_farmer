@@ -1,0 +1,1289 @@
+# Global Bivariate Map Progress
+
+This log is updated by the seven-night implementation sprint defined in `SEVEN_DAY_PLAN.md`.
+
+## Sprint status
+
+- Window: July 23–29, 2026
+- Nightly start: 2:00 AM America/Phoenix
+- Next night: Night 7 — hardening and beta handoff
+- Completed nights: Nights 1, 2, 3, 4, 5, and 6
+- Night 6 status: acceptance gate complete for fixed univariate/3 × 3 legends, text-identifiable bivariate states, point-linked interpretation, source/quality/retrieval metadata, methodology and limitations, truthful loading/stale/empty/no-data/error/retry states, axis orientation, and the artificial third-variable proof
+- Current blockers: the checked-in service catalogue covers only the four-region, January/July 2024 official sample, so the live UI truthfully disables ten months and has no complete default year; production Zarr, global/full-year backfill, raster tiles/basemap, object storage/CDN, and operations remain incomplete; full axe/screen-reader, color-vision, Firefox/WebKit, production-performance, climate-review, and palette-comprehension gates remain Night 7 or post-sprint work
+
+## Pre-sprint state
+
+- `docs/` contains the legacy Mediterranean Leaflet prototype and generated crop-suitability rasters.
+- `PROJECT_PLAN.md` defines the target global UTCI × SPEI-3 product.
+- `SEVEN_DAY_PLAN.md` defines the seven-night beta implementation sequence.
+- The legacy application and rasters must remain untouched until the replacement has passed its release gates.
+
+## Run log
+
+## 2026-07-23 — Night 1
+
+Goal:
+
+- Recover the missed scheduled run and complete the foundation and contracts gate.
+
+Completed:
+
+- Confirmed that the original automation produced no run artifact, progress entry, or repository change even though the Mac and Codex app were awake.
+- Replaced the suspect daily/count recurrence with a bounded weekly-by-day schedule for the six remaining 2:00 AM runs through July 29.
+- Added the target `config/`, `pipeline/`, `services/`, `web/`, `tests/`, and CI structure.
+- Added a Draft 2020-12 public variable-manifest schema.
+- Added validated `utci_daymax_median` and `spei_3` registry entries.
+- Added canonical 12-bit month-mask conversion, three-digit hexadecimal URL serialization, and period formatting.
+- Added invalid-manifest fixtures and exhaustive round-trip tests for all 4095 non-empty month masks.
+- Added pinned Python and web dependency manifests, generated `web/package-lock.json`, and configured test, strict type-check, lint, and production-build commands.
+- Expanded `.gitignore` to exclude credentials, raw/canonical climate data, caches, local environments, generated tiles, and dependencies.
+
+Files changed:
+
+- `.github/workflows/checks.yml`
+- `.gitignore`
+- `Makefile`
+- `config/app.json`
+- `config/manifest.schema.json`
+- `config/variables/*.json`
+- `pipeline/pyproject.toml`
+- `pipeline/src/thermal_drought/*.py`
+- `pipeline/tests/*.py`
+- `services/README.md`
+- `tests/fixtures/manifests/invalid-missing-id.json`
+- `web/index.html`
+- `web/package.json`
+- `web/package-lock.json`
+- `web/tsconfig.json`
+- `web/vite.config.ts`
+- `web/src/*`
+
+Checks:
+
+- Python tests: 17 passed.
+- Variable contracts: 2 manifests validated.
+- Month masks: all values 1–4095 round-trip in tests.
+- Ruff: passed.
+- Mypy strict mode: passed.
+- TypeScript type-check: passed.
+- Vitest: 1 passed.
+- Vite production build: passed.
+- Dependency audit: 0 reported npm vulnerabilities.
+- `git diff --check`: passed.
+
+Decisions:
+
+- Registry entries remain `planned` with `data_version: unpublished` until official source acquisition is verified.
+- The SPEI axis reverses display order while preserving ascending raw-value classification.
+- The web build is an intentionally minimal foundation page; map behavior begins on Night 5.
+
+Blockers:
+
+- None for Night 1.
+
+Next:
+
+- Night 2: verify official CDS access without exposing credentials, build restartable request metadata, and acquire or transparently substitute the documented representative test fixtures.
+
+## 2026-07-23 — Night 2
+
+Goal:
+
+- Prove official ERA5-HEAT and ERA5-Drought access on a bounded representative
+  sample, or complete every independent acquisition task and record the exact
+  access blocker without presenting fixtures as climate observations.
+
+Completed:
+
+- Checked CDS access without reading or printing secrets. No `.cdsapirc`,
+  `CDSAPI_URL`, or `CDSAPI_KEY` is present; `cdsapi` is not installed in the
+  current pipeline environment.
+- Verified the current public Copernicus catalogue, form, and constraint
+  contracts for ERA5-HEAT v1.1 and ERA5-Drought v1.0.
+- Added bounded request builders for 2024 January and July across hot/arid,
+  temperate, cold, and ERA5-HEAT southern-limit regions.
+- Added separate requests for provider daily UTCI statistics, deterministic
+  year/month SPEI-3, and the month-specific SPEI normality-quality layer.
+- Split SPEI-3 values from `test_for_normality_spei` because the official
+  constraint metadata exposes the quality field by calendar month and
+  accumulation period, not analysis year.
+- Added atomic `.part` retrieval, exact request fingerprints, byte counts,
+  SHA-256 checksums, UTC timestamps, source/version/licence/DOI/citation
+  receipts, and verified-file restart behavior.
+- Added corruption recovery, empty-response failure, and a safeguard that a
+  fixture receipt can never verify a production-mode acquisition.
+- Added a conspicuously labeled deterministic text fixture containing no
+  observations or physical climate values.
+- Added a data-access report recording provider metadata, the 24-partition
+  plan, unmeasured download facts, the unresolved grid-alignment evidence, and
+  reproduction commands.
+
+Files changed:
+
+- `README.md`
+- `Makefile`
+- `pipeline/pyproject.toml`
+- `pipeline/src/thermal_drought/acquire/__init__.py`
+- `pipeline/src/thermal_drought/acquire/__main__.py`
+- `pipeline/src/thermal_drought/acquire/cli.py`
+- `pipeline/src/thermal_drought/acquire/requests.py`
+- `pipeline/src/thermal_drought/acquire/runner.py`
+- `pipeline/tests/test_acquisition.py`
+- `pipeline/reports/night-2-data-access.md`
+- `tests/fixtures/acquisition/DETERMINISTIC_NOT_ERA5_PAYLOAD.txt`
+- `tests/fixtures/acquisition/README.md`
+- `progress.md`
+
+Checks:
+
+- Full Python suite: 25 passed.
+- Acquisition tests: 8 passed.
+- Variable contracts: 2 manifests validated.
+- Representative plan: 24 bounded requests covering three source-layer types,
+  four regions, and two seasons.
+- Secret-safe access status: all credential/client availability fields false;
+  no secret values emitted.
+- Ruff: passed.
+- Mypy strict mode: passed.
+- TypeScript type-check: passed.
+- Vitest: 1 passed.
+- Vite production build: passed.
+- npm audit: 0 reported vulnerabilities.
+- `git diff --check`: passed.
+
+Decisions:
+
+- Use the consolidated provider products for the reproducible proof rather than
+  near-real-time intermediate data.
+- Request ERA5-HEAT daily-statistics files and defer daily-maximum field
+  selection, K-to-°C conversion, and monthly median calculation to Night 3
+  after observed NetCDF metadata is available.
+- Request deterministic ERA5-Drought `reanalysis`, accumulation period 3,
+  directly; never recalculate January SPEI-3 from selected UI months.
+- Keep provider quality layers independent of analysis year while associating
+  them by accumulation period, calendar month, and grid cell.
+- Treat advertised 0.25° grids as an alignment hypothesis only. Do not
+  interpolate or claim matching cell centers until paired official files are
+  inspected.
+- Keep fixture and production receipt modes distinct so deterministic test
+  content cannot satisfy a production verification check.
+
+Blockers:
+
+- Official retrieval is blocked by absent CDS credentials. The authenticated
+  account's acceptance of both dataset licences also cannot be confirmed.
+- The optional `cdsapi` dependency is not installed in `pipeline/.venv`.
+- Therefore download size, latency, returned dimensions, coordinate order,
+  cell-center alignment, actual NetCDF variable/unit metadata, no-data
+  encoding, quality values, and UTCI coverage-edge behavior remain unverified.
+- No ERA5, ERA5-HEAT, or ERA5-Drought file was downloaded, and no fixture is
+  represented as one.
+
+Next:
+
+- Remain on Night 2. After CDS credentials and dataset-term acceptance are
+  available, install `pipeline[data,dev]`, run the bounded fetch, inspect and
+  record observed NetCDF metadata, compare paired cell centers, measure size
+  and latency, and close the acceptance gate before starting Night 3.
+
+## 2026-07-24 — Night 2
+
+Goal:
+
+- Continue the earliest incomplete gate by making official sample metadata,
+  latency, plan completeness, and paired-grid evidence automatically auditable
+  as soon as authenticated retrieval becomes available.
+
+Completed:
+
+- Rechecked secret-safe access state. The CDS client is now installed, but no
+  `.cdsapirc`, `CDSAPI_URL`, or `CDSAPI_KEY` is present.
+- Added retrieval-duration measurement and explicit year/month metadata to
+  acquisition receipts while preserving checksum-based restart behavior.
+- Added a structural NetCDF inspector backed by optional
+  `xarray`/`h5netcdf`/`h5py` dependencies.
+- Made inspection verify receipt paths, byte sizes, and SHA-256 checksums before
+  opening an artifact.
+- Made production inspection reject fixture receipts by default. An explicit
+  test-only fixture path remains labeled non-official and can never complete
+  the acceptance audit.
+- Added header-only evidence for dimensions, shapes, attributes, units, nodata,
+  coordinate names, coordinate values, order, endpoints, and regular step.
+  Climate data arrays are not loaded by this audit.
+- Added cell-center comparison for every UTCI/SPEI-3 region-year-month pair and
+  every SPEI-3/provider-quality pair.
+- Distinguished reversible latitude reordering and longitude-convention
+  normalization from actual coordinate mismatch; no interpolation is proposed
+  or performed.
+- Required the exact 24-request plan, every non-fixture artifact, every source
+  and quality pairing, and compatible observed cell centers before an audit can
+  report completion.
+- Added a machine-readable `inspect` CLI and documented the authenticated
+  fetch-to-audit workflow.
+- Installed and exercised the CDS client plus structural NetCDF reader
+  dependencies locally. The NetCDF integration test creates only a
+  coordinate-only file conspicuously labeled as non-climate data.
+
+Files changed:
+
+- `README.md`
+- `Makefile`
+- `pipeline/pyproject.toml`
+- `pipeline/src/thermal_drought/acquire/__init__.py`
+- `pipeline/src/thermal_drought/acquire/cli.py`
+- `pipeline/src/thermal_drought/acquire/inspection.py`
+- `pipeline/src/thermal_drought/acquire/runner.py`
+- `pipeline/tests/test_acquisition.py`
+- `pipeline/reports/night-2-data-access.md`
+- `progress.md`
+
+Checks:
+
+- Full Python suite: 31 passed.
+- Acquisition suite: 14 passed, including fixture exclusion, plan-completeness
+  evidence, grid order/convention comparison, checksum verification, and a
+  local structural NetCDF header read.
+- Variable contracts: 2 manifests validated.
+- Representative plan: 24 requests, 24 unique IDs, and `fixture: false`.
+- Secret-safe status: `cdsapi` installed; all credential-presence fields false;
+  no secret value read or emitted.
+- Fetch preflight: exited 2 before network access with the precise missing
+  credential blocker.
+- Observed-metadata preflight: exited 2 with `artifact_count: 0`,
+  `expected_request_count: 24`, all 24 missing request IDs, and
+  `official_evidence: false`.
+- Ruff: passed.
+- Mypy strict mode: passed across 9 source files.
+- TypeScript typecheck: passed.
+- Vitest: 1 passed.
+- Vite production build: passed.
+- npm audit: 0 reported vulnerabilities.
+- `git diff --check`: passed.
+- No service, end-to-end, visual, or accessibility command exists yet at this
+  Night 2 stage; none was skipped.
+- Legacy `docs/` application and rasters: unchanged.
+
+Decisions:
+
+- Treat the audit as complete only with an explicit expected request plan.
+  A partial official subset cannot accidentally close the Night 2 gate.
+- Read full coordinate arrays for the bounded samples but only structural
+  metadata for climate variables.
+- Permit order and longitude-convention normalization only after equivalent
+  cell-center sets are proven; otherwise report an exact mismatch.
+- Keep observed metadata in both atomic acquisition receipts and an optional
+  machine-readable report so later normalization has reproducible source
+  evidence.
+- Keep selected-year SPEI-3, reference-period provider quality, and UTCI daily
+  statistics as separate artifacts with explicit period semantics.
+
+Blockers:
+
+- Official retrieval remains blocked by absent CDS credentials.
+- Acceptance of both dataset terms by the eventual authenticated CDS account
+  remains unconfirmed.
+- `data/raw` is absent, so 0 of 24 official artifacts have been inspected.
+- Returned dimensions, variable names, units, nodata, coordinate order, exact
+  cell centers, quality values, download sizes/latencies, and UTCI coverage-edge
+  behavior therefore remain unverified. No fixture is used to fill those facts.
+
+Next:
+
+- Remain on Night 2. When credentials and dataset-term acceptance are
+  available, run the bounded 24-partition fetch, run the observed-metadata
+  audit, record actual sizes and latency, resolve any provider-field changes,
+  and close the paired-grid gate only if every official source and quality
+  artifact verifies.
+
+## 2026-07-25 — Night 2
+
+Goal:
+
+- Continue the earliest incomplete gate by making the official-data evidence
+  set cryptographically identifiable and preventing stale, altered, duplicate,
+  or out-of-plan receipts from satisfying the 24-partition acceptance audit.
+
+Completed:
+
+- Re-read the four required project documents in full and inspected the complete
+  working-tree, package-script, acquisition, test, configuration, report, and
+  legacy-preservation state.
+- Rechecked secret-safe access state. `cdsapi` remains installed, but no
+  `.cdsapirc`, `CDSAPI_URL`, or `CDSAPI_KEY` is present.
+- Added an order-independent SHA-256 fingerprint over the complete acquisition
+  plan, including request bodies, regions, periods, canonical targets, and
+  source metadata.
+- Added the fingerprint to both `plan` output and observed-metadata audit
+  reports. The current 24-request plan fingerprint is
+  `04989c737e477ab6aba89ee884014c03e3c87cfc8ca91ddbeb4c2e1f4839dee1`.
+- Bound every inspected receipt to its exact planned request by checking receipt
+  schema, dataset, variable, product version, request body and hash, period,
+  region, source metadata, artifact path, and canonical receipt path.
+- Made unexpected receipts, duplicate request IDs, and all receipt-to-plan
+  mismatches explicit report fields that prevent audit completion.
+- Made the inspector skip mismatched receipts without opening their artifacts or
+  writing observed metadata into them.
+- Added tests for plan-fingerprint stability and coverage, modified receipt
+  rejection, unexpected artifacts, duplicate request IDs, exact-plan report
+  fields, and the rule that mismatched receipts remain unmodified.
+
+Files changed:
+
+- `README.md`
+- `pipeline/src/thermal_drought/acquire/__init__.py`
+- `pipeline/src/thermal_drought/acquire/cli.py`
+- `pipeline/src/thermal_drought/acquire/inspection.py`
+- `pipeline/src/thermal_drought/acquire/requests.py`
+- `pipeline/tests/test_acquisition.py`
+- `pipeline/reports/night-2-data-access.md`
+- `progress.md`
+
+Checks:
+
+- Full Python suite: 34 passed.
+- Acquisition suite: 17 passed.
+- Variable contracts: 2 manifests validated.
+- Representative plan: 24 unique non-fixture requests with the expected stable
+  plan fingerprint.
+- Secret-safe status: `cdsapi` installed; all credential-presence fields false;
+  no secret values read or emitted.
+- Fetch preflight: exited 2 before network access with the precise missing
+  credential blocker.
+- Observed-metadata preflight: exited 2 with `artifact_count: 0`,
+  `expected_request_count: 24`, all 24 request IDs missing, no unexpected or
+  duplicate receipts, and `official_evidence: false`.
+- Ruff: passed.
+- Mypy strict mode: passed across 9 source files.
+- Python dependency consistency (`pip check`): passed.
+- TypeScript typecheck: passed.
+- Vitest smoke test: 1 passed.
+- Vite production build: passed.
+- Local npm dependency tree: valid.
+- Offline npm audit: 0 vulnerabilities reported. The live registry audit could
+  not be completed because sandbox policy rejected transmitting the dependency
+  manifest; no bypass was attempted.
+- `git diff --check`: passed on the completed working tree.
+- Legacy `docs/` application and rasters: unchanged.
+- `data/raw`: still absent.
+- No service, end-to-end, visual, or accessibility command exists yet at this
+  Night 2 stage; none was skipped.
+
+Decisions:
+
+- Identify the full bounded plan separately from per-request fingerprints so an
+  audit can prove both set completeness and individual receipt integrity.
+- Treat extra receipts as a failed exact-plan audit rather than silently
+  ignoring them.
+- Do not inspect or enrich a receipt whose provenance does not exactly match the
+  expected plan, even when its referenced artifact checksum is internally
+  consistent.
+- Keep fixtures usable for structural tests only; fixture evidence still cannot
+  close the official-data gate.
+
+Blockers:
+
+- Official retrieval remains blocked by absent CDS credentials.
+- Acceptance of both dataset terms by the eventual authenticated CDS account
+  remains unconfirmed.
+- `data/raw` is absent, so 0 of 24 official artifacts have been inspected.
+- Returned dimensions, variables, units, nodata, cell centers, quality values,
+  sizes/latencies, and UTCI coverage-edge behavior remain unverified. No fixture
+  supplies those facts.
+- A live npm registry vulnerability audit was disallowed by sandbox policy;
+  only the successful offline audit is evidence for this run.
+
+Next:
+
+- Remain on Night 2. When credentials and dataset-term acceptance are
+  available, fetch the fingerprinted 24-partition plan, run the exact-plan
+  observed-metadata audit, record actual sizes and latency, resolve any
+  provider-field changes, and close the paired-grid gate only if every official
+  source and quality artifact verifies.
+
+## 2026-07-26 — Night 2
+
+Goal:
+
+- Resume the earliest incomplete gate, use the newly available CDS
+  configuration to test official access, and make any provider access failure
+  precise, secret-safe, and independently auditable for both source datasets.
+
+Completed:
+
+- Re-read the four required project documents in full and inspected Git status,
+  package scripts, current source, tests, configuration, reports, user changes,
+  ignored raw-data state, and legacy preservation state.
+- Rechecked secret-safe access status. A non-empty `.cdsapirc` is now present
+  and `cdsapi` is installed; no credential value was opened or emitted.
+- Reached the official CDS API with the exact first ERA5-HEAT request in the
+  fingerprinted plan. CDS returned HTTP 403 because the account has not accepted
+  the required ERA5-HEAT licence.
+- Independently reached CDS with the exact first ERA5-Drought request. CDS
+  returned HTTP 403 because the account has not accepted the required
+  ERA5-Drought licence.
+- Added dataset-scoped fetching so either official source can be tested or
+  resumed without submitting the other source or changing the full acceptance
+  plan.
+- Added a typed acquisition failure that maps provider licence,
+  authentication, access, and other failures to secret-safe reason codes and
+  planned request context.
+- Changed fetch failures from provider tracebacks to machine-readable JSON with
+  the dataset, request ID, reason, and official dataset page.
+- Preserved atomic cleanup: a provider denial removes any partial response and
+  cannot create a verified artifact or receipt.
+- Added tests for secret-safe licence failure handling, partial-file cleanup,
+  dataset-scoped plan selection, and machine-readable CLI blockers.
+- Updated the setup instructions and Night 2 data-access report with the
+  observed authenticated results and exact next step.
+
+Files changed:
+
+- `README.md`
+- `pipeline/src/thermal_drought/acquire/cli.py`
+- `pipeline/src/thermal_drought/acquire/runner.py`
+- `pipeline/tests/test_acquisition.py`
+- `pipeline/reports/night-2-data-access.md`
+- `progress.md`
+
+Checks:
+
+- Targeted acquisition suite after implementation: 20 passed.
+- Full Python suite: 37 passed.
+- Variable contracts: 2 manifests validated.
+- Representative plan: 24 unique non-fixture requests across both official
+  dataset IDs; fingerprint unchanged at
+  `04989c737e477ab6aba89ee884014c03e3c87cfc8ca91ddbeb4c2e1f4839dee1`.
+- Secret-safe status: `cdsapi` installed and non-empty `.cdsapirc` present;
+  environment credential flags false; no secret values emitted.
+- Dataset-scoped ERA5-HEAT access: exited 2 with
+  `licence_not_accepted` for the exact planned request.
+- Dataset-scoped ERA5-Drought access: exited 2 with
+  `licence_not_accepted` for the exact planned request.
+- Observed-metadata audit: exited 2 as required with 0 of 24 artifacts,
+  `official_evidence: false`, no unexpected or duplicate receipts, and the
+  expected plan fingerprint.
+- Ruff: passed.
+- Mypy strict mode: passed across 9 source files.
+- Python dependency consistency (`pip check`): passed.
+- TypeScript typecheck: passed.
+- Vitest smoke test: 1 passed.
+- Vite production build: passed.
+- Local npm dependency tree: command passed; platform-inapplicable and
+  undeclared feature dependencies were reported only as optional.
+- Offline npm audit: 0 vulnerabilities reported.
+- `git diff --check`: passed.
+- Legacy `docs/` application and all 753 files: unchanged.
+- No service, end-to-end, visual, or accessibility command exists yet at this
+  Night 2 stage; none was skipped.
+
+Decisions:
+
+- Keep the full 24-request plan and its inspection fingerprint authoritative.
+  Dataset scoping is only a retrieval/resume aid and cannot close the gate from
+  a partial source.
+- Report known provider denials with stable reason codes and official dataset
+  context without echoing arbitrary provider response bodies.
+- Do not advance to normalization while both official source licences remain
+  unaccepted and no observed source metadata exists.
+
+Blockers:
+
+- The configured CDS account has not accepted the required licence for
+  ERA5-HEAT.
+- The same account has not accepted the required licence for ERA5-Drought.
+- Therefore 0 of 24 official artifacts exist, and returned dimensions,
+  variables, units, nodata, cell centers, quality values, sizes/latencies, and
+  UTCI coverage-edge behavior remain unverified. No fixture supplies those
+  facts.
+
+Next:
+
+- Remain on Night 2. Accept both licences through the two official CDS dataset
+  pages, rerun the restartable fingerprinted fetch, and run the exact-plan
+  observed-metadata audit. Close the gate only after all 24 official artifacts,
+  source/quality pairs, and cell-center comparisons verify.
+
+## 2026-07-27 — Night 2
+
+Goal:
+
+- Retest official access after both dataset licences were accepted, complete
+  the exact 24-partition retrieval, and close the paired-grid evidence gate only
+  if every official artifact verifies.
+
+Completed:
+
+- Confirmed the non-empty local CDS configuration without reading or emitting
+  any credential value.
+- Retrieved all 24 planned official response containers: eight UTCI daily
+  statistics partitions, eight deterministic selected-year SPEI-3 partitions,
+  and eight separate reference-period SPEI normality-quality partitions.
+- Retained a checksum, byte size, duration, exact request, source metadata, and
+  UTC retrieval time in every receipt.
+- Discovered and documented that CDS returns ZIP containers even when the
+  client target uses a `.nc` suffix.
+- Added content-detected ZIP inspection with bounded member count and expanded
+  size, safe paths, duplicate-name rejection, encryption rejection, NetCDF-only
+  members, temporary extraction, and full header inspection.
+- Made the archive audit verify identical member structures and spatial grids.
+- Made UTCI inspection require exactly one daily member for every requested
+  calendar date; January and July each contain all 31 planned days.
+- Recorded that `utci_daily_max` and `SPEI3` omit unit attributes in the
+  returned NetCDF headers, while the quality field is named `significance` with
+  unit `1`.
+- Ran the exact-plan audit successfully: 24 of 24 official artifacts, eight
+  UTCI/SPEI pairs, and eight SPEI/quality pairs pass with no missing,
+  unexpected, duplicate, fixture, checksum, provenance, or grid issue.
+- Confirmed identical 0.25° cell centers without transformation in Phoenix,
+  Paris, Fairbanks, and the -60° UTCI coverage-edge sample.
+- Reran acquisition and verified all 24 existing artifacts locally without
+  redownloading.
+- Updated the human-readable data-access report and produced the complete
+  machine-readable observed-metadata audit.
+
+Files changed:
+
+- `README.md`
+- `pipeline/src/thermal_drought/acquire/inspection.py`
+- `pipeline/tests/test_acquisition.py`
+- `pipeline/reports/night-2-data-access.md`
+- `pipeline/reports/night-2-observed-metadata.json`
+- `progress.md`
+
+Checks:
+
+- Official retrieval: 24 downloaded response containers and 24 checksum-bound
+  receipts; 9,662,880 response bytes total.
+- Restart behavior: 24 of 24 reported `verified-existing`; no network retrieval
+  was attempted for verified files.
+- Exact-plan inspection: `complete: true`, `official_evidence: true`, 24
+  artifacts, 8 source pairs, 8 quality pairs, and fingerprint
+  `04989c737e477ab6aba89ee884014c03e3c87cfc8ca91ddbeb4c2e1f4839dee1`.
+- Archive evidence: 264 safely inspected NetCDF members, including 248 daily
+  UTCI files; no member was persisted outside its response container.
+- Targeted acquisition suite: 22 passed.
+- Full Python suite: 39 passed.
+- Variable contracts: 2 manifests validated.
+- Ruff: passed.
+- Mypy strict mode: passed across 9 source files.
+- Python dependency consistency (`pip check`): passed.
+- TypeScript typecheck: passed.
+- Vitest smoke test: 1 passed.
+- Vite production build: passed.
+- Local npm dependency tree: command passed; platform-inapplicable and
+  undeclared feature dependencies were reported only as optional.
+- Offline npm audit: 0 vulnerabilities reported.
+- `git diff --check`: passed.
+- Legacy `docs/` application and all 753 files: unchanged.
+- No service, end-to-end, visual, or accessibility command exists yet at this
+  Night 2 stage; none was skipped.
+
+Decisions:
+
+- Close Night 2 because the exact official plan, receipts, source/quality
+  pairings, and cell centers now pass the implemented acceptance audit.
+- Treat ZIP packaging as a provider response format discovered by content, not
+  by a misleading target extension.
+- Carry the catalogue's documented UTCI Kelvin and dimensionless SPEI contracts
+  into explicit product-versioned Night 3 adapters; never silently accept
+  arbitrary unitless source fields.
+- Keep source climate arrays unread during this structural audit. Value-level
+  unit validation, provider-quality application, daily-max monthly medians, and
+  coverage-edge cell validity belong to Night 3.
+
+Blockers:
+
+- None for the Night 2 acceptance gate.
+- The returned UTCI and SPEI NetCDF variables lack unit attributes. This is a
+  documented Night 3 adapter requirement, not permission to infer or fabricate
+  units or values.
+
+Next:
+
+- Begin Night 3 with archive-aware normalization. Select only
+  `utci_daily_max`, validate its product-versioned Kelvin contract and sample
+  values before converting to °C, calculate monthly medians of daily maxima,
+  retain provider `SPEI3` without recomputing its accumulation window, apply the
+  `significance` quality field, and verify nodata and -60° edge behavior from
+  the official sample arrays.
+
+## 2026-07-27 — Night 3
+
+Goal:
+
+- Turn the exact official acquisition proof into deterministic canonical
+  monthly products while preserving the locked UTCI, SPEI-3, time, nodata, and
+  provider-quality semantics.
+
+Completed:
+
+- Re-audited the exact 24-artifact, checksum-bound non-fixture plan before
+  reading climate arrays.
+- Added bounded ZIP-aware normalization that selects only ERA5-HEAT v1.1
+  `utci_daily_max` with `cell_methods = "time: maximum"`.
+- Added an explicit product/version/variable adapter for the observed missing
+  UTCI unit attribute. It accepts the catalogue-bound Kelvin contract, rejects
+  unexpected present units, validates plausible source values, converts to °C,
+  requires every requested daily member exactly once, and computes the monthly
+  median per cell.
+- Added the ERA5-Drought v1.0 adapter for deterministic provider `SPEI3`.
+  Selected-year monthly values are retained directly and the three-month
+  accumulation window is never recomputed.
+- Preserved the separate reference-period `significance` array, restricted it
+  to provider values 0, 1, or nodata, retained unmasked source SPEI-3, and made
+  the published SPEI-3 no data unless quality equals 1.
+- Canonicalized coordinate names, EPSG:4326 metadata, Gregorian month-start
+  time, north-to-south latitude, and ascending `[-180, 180)` longitude on the
+  exact 0.25° cell centers without interpolation.
+- Added atomic, semantically idempotent local publication. An existing
+  identical dataset is left untouched, preserving its checksum.
+- Produced four ignored two-month regional NetCDF products totaling 120,656
+  bytes and a checked-in report with their SHA-256 checksums and eight official
+  center-cell golden samples.
+- Independently reproduced UTCI monthly medians with Python's reference median
+  and directly read provider SPEI-3 and quality values at all eight golden
+  cells.
+- Verified the southern edge: UTCI remains valid at -59.75°, while provider
+  SPEI-3 is nodata and quality is 0 in January and July; published drought
+  remains no data rather than zero.
+- Added the shared `ceil(selected_month_count × 0.75)` validity rule with
+  minimum one, including one-month identity and real-zero preservation.
+- Added a minimal `normalize` dependency extra and CI coverage for the
+  normalization/scientific tests.
+- Documented the reproduction command, adapters, canonical contract,
+  independent precision evidence, local publication scope, and dependency
+  blocker.
+
+Files changed:
+
+- `.github/workflows/checks.yml`
+- `Makefile`
+- `README.md`
+- `pipeline/pyproject.toml`
+- `pipeline/src/thermal_drought/acquire/inspection.py`
+- `pipeline/src/thermal_drought/aggregation.py`
+- `pipeline/src/thermal_drought/normalize/__init__.py`
+- `pipeline/src/thermal_drought/normalize/__main__.py`
+- `pipeline/src/thermal_drought/normalize/cli.py`
+- `pipeline/src/thermal_drought/normalize/core.py`
+- `pipeline/tests/test_aggregation.py`
+- `pipeline/tests/test_normalization.py`
+- `pipeline/reports/night-3-normalization.md`
+- `pipeline/reports/night-3-normalization.json`
+- `progress.md`
+
+Checks:
+
+- Targeted aggregation and normalization suite: 16 passed, including
+  deterministic structural inputs explicitly labeled as non-climate data and
+  the bounded official integration path.
+- Full Python suite: 55 passed.
+- Exact-plan source audit: `complete: true`, `official_evidence: true`, 24
+  artifacts, eight UTCI/SPEI pairs, eight SPEI/quality pairs, and fingerprint
+  `04989c737e477ab6aba89ee884014c03e3c87cfc8ca91ddbeb4c2e1f4839dee1`.
+- Local publication: four 2 × 3 × 3 regional products; a second run retained
+  identical output checksums.
+- Variable contracts: two manifests validated.
+- Ruff lint: passed.
+- Ruff format: passed for all new Night 3 Python files. A separate repository-
+  wide advisory check identified eight pre-existing unformatted files; they
+  were not bulk-rewritten.
+- Mypy strict mode: passed across 14 source files.
+- Python dependency consistency (`pip check`): passed.
+- TypeScript typecheck: passed.
+- Vitest smoke test: one passed.
+- Vite production build: passed.
+- Local npm dependency tree: passed; only platform- or feature-specific
+  optional dependencies were reported absent.
+- Offline npm audit: zero vulnerabilities reported.
+- `git diff --check`: passed.
+- Legacy `docs/` application and all 753 files: unchanged.
+- No service, end-to-end browser, visual, or accessibility command exists at
+  this Night 3 stage; none was skipped.
+
+Decisions:
+
+- Treat absent source unit attributes as a narrow, product-versioned adapter
+  case, never as permission to infer units from arbitrary input.
+- Keep `spei_3_source`, `spei_3_quality`, and quality-masked `spei_3` separate
+  so quality handling remains inspectable and missing data cannot become zero.
+- Preserve the provider's common cell centers and use canonical coordinate
+  ordering only; do not interpolate.
+- Use compressed NetCDF for the bounded local development representation
+  because it is supported by the installed reviewed stack. Keep chunked Zarr
+  as the production target rather than weakening or mislabeling this sample.
+- Close Night 3 because the representative normalization acceptance gate,
+  independent value comparisons, idempotence, quality handling, and southern
+  edge checks pass. This is not a claim of a global or complete-year backfill.
+
+Blockers:
+
+- `zarr>=2.18,<3` and `numcodecs>=0.15,<1` are declared but absent. The
+  sandboxed install could not resolve the package index, and the required
+  network escalation was rejected as an unreviewed third-party install. No
+  workaround or external asset was used.
+- Production Zarr layout, global backfill, overviews, quantization study, and
+  object-storage publication remain pending. None blocks the bounded Night 3
+  sample gate or local Night 4 service work.
+
+Next:
+
+- Night 4: implement the shared selected-month median/classification library,
+  compatibility and two-variable bounds, deterministic versioned cache keys,
+  and local availability, health, point-sample, and development raster
+  endpoints backed by the canonical Night 3 products.
+
+## 2026-07-28 — Night 4
+
+Goal:
+
+- Provide one scientifically consistent, bounded implementation for selected-
+  month point values and development tiles, backed by the verified canonical
+  Night 3 products.
+
+Completed:
+
+- Extended the variable contract with explicit ownership for exact
+  classification breaks. UTCI now expresses `< 9`, `9–26`, and `> 26`
+  precisely, while SPEI-3 expresses `≤ -1.5`, `(-1.5, -1.0]`, and `> -1.0`
+  without variable-name branches in the classifier.
+- Marked both registry entries as the bounded
+  `night-3-official-sample-v1` publication for 2024 and added data-driven
+  quality-field/pass-value metadata.
+- Added selected-month aggregation by canonical mask, including a structured
+  unavailable-month failure and the unchanged
+  `ceil(selected months × 0.75)` validity rule.
+- Exhaustively compared all 4,095 month masks to a simple independent median
+  implementation, including one-month, odd, even, all-year, missing-value,
+  ordering, real-zero, and unpublished-month cases.
+- Added a registry-driven fixed classifier for scalar and array values. No data
+  maps to class index `-1` internally and JSON `null` externally, never zero.
+- Added variable-neutral selection and compatibility checks for grid,
+  resolution, calendar, statistic, published year, months, and spatial
+  coverage. One variable and two different compatible variables are accepted;
+  duplicates and more than two are rejected.
+- Added a release catalogue that verifies the Night 3 report, every product
+  checksum, official/fixture provenance, required data and quality arrays,
+  time/month metadata, grid, path containment below `data/published/`, unique
+  region/year identity, product count, and development cell bounds before
+  serving.
+- Added local `health`, `availability`, point-sample, and versioned sparse JSON
+  development-tile endpoints through a dependency-light WSGI application.
+- Kept the sample scope explicit in every response. Availability reports only
+  January and July 2024 across the four representative regions and correctly
+  reports no complete year.
+- Made point and tile cells use the identical aggregation, provider-quality,
+  classification, and source-metadata path. The southern sample returns
+  drought `null`, class `null`, zero valid months, and `low_quality`; UTCI
+  remains valid.
+- Added deterministic cache identities and HTTP ETags covering API, software,
+  data/release, ordered variables, year, month mask, statistic,
+  minimum-valid fraction, quality rule, classification
+  versions/breaks/edge assignments, palette version, response kind, and
+  spatial/tile identity.
+- Bounded masks, years, latitudes, longitudes, dataset versions, zooms, tile
+  coordinates, release paths, file counts, and per-product development cells.
+  Tests prove invalid requests fail before a climate data reader is called.
+- Added deterministic structural service fixtures that are labeled
+  `fixture: true` and `official_evidence: false`. The normal service startup
+  rejects them; tests must opt in programmatically.
+- Documented local installation, validation, startup, endpoint shapes, mask
+  semantics, immutable cache behavior, sample limits, and production gaps.
+
+Files changed:
+
+- `README.md`
+- `Makefile`
+- `config/app.json`
+- `config/manifest.schema.json`
+- `config/variables/spei_3.json`
+- `config/variables/utci_daymax_median.json`
+- `pipeline/pyproject.toml`
+- `pipeline/src/thermal_drought/__init__.py`
+- `pipeline/src/thermal_drought/aggregation.py`
+- `pipeline/src/thermal_drought/classification.py`
+- `pipeline/src/thermal_drought/contracts.py`
+- `pipeline/src/thermal_drought/normalize/core.py`
+- `pipeline/src/thermal_drought/api/__init__.py`
+- `pipeline/src/thermal_drought/api/__main__.py`
+- `pipeline/src/thermal_drought/api/app.py`
+- `pipeline/src/thermal_drought/api/cli.py`
+- `pipeline/src/thermal_drought/api/core.py`
+- `pipeline/tests/test_aggregation.py`
+- `pipeline/tests/test_classification.py`
+- `pipeline/tests/test_contracts.py`
+- `pipeline/tests/test_service.py`
+- `services/README.md`
+- `progress.md`
+
+Checks:
+
+- Focused service/scientific gate: 33 passed.
+- Full Python suite: 78 passed.
+- All 4,095 non-empty month masks matched the independent selected-month
+  reference median.
+- Night 3 normalization replay: 23 aggregation/normalization tests passed; the
+  exact official source audit and four idempotent canonical outputs completed.
+- Local service catalogue: four checksum-verified products, 36 cells, official
+  evidence true, fixture false, two published months, no falsely complete year.
+- Live loopback WSGI smoke: health, Phoenix point sample, and zoom-zero
+  development tile each returned HTTP 200.
+- Live Phoenix January/July point: SPEI-3 `-0.5169488192`, UTCI
+  `31.8961267471 °C`, two valid months each, provider quality passed, classes
+  `No drought` and `Heat stress`.
+- Live development tile: 36 cells, 43,492 bytes, immutable cache header and
+  deterministic ETag. Its Phoenix center values and classes match the point
+  response exactly.
+- Variable contracts: two manifests validated.
+- Ruff lint: passed.
+- Ruff format: all 11 Night 4 Python files checked are formatted.
+- Strict mypy: passed across 20 source files.
+- Python dependency consistency: no broken requirements.
+- TypeScript typecheck: passed.
+- Vitest smoke: one passed.
+- Vite production build: passed; application bundle remains 1.11 kB before
+  gzip and 0.62 kB after gzip at this foundation stage.
+- Local npm dependency tree: passed.
+- Offline npm audit: zero vulnerabilities reported.
+- `git diff --check`: passed.
+- Legacy `docs/` application and all 753 files: unchanged.
+- No browser end-to-end, automated accessibility, or visual-regression command
+  exists yet; those remain Night 5–7 work rather than skipped checks.
+
+Decisions:
+
+- Encode exact-break ownership in the versioned registry because UTCI and
+  SPEI-3 have different inclusive boundaries that cannot be recovered safely
+  from breaks alone.
+- Reuse quality-masked canonical `spei_3` values and the separate provider
+  quality array. Never aggregate `spei_3_source` into a published drought value
+  or infer January from the selected UI months.
+- Use the standard-library WSGI server for this local slice so no unreviewed
+  dependency is required. Keep the core framework-neutral for a later
+  production host.
+- Return sparse JSON grid cells as the bounded development tile format. Do not
+  describe it as a production WebP raster, CDN cache, or global layer.
+- Version the sample in the public manifests but let availability describe its
+  actual two-month extent; never imply that the registry's provider coverage
+  is published data availability.
+
+Blockers:
+
+- Production Zarr and numcodecs dependencies remain unavailable in the current
+  sandbox. The bounded official sample remains compressed NetCDF.
+- No global or complete-year canonical backfill exists. The service cannot
+  truthfully offer the latest complete year or arbitrary months beyond January
+  and July 2024.
+- Production raster/WebP rendering, spatial chunk reads, object storage/CDN,
+  cache warming, rate limiting, observability, and deployment remain pending.
+- The `development-1` palette identifier participates in cache identity, but
+  palette design, bivariate rendering, comprehension testing, and
+  color-vision/accessibility review belong to Nights 5–7.
+
+Next:
+
+- Night 5: build the global TypeScript map shell against availability and the
+  development data path; render variable slots from the registry; support
+  univariate/bivariate selection and axis swap; add the accessible circular
+  month selector with final-month protection and textual fallback; serialize
+  variables, year, mask, location, and zoom to the URL; and preserve the last
+  valid map while replacement data loads.
+
+## 2026-07-28 — Night 4 storage-hardening follow-up
+
+Goal:
+
+- Turn the daily-source/monthly-serving design and local disk-safety plan into
+  enforced, reviewable safeguards before the next nightly objective.
+
+Completed:
+
+- Added a versioned storage policy with a 20 GiB free-space reserve, 80% volume
+  high-water mark, three-times processing-peak estimate, and one-year local
+  backfill limit.
+- Added managed quotas: 3 GiB raw, 5 GiB canonical, 5 GiB published, 2 GiB
+  composite cache, and 2 GiB generated tiles.
+- Locked the hybrid temporal contract: provider daily maximum UTCI is reduced
+  to monthly medians; provider SPEI-3 stays monthly; daily arrays are forbidden
+  in serving storage and are archived externally after checksum and product
+  validation.
+- Added disk-independent policy validation, managed-directory inventory, and
+  conservative annual backfill preflight commands with structured JSON output.
+- Made new acquisition writes reserve space before the provider is called,
+  retain restartability for verified files, cap every response partition at
+  512 MiB, reserve 64 KiB for its receipt, remove oversized partials, and
+  record the applied policy in receipts.
+- Made ZIP inspection and normalization reserve exact expanded bytes before
+  temporary extraction. Inspection preflights the exact serialized receipt
+  updates before any sidecar write. Full normalization also reserves 1 GiB
+  working space plus 512 MiB output space before inspection can update receipts.
+- Made normalization reports and published NetCDF metadata state the source and
+  published temporal frequencies and daily-source retention rule.
+- Bounded cache prewarming to exactly 17 masks: 12 single months, DJF, MAM,
+  JJA, SON, and all months. Arbitrary masks remain on demand.
+- Kept automatic deletion disabled. Multi-year backfill is rejected until
+  reviewed object storage, versioning, and lifecycle rules exist.
+- Replaced host-dependent disk preflights in CI with policy-only validation;
+  local `make storage-check` still performs real inventory and a one-year
+  capacity preflight.
+
+Files changed:
+
+- `.github/workflows/checks.yml`
+- `Makefile`
+- `README.md`
+- `PROJECT_PLAN.md`
+- `config/storage-policy.json`
+- `pipeline/pyproject.toml`
+- `pipeline/src/thermal_drought/storage.py`
+- `pipeline/src/thermal_drought/acquire/cli.py`
+- `pipeline/src/thermal_drought/acquire/inspection.py`
+- `pipeline/src/thermal_drought/acquire/runner.py`
+- `pipeline/src/thermal_drought/normalize/cli.py`
+- `pipeline/src/thermal_drought/normalize/core.py`
+- `pipeline/tests/test_acquisition.py`
+- `pipeline/tests/test_normalization.py`
+- `pipeline/tests/test_storage.py`
+- `services/README.md`
+- `progress.md`
+
+Checks:
+
+- Targeted storage, acquisition, and normalization suite: 39 passed.
+- Full Python suite: 90 passed.
+- Acquisition gate: 25 passed; the secret-safe credential probe found the
+  installed client and a non-empty local credential without printing values.
+- Normalization replay: 24 passed; four official bounded products and their
+  deterministic report were regenerated.
+- Service gate: 33 passed; variable contracts and the four-product official
+  catalogue validated.
+- Ruff lint: passed across pipeline source and tests.
+- Ruff format: all 29 Python source and test files are formatted.
+- Strict mypy: passed across all pipeline source modules.
+- Storage policy validation: approved.
+- Local storage inventory: approved at 9.44 MiB raw, 121.83 KiB published,
+  85.42 GiB free, and 62.58% volume use.
+- One-year local preflight: approved at a conservative 7.51 GiB processing
+  peak, leaving an estimated 77.91 GiB free and 65.87% volume use.
+- Two-year local preflight: rejected before work with
+  `backfill_year_limit` and `managed_quota_exceeded`.
+- TypeScript typecheck and Vitest smoke: passed.
+- Vite production build: passed at 1.11 kB JavaScript before gzip.
+- Python dependency consistency and local npm dependency tree: passed.
+- Offline npm audit: zero vulnerabilities.
+- `git diff --check`: passed.
+
+Decisions:
+
+- Preserve daily UTCI only where its temporal resolution contributes to the
+  monthly statistic and validation. Do not publish or tile daily layers for
+  this product.
+- Treat annual byte figures as conservative planning estimates, never as
+  measured provider compression or climate observations.
+- Fail before guarded writes and emit reason codes instead of attempting
+  cleanup under pressure. Leave all deletion and external archival decisions
+  to reviewed operator workflows.
+- Do not run real disk-capacity checks on ephemeral CI hosts; validate the
+  policy deterministically there and exercise preflights with injected disk
+  states in tests.
+
+Blockers:
+
+- No reviewed object-storage target or lifecycle policy exists, so multi-year
+  backfill remains intentionally blocked.
+- Production Zarr and numcodecs remain unavailable; the bounded official sample
+  stays in compressed NetCDF.
+- Cache and tile writers are not implemented yet. Their quotas and allowlist
+  are now defined before those write paths exist.
+
+Next:
+
+- Night 5 remains the earliest incomplete night: build the global TypeScript
+  map shell and accessible circular month interaction against the bounded
+  Night 4 service, without widening the published-data claim.
+
+## 2026-07-30 — Night 5
+
+Goal:
+
+- Deliver the manifest-driven global frontend shell, one/two-variable
+  interaction, accessible non-empty month selection, URL state, and
+  last-valid-map behavior against the bounded Night 4 data path.
+
+Completed:
+
+- Replaced the foundation placeholder with a responsive, map-dominant
+  TypeScript application and a collapsible narrow-screen control sheet.
+- Added a global MapLibre navigation surface with a code-native globe
+  reference, graticule, ERA5-HEAT southern-limit treatment, and sparse
+  official-sample cell markers. No external basemap or unreviewed asset is
+  requested.
+- Imported the checked-in public application and variable manifests at build
+  time. Labels, units, default axes, publication versions, classifications,
+  service version, and the two-variable maximum now drive the controls.
+- Intersected the registry with live service availability. The current
+  official sample enables only January and July 2024, labels the year partial,
+  says `All available` rather than `All year`, and never widens the sample into
+  a global-data claim.
+- Added one-variable univariate and two-variable bivariate modes, duplicate
+  prevention, data-driven incompatibility disabling, and axis swap.
+- Added the twelve-wedge month ring as native buttons in January-to-December
+  DOM order, with `aria-pressed`, full month accessible names, visible focus,
+  disabled-unavailable styling, pointer/keyboard activation, final-month
+  protection with an assertive announcement, and a direct all-available action.
+- Added a synchronized native-checkbox fallback that uses the identical
+  non-empty selection path.
+- Added canonical URL state for X/Y variables, year, three-digit hexadecimal
+  month mask, longitude, latitude, and zoom. Invalid values fall back safely
+  with one non-blocking message; reload and Back/Forward restore controls,
+  title, period, map view, and data request orientation.
+- Added an abortable development-tile loader. A pending or failed replacement
+  leaves the last successfully rendered map intact and labels its stale state;
+  retry uses the current state.
+- Added a Vite-only `/api` loopback proxy so the local official service can be
+  exercised without adding permissive CORS or embedding a production endpoint.
+- Split MapLibre into a separate vendor chunk so the application JavaScript
+  remains measurable against the plan's map-library-excluded budget.
+- Added exhaustive month-mask tests, disjoint January/April/September state,
+  final-month protection, URL round trips and fallbacks, univariate URL state,
+  manifest/cap checks, request-path orientation, and last-valid-map failure
+  retention.
+- Used a real Chromium browser to find and fix an unbound browser fetch, a
+  center button that intercepted circular-wedge pointer clicks, a
+  style-before-load projection failure, and unnamed focusable development
+  markers.
+
+Files changed:
+
+- `.gitignore`
+- `README.md`
+- `config/app.json`
+- `web/index.html`
+- `web/tsconfig.json`
+- `web/vite.config.ts`
+- `web/src/app.ts`
+- `web/src/data.ts`
+- `web/src/data.test.ts`
+- `web/src/main.ts`
+- `web/src/map.ts`
+- `web/src/months.ts`
+- `web/src/months.test.ts`
+- `web/src/registry.ts`
+- `web/src/registry.test.ts`
+- `web/src/state.ts`
+- `web/src/state.test.ts`
+- `web/src/style.css`
+- `web/src/types.ts`
+- `web/src/smoke.test.ts` (removed)
+- `progress.md`
+
+Checks:
+
+- Full Python suite: 90 passed.
+- Acquisition gate: 26 passed; the secret-safe probe found the installed
+  client and non-empty local credential without printing values.
+- Normalization/aggregation gate: 24 passed; the exact official audit and four
+  bounded canonical products replayed.
+- Service gate: 33 passed; both manifests and the four-product
+  official-evidence catalogue validate.
+- Storage gate: seven tests, policy validation, live inventory, and one-year
+  preflight passed at 85.23 GiB free and a projected 7.51 GiB peak.
+- Frontend typecheck and four Vitest files: 11 passed. The tests enumerate all
+  4,095 masks and explicitly cover January + April + September.
+- Production build passed. The application JavaScript is 25.40 kB / 9.04 kB
+  gzip, separate from the MapLibre vendor chunk at 1,053.03 kB / 283.19 kB
+  gzip. Application CSS is 7.56 kB / 2.61 kB gzip.
+- Real Chromium smoke against the live bounded official service passed:
+  availability/load, January/July pointer selection, Space-key final-month
+  protection, all-available action, axis swap, univariate mode, Back, reload,
+  and 390 × 844 / 1280 × 800 responsive layouts.
+- Browser accessibility-tree review confirmed native labeled selects/buttons,
+  January-to-December order, pressed/disabled state, named map controls, no
+  unnamed marker controls, and the live final-month announcement.
+- Browser console: zero application errors. Chromium emitted only MapLibre
+  WebGL read-buffer performance warnings during repeated screenshots.
+- Ruff lint and format check passed across 29 Python files.
+- Strict mypy passed across 21 Python source files.
+- Python dependency consistency, local npm dependency tree, offline npm audit
+  with zero vulnerabilities, and `git diff --check` passed.
+- Browser QA screenshots were written below ignored `output/playwright/`;
+  neither they nor the generated `web/dist/` build are checked in.
+- No automated axe, screen-reader, color-vision, Firefox, WebKit, or
+  visual-regression command is installed. Those remaining Night 6–7 gates were
+  not represented as passing.
+
+Decisions:
+
+- Treat live availability as authoritative. Generic month logic supports every
+  non-empty mask, but unavailable official-sample months remain disabled rather
+  than provoking known service failures or implying observations exist.
+- Use `y=-` as the explicit univariate URL state and preserve ordered X/Y axes
+  in service paths so swaps change rendering and cache identity consistently.
+- Update visible control state immediately, abort stale network work, and
+  replace the rendered sample only after a valid response. Never blank a good
+  map during an update.
+- Keep the local proxy development-only. Production service origin, CORS,
+  raster delivery, basemap, and deployment remain reviewed operations choices.
+- Keep the current colors explicitly developmental. The fixed 3 × 3 legend,
+  palette review, text alternatives, and point-linked interpretation belong to
+  Night 6 rather than being implied by sparse sample markers.
+
+Blockers:
+
+- Only January and July 2024 are present in the verified four-region sample.
+  The live UI therefore cannot demonstrate January + April + September with
+  observations or offer a latest complete year; the generic tested control
+  path is ready when those months are actually published.
+- Production Zarr, global/full-year monthly products, raster/WebP tiles,
+  object storage/CDN, a reviewed basemap, and deployment remain unavailable.
+- The Night 6 legend, point readout, sources/methodology/limitations panels,
+  complete empty/error/stale explanations, artificial third-variable proof,
+  automated accessibility runner, and manual screen-reader audit remain.
+
+Next:
+
+- Night 6: add the fixed 3 × 3 and univariate legends, text-identifiable
+  bivariate states, point inspection tied to legend cells, source/methodology
+  and limitations panels, complete loading/stale/error/no-data states, the
+  artificial compatible variable fixture, and automated accessibility plus
+  manual keyboard/screen-reader review.
+
+## 2026-08-03 — Night 6
+
+Goal:
+
+- Make the bounded map interpretable, inspectable, registry-extensible, and
+  resilient without widening its data claim or weakening the locked temporal,
+  quality, and missing-data semantics.
+
+Completed:
+
+- Added a manifest-driven univariate scale and fixed 3 × 3 bivariate matrix
+  backed by the same palette and raw class indices as the map. Exact threshold
+  ownership, axis display order, units, and labels come from configuration.
+- Added full paired text labels for all nine bivariate states, focus/pointer
+  emphasis of matching sample cells, selected-cell linkage, and a separate
+  crosshatched no-data key that states missing or failed-quality values are
+  never zero.
+- Added click, tap, map-center button, Enter, and Space point inspection through
+  the shared `/v1/sample` path. The readout includes grid coordinates, selected
+  year/period, values, units, classes, valid/required month counts, provider
+  quality, source/product version, sample retrieval date, and the grid-cell and
+  personal-exposure limitation.
+- Added an abortable point loader. State changes mark the last readout stale,
+  errors retain it with explicit copy, and map/readout retry actions recover
+  independently. Empty availability, outside-sample no-data, partial data,
+  provider-quality failure, loading, ready, stale, and service-error states are
+  distinct and never fabricate zero.
+- Added source, methodology, temporal-semantics, and limitations panels driven
+  by selected manifests. SPEI-3's provider three-month ending-month semantics
+  and UTCI's daily-maximum-to-monthly-median order are configuration data, not
+  variable-name branches.
+- Added checksum-evidence-derived sample retrieval timestamps to both
+  manifests, schema validation, service availability, point/tile source
+  metadata, and readouts.
+- Added a conspicuously labeled artificial interface variable in deterministic
+  tests only. Frontend registry and legend tests and a temporary backend
+  structural product prove that a third compatible variable uses unchanged
+  compatibility, median, classification, URL, legend, and sampling paths while
+  remaining `fixture: true` and `official_evidence: false`.
+- Added deterministic accessibility coverage for legend text contrast. A real
+  browser audit found no duplicate IDs, unnamed buttons/selects, focusable
+  content hidden from accessibility APIs, or unlabeled legend/source entries.
+- Real Chromium QA found and fixed two invalid composite MapLibre expressions
+  before the final clean-console run. Keyboard review confirmed map inspection
+  by Space and sequential focus across all labeled legend cells.
+
+Files changed:
+
+- `README.md`
+- `config/manifest.schema.json`
+- `config/variables/spei_3.json`
+- `config/variables/utci_daymax_median.json`
+- `pipeline/src/thermal_drought/api/core.py`
+- `pipeline/tests/test_service.py`
+- `web/src/app.ts`
+- `web/src/data.ts`
+- `web/src/data.test.ts`
+- `web/src/inspection.ts`
+- `web/src/inspection.test.ts`
+- `web/src/legend.ts`
+- `web/src/legend.test.ts`
+- `web/src/map.ts`
+- `web/src/registry.ts`
+- `web/src/style.css`
+- `web/src/test-fixtures.ts`
+- `web/src/types.ts`
+- `progress.md`
+
+Checks:
+
+- Full Python suite: 91 passed.
+- Acquisition gate: 26 passed; the secret-safe probe found the installed CDS
+  client and non-empty local credential without printing values.
+- Normalization/aggregation gate: 24 passed; the exact bounded official sample
+  replay and four canonical products completed.
+- Service gate: 34 passed; both manifests, official-evidence catalogue, point,
+  tile, retrieval metadata, and artificial third-variable path validate.
+- Storage gate: seven tests, policy validation, inventory, and one-year
+  preflight passed at 86.70 GiB free and a projected 7.51 GiB peak.
+- Frontend strict TypeScript and six Vitest files: 18 passed, including all nine
+  legend states, exact threshold ownership, swaps, univariate mode, point
+  no-data/quality/stale behavior, artificial-variable integration, and WCAG AA
+  text contrast for every development legend color.
+- Production build passed. Application JavaScript is 41.25 kB / 13.53 kB gzip,
+  separate from MapLibre at 1,053.03 kB / 283.19 kB gzip. Application CSS is
+  11.42 kB / 3.46 kB gzip.
+- Real Chromium passed Phoenix bivariate values, selected-legend linkage,
+  southern-limit provider-quality no-data, axis swap, univariate mode, map
+  Space-key inspection, offline stale/error/retry recovery, and 390 × 844 plus
+  1280 × 800 layouts. The final non-failure session had zero application
+  console errors; repeated WebGL readback emitted performance warnings only.
+- Automated browser semantics audit: zero duplicate IDs, unnamed buttons,
+  unnamed selects, or focusable descendants of `aria-hidden`; one H1, two live
+  status regions, nine labeled bivariate buttons, and two HTTPS source links.
+- Ruff lint and format passed across 29 Python files; strict mypy passed across
+  21 source files; Python dependency consistency, local npm tree, offline npm
+  audit with zero vulnerabilities, and `git diff --check` passed.
+- Browser screenshots are below ignored `output/playwright/`; the generated
+  `web/dist/` build remains ignored. Legacy `docs/` and its 753 files are
+  unchanged.
+
+Decisions:
+
+- Keep class indices in raw manifest order for service/map identity and derive
+  only visual X/Y ordering from `axis_display_order`. Swapping axes changes the
+  request, map color composition, legend, and readout together.
+- Use the official acquisition receipt timestamps as bounded-sample retrieval
+  dates. Do not present them as provider reference-period dates or as global
+  refresh evidence.
+- Keep point state separate from map-tile state so either can fail or retry
+  without erasing the other's last valid interpretation.
+- Keep the artificial variable test-only, conspicuously non-climate, and out of
+  the production manifest directory and live availability response.
+- Keep the current palette labeled developmental. Passing text contrast is not
+  a color-vision or comprehension study.
+
+Blockers:
+
+- Only January and July 2024 in Phoenix, Paris, Fairbanks, and the southern
+  coverage edge are published. The UI cannot truthfully offer all-year/global
+  observations, and the Night 7 tropical, coastal, and mountain exercises need
+  clearly labeled structural fixtures or additional official acquisition.
+- Production Zarr, global/full-year backfill, raster/WebP tiles, basemap,
+  object storage/CDN, monitoring, deployment, refresh, and rollback rehearsal
+  remain unavailable.
+- Axe, a live screen reader, color-vision simulation, Firefox, and WebKit are
+  not installed. The durable contrast tests, Chromium accessibility tree, and
+  keyboard review pass, but those broader Night 7 validation tools are not
+  represented as completed.
+- Independent climate-science review and palette-comprehension testing require
+  external reviewers and remain explicit production-readiness gaps.
+
+Next:
+
+- Night 7: run the complete hardening suite; exercise the required official and
+  clearly labeled structural location cases; measure browser, service, and
+  bundle budgets; add a recoverable preview alongside rather than over the
+  legacy app; document setup, refresh, preview, rollback, and the final gap
+  report; then close only the beta gates that have trustworthy evidence.

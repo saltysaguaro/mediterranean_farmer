@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "id": "utci_daymax_median",
+  "label": "Typical daily peak UTCI",
+  "short_label": "UTCI",
+  "description": "Monthly median of ERA5-HEAT daily maximum Universal Thermal Climate Index values.",
+  "unit": "°C",
+  "role_hint": "y",
+  "grid_id": "era5_latlon_0_25",
+  "source": {
+    "dataset": "ERA5-HEAT thermal comfort indices",
+    "provider": "ECMWF/Copernicus Climate Change Service",
+    "dataset_url": "https://cds.climate.copernicus.eu/datasets/derived-utci-historical",
+    "doi": "10.24381/cds.553b7518",
+    "product_version": "1.1",
+    "reference_period": null,
+    "license": "Copernicus Products licence"
+  },
+  "coverage": {
+    "bbox": [-180, -60, 180, 90],
+    "resolution_degrees": 0.25,
+    "calendar": "gregorian",
+    "provider_start_year": 1940,
+    "provider_end_policy": "near_real_time",
+    "months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+  },
+  "aggregation": {
+    "input_frequency": "daily",
+    "source_statistic": "monthly median of daily maximum UTCI",
+    "temporal_note": "Provider daily maximum UTCI is reduced first to one monthly median per cell; selected monthly layers are then combined with equal month weights.",
+    "allowed": ["median"],
+    "default": "median",
+    "minimum_valid_fraction": 0.75,
+    "month_weighting": "equal"
+  },
+  "classification": {
+    "type": "fixed",
+    "breaks": [9, 26],
+    "break_assignments": ["upper_class", "lower_class"],
+    "labels": ["Cold stress", "No thermal stress", "Heat stress"],
+    "raw_value_order": "ascending",
+    "axis_display_order": "ascending",
+    "version": "1"
+  },
+  "quality": {
+    "policy": "none",
+    "mask": null,
+    "field": null,
+    "pass_values": []
+  },
+  "publication": {
+    "status": "sample",
+    "data_version": "night-3-official-sample-v1",
+    "published_years": [2024],
+    "sample_retrieved_at": "2026-07-27T23:37:49.085886+00:00"
+  }
+}

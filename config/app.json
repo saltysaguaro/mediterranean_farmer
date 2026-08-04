@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "title": "Global Thermal Comfort × Drought",
+  "variable_schema": "manifest.schema.json",
+  "variables": [
+    "variables/utci_daymax_median.json",
+    "variables/spei_3.json"
+  ],
+  "default_view": {
+    "x_variable": "spei_3",
+    "y_variable": "utci_daymax_median",
+    "month_mask": "fff",
+    "year_policy": "latest_complete"
+  },
+  "maximum_active_variables": 2,
+  "service": {
+    "api_version": "v1",
+    "dataset_version": "night-3-official-sample-v1",
+    "development_api_base": "/api",
+    "palette_version": "development-1",
+    "maximum_zoom": 6,
+    "maximum_product_files": 64,
+    "maximum_development_cells_per_product": 4096,
+    "release_report": "pipeline/reports/night-3-normalization.json"
+  }
+}

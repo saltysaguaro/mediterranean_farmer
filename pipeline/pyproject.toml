@@ -1,0 +1,69 @@
+[build-system]
+requires = ["hatchling>=1.25,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "thermal-drought-pipeline"
+version = "0.2.0"
+description = "Data contracts and pipeline for the global UTCI × SPEI-3 map"
+requires-python = ">=3.9"
+dependencies = [
+  "jsonschema[format]>=4.23,<5"
+]
+
+[project.optional-dependencies]
+normalize = [
+  "h5netcdf>=1.3,<2",
+  "h5py>=3.10,<4",
+  "numpy>=2,<3",
+  "xarray>=2024.7,<2026"
+]
+service = [
+  "h5netcdf>=1.3,<2",
+  "h5py>=3.10,<4",
+  "numpy>=2,<3",
+  "xarray>=2024.7,<2026"
+]
+data = [
+  "cdsapi>=0.7.7,<1",
+  "dask[array]>=2024.8,<2026",
+  "h5py>=3.10,<4",
+  "h5netcdf>=1.3,<2",
+  "numcodecs>=0.15,<1",
+  "rasterio>=1.4,<2",
+  "rioxarray>=0.18,<1",
+  "xarray>=2024.7,<2026",
+  "zarr>=2.18,<3"
+]
+dev = [
+  "mypy>=1.13,<2",
+  "pytest>=8.3,<9",
+  "ruff>=0.8,<1",
+  "types-jsonschema>=4.23,<5"
+]
+
+[project.scripts]
+thermal-drought-contracts = "thermal_drought.contracts:main"
+thermal-drought-acquire = "thermal_drought.acquire.cli:main"
+thermal-drought-normalize = "thermal_drought.normalize.cli:main"
+thermal-drought-service = "thermal_drought.api.cli:main"
+thermal-drought-storage = "thermal_drought.storage:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/thermal_drought"]
+
+[tool.pytest.ini_options]
+addopts = "-ra"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py39"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP"]
+
+[tool.mypy]
+python_version = "3.9"
+strict = true
+packages = ["thermal_drought"]

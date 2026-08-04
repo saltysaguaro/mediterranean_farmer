@@ -1,1 +1,42 @@
 .DS_Store
+
+# Local secrets and provider credentials
+.env
+.env.*
+!.env.example
+.cdsapirc
+**/credentials.*
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+pipeline/.venv/
+*.egg-info/
+
+# JavaScript
+node_modules/
+web/dist/
+coverage/
+output/playwright/
+.playwright-cli/
+
+# Climate source data and generated products
+data/raw/
+data/cache/
+data/canonical/
+data/published/
+data/tiles/
+outputs/
+*.nc
+*.nc4
+*.zarr/
+*.tif.aux.xml
+
+# Runtime caches and local service state
+.cache/
+services/**/cache/
+services/**/*.sqlite

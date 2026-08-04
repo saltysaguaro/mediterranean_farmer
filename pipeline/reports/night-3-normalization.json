@@ -1,0 +1,264 @@
+{
+  "canonical_contract": {
+    "calendar": "gregorian",
+    "crs": "EPSG:4326",
+    "grid_id": "era5_latlon_0_25",
+    "latitude_order": "north_to_south",
+    "longitude_convention": "[-180, 180)",
+    "quality": "mask published SPEI-3 unless provider significance equals 1",
+    "spei": "ERA5-Drought v1.0 deterministic provider SPEI3; no recomputation",
+    "time": "calendar month start",
+    "utci": "ERA5-HEAT v1.1 utci_daily_max Kelvin to Celsius, then monthly median"
+  },
+  "fixture": false,
+  "golden_center_cell_samples": [
+    {
+      "latitude": 64.75,
+      "longitude": -147.75,
+      "month": 1,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "cold_fairbanks",
+      "spei_3_class": "No drought",
+      "spei_3_published": 0.157117,
+      "spei_3_source": 0.157117,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "Cold stress",
+      "utci_daymax_median_celsius": -25.848318,
+      "year": 2024
+    },
+    {
+      "latitude": 64.75,
+      "longitude": -147.75,
+      "month": 7,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "cold_fairbanks",
+      "spei_3_class": "No drought",
+      "spei_3_published": 0.545992,
+      "spei_3_source": 0.545992,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "No thermal stress",
+      "utci_daymax_median_celsius": 24.933221,
+      "year": 2024
+    },
+    {
+      "latitude": 34.0,
+      "longitude": -112.0,
+      "month": 1,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "hot_arid_phoenix",
+      "spei_3_class": "No drought",
+      "spei_3_published": -0.46421,
+      "spei_3_source": -0.46421,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "No thermal stress",
+      "utci_daymax_median_celsius": 19.733209,
+      "year": 2024
+    },
+    {
+      "latitude": 34.0,
+      "longitude": -112.0,
+      "month": 7,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "hot_arid_phoenix",
+      "spei_3_class": "No drought",
+      "spei_3_published": -0.569688,
+      "spei_3_source": -0.569688,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "Heat stress",
+      "utci_daymax_median_celsius": 44.059045,
+      "year": 2024
+    },
+    {
+      "latitude": 48.75,
+      "longitude": 2.25,
+      "month": 1,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "temperate_paris",
+      "spei_3_class": "No drought",
+      "spei_3_published": 0.789905,
+      "spei_3_source": 0.789905,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "Cold stress",
+      "utci_daymax_median_celsius": 3.208002,
+      "year": 2024
+    },
+    {
+      "latitude": 48.75,
+      "longitude": 2.25,
+      "month": 7,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "temperate_paris",
+      "spei_3_class": "No drought",
+      "spei_3_published": 1.297101,
+      "spei_3_source": 1.297101,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "Heat stress",
+      "utci_daymax_median_celsius": 27.977014,
+      "year": 2024
+    },
+    {
+      "latitude": -59.75,
+      "longitude": 0.25,
+      "month": 1,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "utci_southern_limit",
+      "spei_3_class": "No data",
+      "spei_3_published": null,
+      "spei_3_source": null,
+      "spei_quality_flag": 0,
+      "spei_quality_state": "low_quality",
+      "utci_class": "Cold stress",
+      "utci_daymax_median_celsius": -9.845221,
+      "year": 2024
+    },
+    {
+      "latitude": -59.75,
+      "longitude": 0.25,
+      "month": 7,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "utci_southern_limit",
+      "spei_3_class": "No data",
+      "spei_3_published": null,
+      "spei_3_source": null,
+      "spei_quality_flag": 0,
+      "spei_quality_state": "low_quality",
+      "utci_class": "Cold stress",
+      "utci_daymax_median_celsius": -18.466437,
+      "year": 2024
+    }
+  ],
+  "months": [
+    1,
+    7
+  ],
+  "outputs": [
+    {
+      "byte_size": 31188,
+      "months": [
+        1,
+        7
+      ],
+      "path": "data/published/night-3-official-sample/v1/2024/cold_fairbanks.nc",
+      "region_id": "cold_fairbanks",
+      "sha256": "688def4835ad0577f778ed457b2b84d5c46c7fa548fa86908a9635eb7aa013d8",
+      "shape": [
+        2,
+        3,
+        3
+      ]
+    },
+    {
+      "byte_size": 31188,
+      "months": [
+        1,
+        7
+      ],
+      "path": "data/published/night-3-official-sample/v1/2024/hot_arid_phoenix.nc",
+      "region_id": "hot_arid_phoenix",
+      "sha256": "29ef4a018d5a9ceceb6a376e999d32a933388835fd0ac58b36316812fd7fa841",
+      "shape": [
+        2,
+        3,
+        3
+      ]
+    },
+    {
+      "byte_size": 31188,
+      "months": [
+        1,
+        7
+      ],
+      "path": "data/published/night-3-official-sample/v1/2024/temperate_paris.nc",
+      "region_id": "temperate_paris",
+      "sha256": "8050164e67cad9e034e5eee65eb0b7ea3586cf481cbd6bb90c8f1cdcf9a5e9f2",
+      "shape": [
+        2,
+        3,
+        3
+      ]
+    },
+    {
+      "byte_size": 31188,
+      "months": [
+        1,
+        7
+      ],
+      "path": "data/published/night-3-official-sample/v1/2024/utci_southern_limit.nc",
+      "region_id": "utci_southern_limit",
+      "sha256": "7a9f4a44dd234fd27ec1a9eebd93e5a949377e97ad419c0a6e37a2f49d3684c5",
+      "shape": [
+        2,
+        3,
+        3
+      ]
+    }
+  ],
+  "plan_sha256": "04989c737e477ab6aba89ee884014c03e3c87cfc8ca91ddbeb4c2e1f4839dee1",
+  "publication_note": "NetCDF is the local development representation for this bounded sample. Production Zarr publication remains pending its declared dependency.",
+  "schema_version": "1.0",
+  "scope": "bounded representative official sample; not global observations",
+  "source_audit_complete": true,
+  "source_official_evidence": true,
+  "status": "complete",
+  "storage_preflight": {
+    "approved": true,
+    "policy_id": "local-safe-v1",
+    "published_output": {
+      "managed_directory": "published",
+      "planned_bytes": 536870912,
+      "quota_bytes": 5368709120
+    },
+    "schema_version": "1.0",
+    "status": "approved",
+    "temporal_retention": {
+      "daily_source_policy": "Archive outside local serving storage after checksum and monthly-product validation.",
+      "serving_store_policy": "Monthly layers only; selected UI months receive equal weight.",
+      "spei_published_frequency": "monthly",
+      "spei_source_frequency": "provider monthly SPEI-3",
+      "utci_published_frequency": "monthly median of daily maximum",
+      "utci_source_frequency": "daily maximum"
+    },
+    "working_space": {
+      "planned_bytes": 1610612736
+    }
+  },
+  "temporal_retention": {
+    "daily_source_policy": "Archive outside local serving storage after checksum and monthly-product validation.",
+    "serving_store_policy": "Monthly layers only; selected UI months receive equal weight.",
+    "spei_published_frequency": "monthly",
+    "spei_source_frequency": "provider monthly SPEI-3",
+    "utci_published_frequency": "monthly median of daily maximum",
+    "utci_source_frequency": "daily maximum"
+  },
+  "year": 2024
+}

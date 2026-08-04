@@ -1,0 +1,57 @@
+{
+  "schema_version": "1.0",
+  "id": "spei_3",
+  "label": "3-month drought (SPEI-3)",
+  "short_label": "SPEI-3",
+  "description": "Standardised three-month precipitation minus potential evapotranspiration anomaly from ERA5-Drought.",
+  "unit": "standard deviations",
+  "role_hint": "x",
+  "grid_id": "era5_latlon_0_25",
+  "source": {
+    "dataset": "ERA5-Drought monthly indices",
+    "provider": "ECMWF/Copernicus Climate Change Service",
+    "dataset_url": "https://cds.climate.copernicus.eu/datasets/derived-drought-historical-monthly",
+    "doi": "10.24381/9bea5e16",
+    "product_version": "1.0",
+    "reference_period": "1991-2020",
+    "license": "CC-BY"
+  },
+  "coverage": {
+    "bbox": [-180, -60, 180, 90],
+    "resolution_degrees": 0.25,
+    "calendar": "gregorian",
+    "provider_start_year": 1940,
+    "provider_end_policy": "near_real_time",
+    "months": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+  },
+  "aggregation": {
+    "input_frequency": "monthly",
+    "source_statistic": "provider SPEI with three-month accumulation",
+    "temporal_note": "Each monthly SPEI-3 value is the provider's three-month index ending in that displayed month; UI month selection never recomputes its accumulation window.",
+    "allowed": ["median"],
+    "default": "median",
+    "minimum_valid_fraction": 0.75,
+    "month_weighting": "equal"
+  },
+  "classification": {
+    "type": "fixed",
+    "breaks": [-1.5, -1.0],
+    "break_assignments": ["lower_class", "lower_class"],
+    "labels": ["Severe or extreme drought", "Moderate drought", "No drought"],
+    "raw_value_order": "ascending",
+    "axis_display_order": "descending",
+    "version": "1"
+  },
+  "quality": {
+    "policy": "mask",
+    "mask": "spei_normality_alpha_0_05",
+    "field": "spei_3_quality",
+    "pass_values": [1]
+  },
+  "publication": {
+    "status": "sample",
+    "data_version": "night-3-official-sample-v1",
+    "published_years": [2024],
+    "sample_retrieved_at": "2026-07-27T23:39:03.577921+00:00"
+  }
+}
