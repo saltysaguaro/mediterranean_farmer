@@ -2057,6 +2057,11 @@ Evidence:
 - Frontend: 20 Vitest tests pass. Application JS is 46.45 kB / 15.33 kB gzip;
   application CSS is 11.81 kB / 3.52 kB gzip. npm reports zero known
   vulnerabilities.
+- Remote checkpoint: completion commit `d3094a6` and annotated
+  `legacy-mediterranean-v1` tag were pushed to origin. GitHub Actions run
+  `33320274977` completed successfully across pipeline, web, and container
+  jobs; both Dockerfiles and Compose validated, and the conventional frontend
+  artifact was retained.
 - Monitor: official evidence true, latest complete year 2025, source freshness
   23.25 days against a 120-day limit, 5.204 ms maximum local endpoint latency,
   privacy contract present, and zero failures.

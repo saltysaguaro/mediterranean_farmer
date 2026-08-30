@@ -33,6 +33,11 @@ Compose model.
   data failure states, inspection, legend semantics, contrast, grayscale, and
   common color-vision-deficiency simulations. The npm audit reports zero known
   vulnerabilities.
+- GitHub Actions run
+  [33320274977](https://github.com/saltysaguaro/mediterranean_farmer/actions/runs/33320274977)
+  passed the pipeline, web, and container jobs for commit `d3094a6`. It built
+  both Dockerfiles, validated the Compose configuration, and retained the
+  314,786-byte `sicily-production-frontend` artifact.
 
 ## Remaining release evidence
 
