@@ -1,11 +1,11 @@
-import { DevelopmentTileLoader, PointSampleLoader, fetchAvailability } from "./data";
+import { MapResponseLoader, PointSampleLoader, fetchAvailability } from "./data";
 import {
   pointClassPair,
   renderExplanatoryPanels,
   renderPointSample,
 } from "./inspection";
 import { renderLegend } from "./legend";
-import { GlobalMap } from "./map";
+import { ClimateMap } from "./map";
 import {
   ALL_MONTHS_MASK,
   MONTHS,
@@ -15,7 +15,13 @@ import {
   monthsToMask,
   toggleMonth,
 } from "./months";
-import { APP_CONFIG, VARIABLES, variableById } from "./registry";
+import {
+  APP_CONFIG,
+  SCOPE_CONFIG,
+  VARIABLES,
+  publishedFallbackYears,
+  variableById,
+} from "./registry";
 import {
   constraintsFromAvailability,
   parseUrlState,
@@ -34,9 +40,7 @@ import type {
 type HistoryMode = "push" | "replace" | "none";
 
 function fallbackAvailability(): Availability {
-  const years = Array.from(
-    new Set(VARIABLES.flatMap(({ publication }) => publication.published_years)),
-  ).sort();
+  const years = publishedFallbackYears();
   return {
     status: "ok",
     dataset_version: APP_CONFIG.service.dataset_version,
@@ -74,7 +78,7 @@ function defaultState(availability: Availability): AppState {
     availability.latest_complete_year ??
     availability.years.map(({ year }) => year).sort((left, right) => right - left)[0];
   if (latestYear === undefined) {
-    throw new Error("No published development year is available.");
+    throw new Error("No published year is available.");
   }
   const availableMonths =
     availability.years.find(({ year }) => year === latestYear)?.months ?? [];
@@ -86,9 +90,9 @@ function defaultState(availability: Availability): AppState {
     year: latestYear,
     monthMask: configuredMask & availableMask || availableMask,
     view: {
-      longitude: 12.5,
-      latitude: 18,
-      zoom: 1.1,
+      longitude: SCOPE_CONFIG.map.initial_center[0],
+      latitude: SCOPE_CONFIG.map.initial_center[1],
+      zoom: SCOPE_CONFIG.map.initial_zoom,
     },
   };
 }
@@ -117,13 +121,34 @@ function scopeLabel(availability: Availability): string {
     return "Deterministic interface fixture — not climate observations";
   }
   if (availability.official_evidence) {
-    return "Bounded official sample — not global coverage";
+    return "Official Sicily scope · 0.25° grid cells";
   }
   return "Registry-only fallback — no climate map loaded";
 }
 
 function selectedCount(mask: number): number {
   return maskToMonths(mask).length;
+}
+
+function freshnessLabel(availability: Availability): string {
+  const retrieved = availability.variables
+    .map(({ sample_retrieved_at: value }) => value)
+    .filter((value): value is string => typeof value === "string")
+    .sort();
+  const earliest = retrieved[0];
+  if (!availability.official_evidence || !earliest) {
+    return "Data freshness unavailable";
+  }
+  const date = new Date(earliest);
+  if (Number.isNaN(date.getTime())) {
+    return "Data freshness unavailable";
+  }
+  return `Sources retrieved ${new Intl.DateTimeFormat("en-GB", {
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(date)} UTC`;
 }
 
 export async function startApplication(root: HTMLElement): Promise<() => void> {
@@ -134,11 +159,12 @@ export async function startApplication(root: HTMLElement): Promise<() => void> {
           <p class="eyebrow">Outdoor thermal conditions × drought</p>
           <h1 id="map-title">${APP_CONFIG.title}</h1>
           <p class="map-period" id="map-period"></p>
+          <p class="data-freshness" id="data-freshness"></p>
         </div>
         <div class="map-reference" aria-hidden="true">
           <div id="reference-markers" class="reference-markers"></div>
         </div>
-        <div id="global-map" class="global-map" aria-label="Global climate map"></div>
+        <div id="climate-map" class="climate-map"></div>
         <div class="map-status" id="map-status" role="status" aria-live="polite">
           <span>Connecting to the bounded local data service.</span>
           <button class="retry-button" id="retry-map" type="button" hidden>Retry</button>
@@ -175,7 +201,7 @@ export async function startApplication(root: HTMLElement): Promise<() => void> {
             <p id="month-guidance" class="control-note">
               Toggle any published months. At least one must remain selected.
             </p>
-            <div class="month-ring" aria-label="Circular month selector">
+            <div class="month-ring" role="group" aria-label="Circular month selector">
               <div id="month-buttons" class="month-ring__buttons"></div>
               <button id="all-months" class="month-ring__center" type="button"></button>
             </div>
@@ -232,7 +258,7 @@ export async function startApplication(root: HTMLElement): Promise<() => void> {
     </div>
   `;
 
-  const apiBase = APP_CONFIG.service.development_api_base;
+  const apiBase = import.meta.env.VITE_API_BASE?.trim() || APP_CONFIG.service.api_base;
   let availability: Availability;
   let availabilityWarning: string | null = null;
   try {
@@ -267,15 +293,18 @@ export async function startApplication(root: HTMLElement): Promise<() => void> {
 
   const constraints: StateConstraints = constraintsFromAvailability(
     availability,
+    SCOPE_CONFIG.map.bounds,
+    SCOPE_CONFIG.map.minimum_zoom,
     APP_CONFIG.service.maximum_zoom,
   );
   const baseline = defaultState(availability);
   const initial = parseUrlState(new URL(window.location.href), baseline, constraints);
   let state = initial.state;
 
-  const mapElement = root.querySelector<HTMLElement>("#global-map")!;
+  const mapElement = root.querySelector<HTMLElement>("#climate-map")!;
   const referenceMarkers = root.querySelector<HTMLElement>("#reference-markers")!;
   const periodElement = root.querySelector<HTMLElement>("#map-period")!;
+  const freshnessElement = root.querySelector<HTMLElement>("#data-freshness")!;
   const statusElement = root.querySelector<HTMLElement>("#map-status span")!;
   const retryButton = root.querySelector<HTMLButtonElement>("#retry-map")!;
   const scopeBadge = root.querySelector<HTMLElement>("#scope-badge")!;
@@ -342,6 +371,7 @@ export async function startApplication(root: HTMLElement): Promise<() => void> {
   }
 
   scopeBadge.textContent = scopeLabel(availability);
+  freshnessElement.textContent = freshnessLabel(availability);
   disclosure.textContent = availability.scope;
   if (availabilityWarning) {
     selectionMessage.textContent = availabilityWarning;
@@ -352,9 +382,10 @@ export async function startApplication(root: HTMLElement): Promise<() => void> {
   let inspectedCoordinate: { longitude: number; latitude: number } | null = null;
   let currentPointSample: PointSample | null = null;
   let pointSampleStale = false;
-  const globalMap = new GlobalMap(
+  const climateMap = new ClimateMap(
     mapElement,
     referenceMarkers,
+    SCOPE_CONFIG,
     state.view,
     (view) => {
       state = { ...state, view };
@@ -362,7 +393,7 @@ export async function startApplication(root: HTMLElement): Promise<() => void> {
     },
     (longitude, latitude) => inspectPoint(longitude, latitude),
   );
-  const tileLoader = new DevelopmentTileLoader(
+  const tileLoader = new MapResponseLoader(
     apiBase,
     availability.dataset_version,
     {
@@ -370,7 +401,7 @@ export async function startApplication(root: HTMLElement): Promise<() => void> {
         renderLoadStatus(loadStatus);
       },
       onData(payload) {
-        globalMap.show(payload);
+        climateMap.show(payload);
         disclosure.textContent = payload.scope;
       },
     },
@@ -383,7 +414,7 @@ export async function startApplication(root: HTMLElement): Promise<() => void> {
       currentPointSample = payload;
       pointSampleStale = false;
       renderPointSample(pointContent, payload);
-      globalMap.highlight(payload);
+      climateMap.highlight(payload);
       renderCurrentLegend();
     },
   });
@@ -416,7 +447,7 @@ export async function startApplication(root: HTMLElement): Promise<() => void> {
       xVariable,
       yVariable ?? null,
       selected,
-      (pair) => globalMap.emphasize(pair),
+      (pair) => climateMap.emphasize(pair),
     );
   }
 
@@ -429,7 +460,7 @@ export async function startApplication(root: HTMLElement): Promise<() => void> {
       (loadStatus.kind === "updating" || loadStatus.kind === "error");
     pointContent.dataset.stale = String(pointSampleStale);
     if (pointSampleStale) {
-      globalMap.highlight(null);
+      climateMap.highlight(null);
       renderCurrentLegend();
     }
   }
@@ -521,7 +552,7 @@ export async function startApplication(root: HTMLElement): Promise<() => void> {
   function commit(next: AppState, historyMode: HistoryMode, loadMap = true): void {
     state = next;
     syncControls();
-    globalMap.setView(state.view);
+    climateMap.setView(state.view);
     if (historyMode !== "none") {
       const url = stateUrl(state, new URL(window.location.href));
       if (historyMode === "push") {
@@ -601,7 +632,7 @@ export async function startApplication(root: HTMLElement): Promise<() => void> {
       inspectPoint(inspectedCoordinate.longitude, inspectedCoordinate.latitude);
     }
   });
-  panel.addEventListener("toggle", () => window.setTimeout(() => globalMap.resize(), 0));
+  panel.addEventListener("toggle", () => window.setTimeout(() => climateMap.resize(), 0));
 
   const popStateListener = () => {
     const parsed = parseUrlState(new URL(window.location.href), baseline, constraints);
@@ -616,6 +647,6 @@ export async function startApplication(root: HTMLElement): Promise<() => void> {
     window.removeEventListener("popstate", popStateListener);
     tileLoader.dispose();
     pointLoader.dispose();
-    globalMap.dispose();
+    climateMap.dispose();
   };
 }

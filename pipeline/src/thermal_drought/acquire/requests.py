@@ -80,6 +80,16 @@ REPRESENTATIVE_REGIONS = (
     ),
 )
 
+SICILY_REGION = Region(
+    id="sicily",
+    label="Sicilia, Italy",
+    north=39.0,
+    west=11.75,
+    south=35.25,
+    east=15.75,
+    purpose="Sicily-only production scope on the provider-aligned 0.25-degree grid",
+)
+
 
 @dataclass(frozen=True)
 class SourceMetadata:
@@ -282,6 +292,34 @@ def build_representative_requests(
             requests.append(_utci_request(region, year, month))
             requests.append(_drought_index_request(region, year, month))
             requests.append(_drought_quality_request(region, month))
+    return tuple(requests)
+
+
+def build_sicily_requests(
+    years: tuple[int, ...] = (2025, 2024),
+    months: tuple[int, ...] = tuple(range(1, 13)),
+) -> tuple[AcquisitionRequest, ...]:
+    """Build the bounded two-year Sicily release plan.
+
+    Provider quality is reference-period data keyed by calendar month, so it is
+    requested once and reused for every selected analysis year.
+    """
+
+    _validate_months(months)
+    if not years:
+        raise ValueError("at least one year is required")
+    if len(set(years)) != len(years):
+        raise ValueError("years must not contain duplicates")
+    if any(year < 1940 or year > 2200 for year in years):
+        raise ValueError("years must be between 1940 and 2200")
+
+    requests: list[AcquisitionRequest] = []
+    for year in years:
+        for month in months:
+            requests.append(_utci_request(SICILY_REGION, year, month))
+            requests.append(_drought_index_request(SICILY_REGION, year, month))
+    for month in months:
+        requests.append(_drought_quality_request(SICILY_REGION, month))
     return tuple(requests)
 
 

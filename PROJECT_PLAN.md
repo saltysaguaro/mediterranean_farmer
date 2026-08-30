@@ -1,12 +1,17 @@
-# Global Human Thermal Comfort × Drought Map
+# Sicily Human Thermal Comfort × Drought Map
 
 Comprehensive implementation plan  
-Status: proposed target state  
+Status: active product and scientific specification
 Prepared: 2026-07-22
+
+Execution order, production-data architecture, large-file strategy, milestone
+gates, and nightly operating rules are defined in
+[`COMPLETION_FOUNDATION.md`](./COMPLETION_FOUNDATION.md). This document remains
+authoritative for the product outcome and scientific semantics.
 
 ## 1. Outcome
 
-Replace the current Mediterranean crop-suitability prototype with a global, map-first application that shows the relationship between outdoor human thermal conditions and drought.
+Replace the current Mediterranean crop-suitability prototype with a Sicily-only, map-first application that shows the relationship between outdoor human thermal conditions and drought.
 
 The initial map has two default axes:
 
@@ -15,7 +20,9 @@ The initial map has two default axes:
 
 The user chooses an analysis year and a non-empty set of calendar months. A circular month selector must support one month, any arbitrary combination of months, and all twelve months. Every map cell shows the median of the selected monthly observations for each axis. Those two values are classified into a 3 × 3 bivariate color matrix.
 
-The product must be global in navigation and presentation. The initial data coverage is global land from 90°N to 60°S because ERA5-HEAT does not cover Antarctica. Antarctica remains visible and is explicitly marked as no data.
+The product is limited to the administrative territory of Sicilia, Italy. Acquisition uses the provider-aligned bounding box `11.75°E–15.75°E, 35.25°N–39.00°N`; publication includes only the 44 exact 0.25° cell centers inside Istat's generalized regional boundary dated 1 January 2026. Navigation is constrained to Sicily. Cells outside the scope mask are no data and are never returned as Sicily observations.
+
+The cell-center rule is deliberate and reproducible. Regional islands without an ERA5 cell center inside their Istat polygon are not represented at this resolution, and an included cell may contain surrounding sea. The application must disclose both limitations.
 
 The implementation is complete when:
 
@@ -55,15 +62,15 @@ The repository currently contains a generated public prototype rather than a mai
 
 | Current element | Finding | Required change |
 | --- | --- | --- |
-| Geography | Bounds are limited to the Mediterranean basin | Replace with global navigation and global land data |
+| Geography | Bounds are limited to the Mediterranean basin | Replace with Sicily-only navigation and an authoritative Istat-derived 0.25° cell-center mask |
 | Purpose | Crop and “Human Comfort” suitability scores | Remove crop concepts and publish physical variables with real units |
 | Measures | TerraClimate-derived 0–100 temperature, humidity, precipitation, and total scores | Replace with documented UTCI and SPEI-3 values |
 | Time | Annual climatology or single-year annual scores, 1991–2020 | Add monthly source layers, analysis year, and arbitrary month-set aggregation |
 | Symbology | One univariate sequential or categorical scale | Add 3 × 3 bivariate classification and legend |
 | Month interaction | None | Add accessible circular 12-month multi-selector |
-| Frontend | One 568-line global script with hard-coded controls and layers | Split into typed state, registry, controls, map, legend, data, and analytics modules |
+| Frontend | One 568-line legacy script with hard-coded controls and layers | Split into typed state, registry, controls, map, legend, data, and analytics modules |
 | Raster delivery | Whole-area TIFFs and WebP overlays committed to Git | Move canonical arrays and tiles to versioned object storage |
-| Rendering | Leaflet image overlay or client GeoTIFF parsing | Use tiled global delivery and MapLibre raster rendering |
+| Rendering | Leaflet image overlay or client GeoTIFF parsing | Use bounded Sicily delivery and MapLibre rendering |
 | Data contract | Crop-oriented manifests with `annual_layers` | Introduce a variable-neutral, versioned manifest schema |
 | Pipeline | README points to a parent project that is not present here | Add a first-class, reproducible pipeline to this repository |
 | Verification | No automated tests | Add scientific, data-contract, API, UI, visual, accessibility, and performance tests |
@@ -407,7 +414,7 @@ Pre-warm the cache for:
 - all twelve months;
 - the default variable pair;
 - the latest three complete years;
-- zoom levels used by the initial global view.
+- zoom levels used by the constrained Sicily view.
 
 The month-mask allowlist is exactly 17 masks: twelve single months, four
 meteorological seasons, and all twelve months. Local warming cannot cross the
@@ -418,9 +425,9 @@ with a clear updating state until the first new tiles arrive.
 
 ### 6.4 Frontend
 
-Replace the global `docs/app.js` script with a TypeScript/Vite application:
+Replace the legacy `docs/app.js` script with a TypeScript/Vite application:
 
-- MapLibre GL JS provides global navigation, raster tile layers, world wrapping, and vector boundaries;
+- MapLibre GL JS provides Sicily-bounded navigation, raster layers, no world wrapping, and the checked scope treatment;
 - a typed store owns variable selection, year, month mask, location, zoom, request status, and inspected cell;
 - controls render from the manifest rather than from hard-coded variable names;
 - one map-source module converts state into versioned tile URLs;
@@ -583,7 +590,7 @@ Release targets on a representative mid-range phone and ordinary broadband:
 | Initial application data excluding basemap | `< 1 MB` |
 | Largest climate tile | `< 200 KB` |
 | Cached map update after month change | `< 500 ms` to first replacement tiles |
-| Uncached common global view | `< 2 s` p95 after request reaches the service |
+| Uncached common Sicily view | `< 2 s` p95 after request reaches the service |
 | Point sample response | `< 500 ms` p95 cached |
 | Cumulative Layout Shift | `< 0.1` |
 | Interaction to Next Paint | `< 200 ms` for local control feedback |
@@ -680,12 +687,12 @@ Exit gate:
 - cold starts and cache hits meet provisional budgets;
 - invalid requests cannot trigger unbounded reads or computation.
 
-### Phase 4 — Global frontend (2–3 weeks)
+### Phase 4 — Sicily frontend (2–3 weeks)
 
 Deliver:
 
 - map-first responsive shell;
-- global MapLibre map and boundaries;
+- Sicily-bounded MapLibre map and scope mask;
 - two manifest-driven variable slots;
 - analysis-year control;
 - accessible circular month selector;
@@ -755,7 +762,7 @@ Expected initial delivery: approximately 8–12 weeks with the staffing assumpti
 - [ ] Source versions, reference period, update date, DOI, and limitations are public.
 - [ ] Median and missing-data results match the reference implementation.
 - [ ] Threshold-edge and golden-location tests pass.
-- [ ] Antarctica and other invalid cells are no data, not zero.
+- [ ] Cells outside the Istat-derived Sicily mask and provider-invalid cells are no data, not zero.
 
 ### Interaction and accessibility
 
@@ -782,7 +789,7 @@ Expected initial delivery: approximately 8–12 weeks with the staffing assumpti
 | “Human comfort” overclaims personal experience | Users infer health or individual safety | Use “outdoor thermal conditions,” show UTCI definition and limitations |
 | 3 × 3 colors are misunderstood | Wrong interpretation of combined states | Fixed orientation, direct labels, hover linkage, user test, accessible text |
 | Arbitrary month sets create cache cardinality | Slow or expensive first requests | Spatial chunking, common-mask prewarming, immutable caching, usage monitoring |
-| Global source downloads are large or throttled | Pipeline delays | Partitioned resumable acquisition, checksums, immutable cache, retry/backoff |
+| Provider downloads are unavailable or throttled | Pipeline delays | Bounded resumable Sicily partitions, checksums, immutable cache, bounded retry/backoff |
 | ERA5 grid misses urban and terrain microclimates | False local precision | Limit zoom, disclose 0.25° cells, avoid address-level claims |
 | UTCI and SPEI availability differ | Empty or inconsistent periods | Manifest compatibility intersection and complete-year publication gate |
 | SPEI quality is poor in very dry regions | Unreliable drought values | Apply provider quality flags and expose warnings/no-data |
@@ -799,7 +806,7 @@ Good later candidates:
 - SPEI-1, SPEI-6, and SPEI-12;
 - soil-moisture percentile;
 - climatic water deficit;
-- wet-bulb globe temperature where a defensible global source exists;
+- wet-bulb globe temperature where a defensible Sicily-compatible source exists;
 - air-quality or smoke exposure;
 - population exposure;
 - crop-specific heat or water stress.
@@ -832,6 +839,7 @@ The old raster deletion is intentionally last. It is large and material, and it 
 
 ## 16. Authoritative references
 
+- [Istat: 2026 statistical administrative boundaries](https://www.istat.it/notizia/confini-delle-unita-amministrative-a-fini-statistici-al-1-gennaio-2018-2/)
 - [Esri Aqueduct bivariate-map example](https://www.esri.com/arcgis-blog/products/arcgis-living-atlas/water/global-water-risk-from-aqueduct-in-living-atlas)
 - [Copernicus Climate Data Store: ERA5-HEAT thermal comfort indices](https://cds.climate.copernicus.eu/datasets/derived-utci-historical)
 - [Copernicus explanation of UTCI and thermal-stress categories](https://climate.copernicus.eu/heat-stress-what-it-and-how-it-measured)

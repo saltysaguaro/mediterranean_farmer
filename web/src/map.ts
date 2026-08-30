@@ -6,7 +6,7 @@ import maplibregl, {
 } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { colorForClasses, NO_DATA_COLOR, type ClassPair } from "./legend";
-import type { DevelopmentTile, MapView, PointSample } from "./types";
+import type { LosslessMapResponse, MapView, PointSample, ScopeConfiguration } from "./types";
 
 type FeatureCollection = GeoJSON.FeatureCollection<GeoJSON.Point, CellProperties>;
 interface CellProperties {
@@ -31,7 +31,7 @@ function emptyStyle(): StyleSpecification {
   };
 }
 
-function colorForCell(payload: DevelopmentTile, cellIndex: number): string {
+function colorForCell(payload: LosslessMapResponse, cellIndex: number): string {
   const variables = payload.cells[cellIndex].variables;
   if (variables.some(({ class_index: classIndex }) => classIndex === null)) {
     return NO_DATA_COLOR;
@@ -43,7 +43,7 @@ function colorForCell(payload: DevelopmentTile, cellIndex: number): string {
 }
 
 function tileFeatures(
-  payload: DevelopmentTile,
+  payload: LosslessMapResponse,
   selectedSample: PointSample | null,
   emphasizedPair: ClassPair | null,
 ): FeatureCollection {
@@ -82,38 +82,40 @@ function tileFeatures(
   };
 }
 
-function graticule(): GeoJSON.FeatureCollection<GeoJSON.LineString> {
+function graticule(scope: ScopeConfiguration): GeoJSON.FeatureCollection<GeoJSON.LineString> {
   const features: GeoJSON.Feature<GeoJSON.LineString>[] = [];
-  for (let longitude = -180; longitude <= 180; longitude += 30) {
+  const [west, south, east, north] = scope.map.bounds;
+  for (let longitude = Math.ceil(west * 2) / 2; longitude <= east; longitude += 0.5) {
     features.push({
       type: "Feature",
       properties: {},
       geometry: {
         type: "LineString",
-        coordinates: Array.from({ length: 35 }, (_, index) => [
-          longitude,
-          -85 + index * 5,
-        ]),
+        coordinates: [
+          [longitude, south],
+          [longitude, north],
+        ],
       },
     });
   }
-  for (let latitude = -60; latitude <= 60; latitude += 30) {
+  for (let latitude = Math.ceil(south * 2) / 2; latitude <= north; latitude += 0.5) {
     features.push({
       type: "Feature",
       properties: {},
       geometry: {
         type: "LineString",
-        coordinates: Array.from({ length: 73 }, (_, index) => [
-          -180 + index * 5,
-          latitude,
-        ]),
+        coordinates: [
+          [west, latitude],
+          [east, latitude],
+        ],
       },
     });
   }
   return { type: "FeatureCollection", features };
 }
 
-function coverage(): GeoJSON.FeatureCollection<GeoJSON.Polygon> {
+function coverage(scope: ScopeConfiguration): GeoJSON.FeatureCollection<GeoJSON.Polygon> {
+  const [west, south, east, north] = scope.analysis_grid.acquisition_bbox;
   return {
     type: "FeatureCollection",
     features: [
@@ -124,11 +126,11 @@ function coverage(): GeoJSON.FeatureCollection<GeoJSON.Polygon> {
           type: "Polygon",
           coordinates: [
             [
-              [-179.999, -60],
-              [179.999, -60],
-              [179.999, 89.999],
-              [-179.999, 89.999],
-              [-179.999, -60],
+              [west, south],
+              [east, south],
+              [east, north],
+              [west, north],
+              [west, south],
             ],
           ],
         },
@@ -137,9 +139,9 @@ function coverage(): GeoJSON.FeatureCollection<GeoJSON.Polygon> {
   };
 }
 
-export class GlobalMap {
+export class ClimateMap {
   private readonly map: MapLibreMap;
-  private pendingTile: DevelopmentTile | null = null;
+  private pendingTile: LosslessMapResponse | null = null;
   private selectedSample: PointSample | null = null;
   private emphasizedPair: ClassPair | null = null;
   private ready = false;
@@ -148,6 +150,7 @@ export class GlobalMap {
   constructor(
     container: HTMLElement,
     private readonly referenceMarkers: HTMLElement,
+    private readonly scope: ScopeConfiguration,
     initialView: MapView,
     onViewChange: (view: MapView) => void,
     onInspect: (longitude: number, latitude: number) => void,
@@ -157,9 +160,13 @@ export class GlobalMap {
       style: emptyStyle(),
       center: [initialView.longitude, initialView.latitude],
       zoom: initialView.zoom,
-      minZoom: 0,
-      maxZoom: 6,
-      renderWorldCopies: true,
+      minZoom: scope.map.minimum_zoom,
+      maxZoom: scope.map.maximum_zoom,
+      maxBounds: [
+        [scope.map.bounds[0], scope.map.bounds[1]],
+        [scope.map.bounds[2], scope.map.bounds[3]],
+      ],
+      renderWorldCopies: false,
       attributionControl: false,
     });
     this.map.addControl(
@@ -169,13 +176,13 @@ export class GlobalMap {
     this.map.addControl(
       new maplibregl.AttributionControl({
         compact: true,
-        customAttribution: "Development grid · no external basemap",
+        customAttribution: "Sicily 0.25° grid · no external basemap",
       }),
       "bottom-right",
     );
     this.map.on("load", () => {
       this.ready = true;
-      this.map.setProjection({ type: "globe" });
+      this.referenceMarkers.hidden = true;
       this.addReferenceLayers();
       if (this.pendingTile) {
         this.renderTile(this.pendingTile);
@@ -183,7 +190,7 @@ export class GlobalMap {
       const canvas = this.map.getCanvas();
       canvas.setAttribute(
         "aria-label",
-        "Global climate map. Use arrow keys to pan; press Enter or Space to inspect the map center.",
+        "Sicily climate map. Use arrow keys to pan; press Enter or Space to inspect the map center.",
       );
       canvas.addEventListener("keydown", (event) => {
         if (event.key !== "Enter" && event.key !== " ") {
@@ -219,7 +226,7 @@ export class GlobalMap {
     });
   }
 
-  show(payload: DevelopmentTile): void {
+  show(payload: LosslessMapResponse): void {
     this.pendingTile = payload;
     if (this.ready) {
       this.renderTile(payload);
@@ -265,7 +272,7 @@ export class GlobalMap {
   }
 
   private addReferenceLayers(): void {
-    this.map.addSource("coverage", { type: "geojson", data: coverage() });
+    this.map.addSource("coverage", { type: "geojson", data: coverage(this.scope) });
     this.map.addLayer({
       id: "coverage",
       type: "fill",
@@ -276,7 +283,7 @@ export class GlobalMap {
         "fill-outline-color": "#6f877b",
       },
     });
-    this.map.addSource("graticule", { type: "geojson", data: graticule() });
+    this.map.addSource("graticule", { type: "geojson", data: graticule(this.scope) });
     this.map.addLayer({
       id: "graticule",
       type: "line",
@@ -323,15 +330,16 @@ export class GlobalMap {
     });
   }
 
-  private renderTile(payload: DevelopmentTile): void {
+  private renderTile(payload: LosslessMapResponse): void {
     const source = this.map.getSource("sample-cells") as GeoJSONSource | undefined;
     source?.setData(tileFeatures(payload, this.selectedSample, this.emphasizedPair));
     this.referenceMarkers.replaceChildren(
       ...payload.cells.map((cell, index) => {
+        const [west, south, east, north] = this.scope.map.bounds;
         const marker = document.createElement("span");
         marker.className = "reference-sample-marker";
-        marker.style.left = `${((cell.longitude + 180) / 360) * 100}%`;
-        marker.style.top = `${((90 - cell.latitude) / 180) * 100}%`;
+        marker.style.left = `${((cell.longitude - west) / (east - west)) * 100}%`;
+        marker.style.top = `${((north - cell.latitude) / (north - south)) * 100}%`;
         marker.style.backgroundColor = colorForCell(payload, index);
         marker.classList.toggle(
           "is-no-data",

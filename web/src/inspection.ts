@@ -1,5 +1,6 @@
 import type { ClassPair } from "./legend";
 import { formatPeriod } from "./months";
+import { SCOPE_CONFIG } from "./registry";
 import type { PointSample, PointVariableRecord, VariableManifest } from "./types";
 
 function number(value: number): string {
@@ -8,7 +9,7 @@ function number(value: number): string {
 
 function retrievalDate(value: string | null): string {
   if (!value) {
-    return "not published";
+    return "Not yet retrieved";
   }
   return new Intl.DateTimeFormat(undefined, {
     dateStyle: "medium",
@@ -94,7 +95,7 @@ export function renderPointSample(root: HTMLElement, sample: PointSample): void 
         "Source",
         `${variable.source.dataset} v${variable.source.product_version}`,
       ),
-      ...term("Sample retrieved", retrievalDate(variable.source.sample_retrieved_at)),
+      ...term("Source retrieved", retrievalDate(variable.source.sample_retrieved_at)),
     );
     card.append(title, values);
     root.append(card);
@@ -117,10 +118,46 @@ function sourceCard(variable: VariableManifest): HTMLElement {
   link.rel = "noreferrer";
   title.append(link);
   const description = document.createElement("p");
-  description.textContent = `${variable.source.provider} · product v${variable.source.product_version} · DOI ${variable.source.doi} · ${variable.source.license}.`;
+  description.textContent = `${variable.source.provider} · product v${variable.source.product_version}.`;
+  const links = document.createElement("p");
+  links.className = "source-links";
+  const doi = document.createElement("a");
+  doi.href = `https://doi.org/${variable.source.doi}`;
+  doi.textContent = `DOI ${variable.source.doi}`;
+  doi.target = "_blank";
+  doi.rel = "noreferrer";
+  const license = document.createElement("a");
+  license.href = variable.source.license_url;
+  license.textContent = variable.source.license;
+  license.target = "_blank";
+  license.rel = "noreferrer";
+  links.append(doi, license);
   const update = document.createElement("p");
-  update.textContent = `Bounded sample retrieved ${retrievalDate(variable.publication.sample_retrieved_at)}. Data version ${variable.publication.data_version}.`;
-  card.append(title, description, update);
+  update.textContent = variable.publication.sample_retrieved_at
+    ? `Sicily release retrieved ${retrievalDate(variable.publication.sample_retrieved_at)}. Data version ${variable.publication.data_version}.`
+    : `Sicily release is planned but not yet retrieved. Target data version ${variable.publication.data_version}.`;
+  card.append(title, description, links, update);
+  return card;
+}
+
+function boundaryCard(): HTMLElement {
+  const source = SCOPE_CONFIG.boundary_source;
+  const card = document.createElement("article");
+  const title = document.createElement("h4");
+  const dataset = document.createElement("a");
+  dataset.href = source.dataset_url;
+  dataset.textContent = `${source.authority} regional boundary`;
+  dataset.target = "_blank";
+  dataset.rel = "noreferrer";
+  title.append(dataset);
+  const description = document.createElement("p");
+  description.textContent = `${source.dataset}. Transformed to the documented 0.25° provider-cell-center mask.`;
+  const license = document.createElement("a");
+  license.href = source.license_url;
+  license.textContent = source.license;
+  license.target = "_blank";
+  license.rel = "noreferrer";
+  card.append(title, description, license);
   return card;
 }
 
@@ -130,7 +167,23 @@ export function renderExplanatoryPanels(
   limitationsRoot: HTMLElement,
   variables: VariableManifest[],
 ): void {
-  sourcesRoot.replaceChildren(...variables.map(sourceCard));
+  const attributionYear = Math.max(
+    ...variables.map(({ publication }) =>
+      publication.sample_retrieved_at
+        ? new Date(publication.sample_retrieved_at).getUTCFullYear()
+        : 0,
+    ),
+  );
+  const attribution = document.createElement("p");
+  attribution.className = "source-attribution";
+  attribution.textContent =
+    `Contains modified Copernicus Climate Change Service information ${attributionYear}. ` +
+    "Neither the European Commission nor ECMWF is responsible for any use of this information.";
+  sourcesRoot.replaceChildren(
+    ...variables.map(sourceCard),
+    boundaryCard(),
+    attribution,
+  );
 
   const selectedCount = variables.length;
   methodologyRoot.replaceChildren();
@@ -150,12 +203,14 @@ export function renderExplanatoryPanels(
 
   limitationsRoot.replaceChildren();
   const scope = document.createElement("p");
-  scope.textContent = `${selectedCount === 1 ? "This variable is" : "These variables are"} shown only for the four-region January/July 2024 development sample. Global navigation is not global published coverage.`;
+  scope.textContent = `${selectedCount === 1 ? "This variable is" : "These variables are"} limited to Sicilia. Provider cells are included only when their center lies inside the official Istat 2026 regional boundary.`;
   const physical = document.createElement("p");
   physical.textContent =
-    "The 0.25° ERA5 grid does not resolve shade, buildings, urban heat islands, terrain-scale wind, personal activity, water demand, soil moisture, reservoirs, governance, or household water access. ERA5-HEAT stops at 60°S, so Antarctica is no data.";
+    "The 0.25° ERA5 grid does not resolve coastlines, shade, buildings, urban heat islands, terrain-scale wind, personal activity, water demand, soil moisture, reservoirs, governance, or household water access. A grid cell may include surrounding sea.";
   const drought = document.createElement("p");
   drought.textContent =
     "SPEI-3 is a selected-year meteorological water-balance anomaly. A median over its 1991–2020 reference period is not presented or labeled as drought risk.";
-  limitationsRoot.append(scope, physical, drought);
+  const islands = document.createElement("p");
+  islands.textContent = SCOPE_CONFIG.limitations[1];
+  limitationsRoot.append(scope, physical, islands, drought);
 }

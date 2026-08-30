@@ -29,7 +29,8 @@ ROOMY_DISK = DiskCapacity(total=200 * GIB, used=80 * GIB, free=120 * GIB)
 def test_checked_in_policy_locks_hybrid_retention_and_bounded_cache() -> None:
     policy = load_storage_policy()
 
-    assert policy.maximum_local_backfill_years == 1
+    assert policy.scope_id == "sicily_istat_2026_grid_centers"
+    assert policy.maximum_local_backfill_years == 2
     assert policy.maximum_acquisition_partition_bytes == 512 * 1024**2
     assert policy.acquisition_receipt_reservation_bytes == 64 * 1024
     assert policy.temporal_retention["utci_source_frequency"] == "daily maximum"
@@ -42,7 +43,7 @@ def test_checked_in_policy_locks_hybrid_retention_and_bounded_cache() -> None:
     assert policy.prewarm_month_masks[-5:] == ("803", "01c", "0e0", "700", "fff")
     assert policy.arbitrary_month_masks == "on_demand_only"
     assert policy.automatic_deletion is False
-    assert policy.object_storage_required_before_multi_year_backfill is True
+    assert policy.object_storage_required_before_multi_year_backfill is False
 
 
 def test_policy_rejects_temporal_semantic_drift(tmp_path: Path) -> None:
@@ -70,7 +71,7 @@ def test_directory_inventory_does_not_follow_symlinks(tmp_path: Path) -> None:
     assert directory_size(managed) == 4
 
 
-def test_one_year_backfill_passes_but_multi_year_fails_closed(tmp_path: Path) -> None:
+def test_two_year_sicily_release_passes_but_third_year_fails_closed(tmp_path: Path) -> None:
     policy = load_storage_policy()
 
     report = preflight_backfill(tmp_path, policy, 1, disk=ROOMY_DISK)
@@ -81,8 +82,10 @@ def test_one_year_backfill_passes_but_multi_year_fails_closed(tmp_path: Path) ->
     assert isinstance(peak, int)
     assert isinstance(steady, int)
     assert peak > steady
+    two_year_report = preflight_backfill(tmp_path, policy, 2, disk=ROOMY_DISK)
+    assert two_year_report["approved"] is True
     with pytest.raises(StorageLimitError) as raised:
-        preflight_backfill(tmp_path, policy, 2, disk=ROOMY_DISK)
+        preflight_backfill(tmp_path, policy, 3, disk=ROOMY_DISK)
     assert raised.value.reason_code == "backfill_year_limit"
 
 
@@ -149,7 +152,7 @@ def test_status_and_normalization_preflight_are_machine_readable(
     json.dumps(preflight)
 
 
-def test_cli_returns_structured_blocker_for_multi_year_request(
+def test_cli_returns_structured_blocker_beyond_two_year_sicily_release(
     capsys: pytest.CaptureFixture[str],
     tmp_path: Path,
 ) -> None:
@@ -159,7 +162,7 @@ def test_cli_returns_structured_blocker_for_multi_year_request(
             str(tmp_path),
             "preflight",
             "--years",
-            "2",
+            "3",
         ]
     )
     report = json.loads(capsys.readouterr().out)

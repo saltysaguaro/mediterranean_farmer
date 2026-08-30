@@ -1,0 +1,15 @@
+.git
+.github
+.mypy_cache
+.playwright-cli
+.pytest_cache
+.ruff_cache
+data
+docs
+output
+pipeline/.venv
+pipeline/reports
+web/node_modules
+web/dist
+**/__pycache__
+**/*.pyc

@@ -1,42 +1,103 @@
-# Global Thermal Comfort × Drought Map
+# Sicily Thermal Comfort × Drought Map
 
-This repository is being redirected from a Mediterranean crop-suitability prototype to an interactive global bivariate climate map.
+This repository contains a deployable implementation of an interactive
+Sicily-only bivariate climate map, alongside the preserved Mediterranean
+crop-suitability prototype.
 
 The target product pairs:
 
 - **Human thermal comfort:** Universal Thermal Climate Index (UTCI)
 - **Drought:** 3-month Standardised Precipitation-Evapotranspiration Index (SPEI-3)
 
-Users will be able to select one month, any non-empty combination of months, or the full year with a circular month control. The map will display the median value of each selected variable over that period and combine their classes in a bivariate legend. The architecture will support a future registry of variables, with one variable shown as a univariate map or two shown together as a bivariate map.
+Users can select one month, any non-empty combination of months, or the full
+year with a circular month control. The map displays the median value of each
+selected variable over that period and combines their classes in a bivariate
+legend. The registry supports one-variable univariate views and compatible
+two-variable bivariate views.
+
+The scientific definitions and data dictionary are in
+[METHODOLOGY.md](./METHODOLOGY.md). Deployment, promotion, monitoring,
+refresh, rollback, and incident procedures are in
+[OPERATIONS.md](./OPERATIONS.md), with the security model in
+[SECURITY.md](./SECURITY.md).
 
 See [PROJECT_PLAN.md](./PROJECT_PLAN.md) for the scientific rationale, temporal semantics, product specification, target architecture, migration strategy, phased delivery plan, risks, tests, and acceptance criteria.
 
-The immediate implementation sequence is in [SEVEN_DAY_PLAN.md](./SEVEN_DAY_PLAN.md). It defines the nightly work scheduled for July 23–29, 2026 and the beta expected at the end of that sprint.
+See [COMPLETION_FOUNDATION.md](./COMPLETION_FOUNDATION.md) for the active route
+from the bounded Night 1–6 implementation to complete Sicily data, production
+tiles and storage, preview, validation, cutover, operations, and historical
+backfill. It is also the repository's large-file and cache-cardinality plan.
+
+The original bounded implementation sequence is in
+[SEVEN_DAY_PLAN.md](./SEVEN_DAY_PLAN.md). It defines the Night 1–7 beta gates;
+unfinished Night 7 work and all later completion milestones now follow the
+active completion foundation.
+
+## Current Sicily scope
+
+`config/scope.json` is the geographic contract. It records Istat's generalized
+regional boundary dated 1 January 2026, the source archive URL and SHA-256, a
+provider-aligned acquisition box of `11.75°E–15.75°E, 35.25°N–39.00°N`, and
+the 44 exact 0.25° ERA5 cell centers inside the Sicilia polygons. The raw Istat
+archive and provider climate responses are not committed.
+
+The initial climate release is the two latest shared complete years, 2025 and
+2024, with all twelve months. Its exact bounded plan contains 60 requests: 24
+UTCI monthly containers of daily maxima, 24 deterministic selected-year SPEI-3
+containers, and 12 reference-period provider-quality containers reused across
+both years. Build and inspect it with:
+
+```bash
+pipeline/.venv/bin/python -m thermal_drought.acquire plan
+pipeline/.venv/bin/python -m thermal_drought.storage preflight --years 2
+pipeline/.venv/bin/python -m thermal_drought.acquire fetch
+pipeline/.venv/bin/python -m thermal_drought.acquire inspect \
+  --output pipeline/reports/sicily-source-audit-v1.json
+pipeline/.venv/bin/python -m thermal_drought.normalize \
+  --report pipeline/reports/sicily-release-v1.json
+```
+
+Retrieval is restartable and fail-closed. Provider responses, receipts, and
+published NetCDF products remain under ignored `data/`. A release is not
+complete until all 60 checksummed official artifacts, 24 UTCI/SPEI grid pairs,
+24 SPEI/quality pairs, both twelve-month products, and the 44-cell scope mask
+validate. Missing or failed-quality values remain no data, never zero.
+
+The 7 August 2026 local release satisfies that gate: 60/60 official artifacts,
+both twelve-month products, 44 included cells, and latest complete year 2025.
+The small source audit and release report are retained as commit candidates;
+the 29,780,288 raw artifact bytes and 94,679 published NetCDF bytes remain
+ignored.
 
 ## Current repository state
 
-The current `docs/` directory is the legacy GitHub Pages prototype:
+The `docs/` directory is the preserved legacy GitHub Pages prototype:
 
 - a static Leaflet application;
 - Mediterranean-only bounds;
 - hard-coded crop/suitability controls;
 - generated annual TerraClimate score rasters for 1991–2020;
-- no source data pipeline, automated tests, or deployable aggregation service in this repository.
+- no connection to the replacement pipeline or deployable aggregation service.
 
-Treat it as a disposable reference implementation, not the foundation of the new data model. Keep it available until the global replacement passes the release gates in the project plan.
+Treat it as a recoverable reference implementation, not the foundation of the
+new data model. The local annotated tag `legacy-mediterranean-v1` points to its
+last legacy-only commit. Keep the tree available until the Sicily replacement
+has completed its monitored public release and independent review gates.
 
 ## Intended repository layout
 
 ```text
 config/           Versioned variable, classification, and deployment configuration
 pipeline/         Source acquisition, normalization, aggregation, validation, and publishing
-services/         Median aggregation, raster tile, and point-sampling API
-web/              Source for the global interactive map
-tests/            Scientific, pipeline, API, UI, accessibility, and performance tests
-docs/             Generated GitHub Pages frontend only
+services/         Service operator handoff documentation
+web/              Source for the Sicily interactive map
+pipeline/tests/   Scientific, pipeline, API, runtime, and operations tests
+docs/             Preserved legacy GitHub Pages application
 ```
 
-Raw and analysis-ready climate data should live in versioned object storage, not Git. `docs/` remains a generated publish target for the static frontend.
+Raw and analysis-ready climate data live outside Git. Production uses an
+immutable checksummed release bundle plus separate API and frontend containers;
+it does not use a Codex Site.
 
 ## Development foundation
 
@@ -61,22 +122,36 @@ cd web
 npm run build
 ```
 
+Audit every tracked and non-ignored commit-candidate path without opening
+ignored credentials or climate data:
+
+```bash
+make repository-check
+```
+
+The audit verifies representative ignore rules, rejects generated data,
+dependencies, caches, browser output, credentials, and climate rasters outside
+the preserved legacy tree, and scans candidate text for high-confidence secret
+patterns without echoing matched values. Only the already tracked rasters below
+`docs/data/crops/` are grandfathered until the reviewed cutover; a newly added
+raster in that path fails the audit.
+
 ## Storage safety and temporal retention
 
 The checked-in [`config/storage-policy.json`](./config/storage-policy.json)
 turns the local storage envelope into an enforced contract:
 
 - keep at least 20 GiB free and stop before the volume exceeds 80% use;
-- allow at most one estimated full-year local backfill at a time, with a
-  three-times processing-peak allowance;
+- allow exactly the two-year initial Sicily release locally, with a three-times
+  processing-peak allowance; a third year remains blocked;
 - cap raw source storage at 3 GiB, canonical and published monthly stores at
   5 GiB each, and each reproducible cache/tile directory at 2 GiB;
 - cap any one acquisition response at 512 MiB and reserve bounded workspace
   before provider retrieval, ZIP extraction, or normalization starts;
 - precompute only 12 single-month masks, four meteorological seasons, and the
   all-month mask. Arbitrary month sets remain on demand;
-- never delete data automatically. Multi-year acquisition must wait for
-  reviewed object storage and lifecycle rules.
+- never delete data automatically. Deployment and any M9 historical
+  acquisition still require reviewed object storage and lifecycle rules.
 
 The temporal design is deliberately hybrid. UTCI begins with provider daily
 maximum fields because they are needed to calculate the scientifically locked
@@ -87,13 +162,13 @@ product, and then archived outside local serving storage. The application
 therefore keeps day-level scientific fidelity without paying a daily-layer
 serving and cache cost.
 
-Validate the policy in any environment, inspect this machine, and preflight one
-full local year:
+Validate the policy in any environment, inspect this machine, and preflight the
+bounded two-year local release:
 
 ```bash
 pipeline/.venv/bin/python -m thermal_drought.storage validate
 pipeline/.venv/bin/python -m thermal_drought.storage status
-pipeline/.venv/bin/python -m thermal_drought.storage preflight --years 1
+pipeline/.venv/bin/python -m thermal_drought.storage preflight --years 2
 make storage-check
 ```
 
@@ -101,13 +176,13 @@ Blocked operations exit nonzero with a machine-readable reason code and do not
 start the guarded write. Verified existing acquisition partitions remain
 restartable without reserving space again.
 
-## Official-data access proof
+## Sicily official-data acquisition
 
-Night 2 added bounded, restartable acquisition requests for ERA5-HEAT daily UTCI
-statistics and deterministic ERA5-Drought SPEI-3 with its provider normality
-quality field. The code retains exact requests, checksums, retrieval timestamps,
-source metadata, licences, DOI, citations, and expected coordinate/unit metadata
-in sidecar receipts.
+The acquisition path submits bounded, restartable Sicily requests for ERA5-HEAT
+daily UTCI statistics and deterministic ERA5-Drought SPEI-3 with its provider
+normality-quality field. It retains exact requests, checksums, retrieval
+timestamps, source metadata, licences, DOI, citations, and expected
+coordinate/unit metadata in sidecar receipts.
 
 Check credential and client availability without displaying secret values:
 
@@ -115,7 +190,7 @@ Check credential and client availability without displaying secret values:
 pipeline/.venv/bin/python -m thermal_drought.acquire status
 ```
 
-Inspect the 24-partition representative plan without downloading:
+Inspect the 60-request Sicily plan without downloading:
 
 ```bash
 pipeline/.venv/bin/python -m thermal_drought.acquire plan
@@ -140,7 +215,7 @@ pipeline/.venv/bin/python -m thermal_drought.acquire fetch
 ```
 
 To test or resume one provider dataset without submitting the other, scope the
-same exact representative plan by dataset ID:
+same exact Sicily plan by dataset ID:
 
 ```bash
 pipeline/.venv/bin/python -m thermal_drought.acquire fetch \
@@ -152,14 +227,14 @@ pipeline/.venv/bin/python -m thermal_drought.acquire fetch \
 Provider authentication, licence, and access failures return a secret-safe
 machine-readable blocker with the dataset, planned request ID, reason code, and
 official dataset page. Dataset-scoped retrieval does not weaken the acceptance
-gate: the inspection command still requires all 24 plan-bound artifacts.
+gate: the inspection command still requires all 60 plan-bound artifacts.
 
 After retrieval, inspect the checksum-verified NetCDF headers and compare
 observed UTCI, SPEI-3, and quality-field cell centers:
 
 ```bash
 pipeline/.venv/bin/python -m thermal_drought.acquire inspect \
-  --output pipeline/reports/night-2-observed-metadata.json
+  --output pipeline/reports/sicily-source-audit-v1.json
 ```
 
 The inspection reads coordinate arrays and structural metadata, not climate
@@ -171,23 +246,22 @@ Archive expansion is preflighted against the same free-space and volume
 high-water guards before a temporary directory is created.
 Before opening an artifact, it requires the receipt's dataset, request body,
 request fingerprint, source metadata, period, region, and canonical target path
-to match the fingerprinted plan. It exits unsuccessfully if any of the 24
+to match the fingerprinted plan. It exits unsuccessfully if any of the 60
 planned artifacts is absent, unexpected, duplicated, fixture-backed, or
 mismatched; if a checksum fails; if a source pair is missing; or if the observed
 grids cannot map without interpolation. A mismatched receipt is never updated
 with observed metadata.
 
 See
-[`pipeline/reports/night-2-data-access.md`](./pipeline/reports/night-2-data-access.md)
-for the verified catalogue fields, request regions, observed provider
-packaging, measured retrieval evidence, and paired-grid result. The complete
-machine-readable audit is
-[`pipeline/reports/night-2-observed-metadata.json`](./pipeline/reports/night-2-observed-metadata.json).
+[`pipeline/reports/m3-sicily-data-plane.md`](./pipeline/reports/m3-sicily-data-plane.md)
+for the exact request plan, capacity evidence, bounded-retry policy, and the
+completed official acquisition evidence. The earlier Night 2 reports remain
+historical evidence for the superseded representative sample.
 
-## Representative normalization path
+## Sicily normalization path
 
-Night 3 turns the checksum-verified bounded sample into canonical monthly
-development products. It:
+Normalization turns the checksum-verified two-year Sicily acquisition into
+canonical monthly release products. It:
 
 - reads the observed ZIP containers with the same path, member-count, type, and
   expansion bounds used by acquisition inspection;
@@ -201,41 +275,48 @@ development products. It:
   where that flag equals 1;
 - canonicalizes names, Gregorian month-start time, EPSG:4326 coordinates,
   north-to-south latitude, and `[-180, 180)` longitude without interpolation;
-- writes one compact, atomic NetCDF development product per representative
-  region below ignored `data/published/`.
+- masks every provider-grid cell outside the 44-cell Istat scope and writes one
+  compact, atomic NetCDF product per year below ignored `data/published/`.
 
 Normalization reserves bounded temporary and published space before inspection
-updates receipts or opens climate arrays. Its report and NetCDF global metadata
+updates receipts or opens climate arrays. Its report and NetCDF dataset metadata
 record the daily-source/monthly-serving retention contract.
 
-Run the scientific/unit checks and reproduce all four official sample outputs:
+Run the scientific/unit checks and then require the complete official Sicily
+audit before writing release products:
 
 ```bash
 make normalization-check
 ```
 
-The machine-readable evidence report is
-[`pipeline/reports/night-3-normalization.json`](./pipeline/reports/night-3-normalization.json).
-It includes output checksums and eight center-cell golden samples with source
-quality state, precision tolerance, and expected class. The tests independently
-read the official daily members and monthly source fields to reproduce those
-values. All synthetic unit-test NetCDFs are created only in temporary
+The scientific tests pass independently. The command fails closed if any
+official Sicily artifact is missing; it never substitutes the historical
+sample or a structural fixture.
+
+The current machine-readable release report is
+`pipeline/reports/sicily-release-v1.json`; it is written only after the exact
+official source audit passes. It includes output checksums and 24 center-cell
+golden samples with source
+quality state, precision tolerance, and expected class. Once acquired, the
+official daily members and monthly source fields are independently replayed to
+reproduce those values. All synthetic unit-test NetCDFs are created only in temporary
 directories and label themselves as structural tests, not ERA5 observations.
 
-The local development representation is NetCDF because the declared Zarr
-dependency could not be installed in this sandbox. Production chunked Zarr
-publication remains a later data-volume step; the NetCDF sample is not described
-as a global backfill or a production climate release.
+The Sicily representation is compressed NetCDF. With two year-sized products,
+44 published cells, and lossless sparse JSON delivery, chunked Zarr and raster
+tiles add operational complexity without a demonstrated payload or latency
+benefit. Climate products remain ignored and outside Git.
 
 ## Local aggregation and data service
 
-Night 4 adds a bounded local WSGI service backed by the checksum-verified Night
-3 products. One shared implementation selects monthly layers by the canonical
+The local WSGI service is configured to load the checksum-verified Sicily
+release and fails closed while its report or products are absent.
+One shared implementation selects monthly layers by the canonical
 12-bit mask, requires `ceil(selected months × 0.75)` valid values, takes the
 median, applies manifest-defined threshold ownership, and carries provider
-quality state through both point and development-tile responses.
+quality state through both point and lossless map responses.
 
-Validate the service against the local official sample:
+Validate the service tests and require the official release catalogue:
 
 ```bash
 make service-check
@@ -247,26 +328,24 @@ Start it on loopback:
 pipeline/.venv/bin/python -m thermal_drought.api
 ```
 
-Then inspect health, availability, a Phoenix point, or the bounded zoom-zero
-development tile:
+Then inspect health, availability, a central Sicily point, or the bounded
+zoom-zero response:
 
 ```text
 http://127.0.0.1:8000/v1/health
 http://127.0.0.1:8000/v1/availability
-http://127.0.0.1:8000/v1/sample?x=spei_3&y=utci_daymax_median&year=2024&months=041&lng=-112&lat=34
-http://127.0.0.1:8000/v1/tiles/night-3-official-sample-v1/spei_3/utci_daymax_median/2024/041/0/0/0
+http://127.0.0.1:8000/v1/sample?x=spei_3&y=utci_daymax_median&year=2025&months=fff&lng=13.75&lat=37.5
+http://127.0.0.1:8000/v1/tiles/sicily-2024-2025-v1/spei_3/utci_daymax_median/2025/fff/0/0/0
 ```
 
-`041` selects January and July. The development tile is sparse JSON over the
-four small official sample grids; it is not a global raster or production tile
-format. Availability correctly reports that 2024 is incomplete because only
-those two months are published in this bounded sample. Missing and
-quality-masked SPEI values are returned as `null`, never as zero.
+`fff` selects all twelve months. The response is lossless sparse JSON over the
+44 Sicily grid centers. Availability reports 2025 and 2024 as complete only
+after all months and products validate. Missing and quality-masked SPEI values
+are returned as `null`, never as zero.
 
-## Global frontend shell
+## Sicily frontend
 
-Night 5 replaces the placeholder web page with a manifest-driven TypeScript
-application. It uses the checked-in variable entries for labels, units,
+The manifest-driven TypeScript application uses the checked-in variable entries for labels, units,
 classifications, publication versions, and the two-variable cap, then intersects
 them with `/v1/availability` before enabling years or months.
 
@@ -279,15 +358,14 @@ npm run dev
 ```
 
 Vite proxies `/api` to the loopback service. The checked-in production build
-does not embed a service URL or any climate arrays; deployment routing remains
-a later operations decision.
+defaults to same-origin `/api` and embeds no climate arrays. `VITE_API_BASE` is
+available for an explicitly reviewed route.
 
-The frontend currently provides:
+The frontend provides:
 
-- a dominant global MapLibre navigation shell with a code-native graticule and
+- a dominant Sicily-bounded MapLibre navigation shell with a code-native graticule and
   no unreviewed external basemap assets;
-- sparse markers for the four-region official development sample, explicitly
-  labeled as bounded rather than global coverage;
+- sparse markers only for cells admitted by the Istat-derived Sicily mask;
 - one-variable and two-variable modes, compatibility-aware selectors, an axis
   swap, and a strict maximum of two active variables;
 - a twelve-wedge native-button month ring in January-to-December DOM order,
@@ -295,16 +373,13 @@ The frontend currently provides:
   final-month protection, and an all-available action;
 - URL serialization for both axes, analysis year, three-digit month mask,
   longitude, latitude, and zoom, including reload and Back/Forward restoration;
-- an abortable development-tile loader that keeps the last valid map visible
+- an abortable lossless-map loader that keeps the last valid map visible
   while a replacement loads or when a request fails;
 - a collapsible narrow-screen control sheet that leaves at least half the
   viewport available to the map.
 
-Because the verified sample publishes only January and July 2024, every other
-month is truthfully disabled and the center action says `All available`, not
-`All year`. The generic state and month logic still covers all 4,095 non-empty
-masks, including disjoint selections, and enables them when availability
-publishes those months.
+The generic state and month logic covers all 4,095 non-empty masks, including
+disjoint selections. The final selected month cannot be cleared.
 
 Run the frontend unit/type gate and production build:
 
@@ -316,7 +391,7 @@ npm run build
 
 The application chunk is kept separate from the MapLibre vendor chunk so its
 own compressed JavaScript size remains measurable. The legacy `docs/`
-application is still untouched.
+application remains untouched.
 
 ## Legend, point inspection, and methodology
 
@@ -363,5 +438,73 @@ swapped orientation, artificial-variable integration, point no-data/quality
 copy, stale retry behavior, and WCAG AA legend-text contrast. Real Chromium
 smoke also covers keyboard point inspection, the official Phoenix values, the
 southern provider-quality failure, offline retry, and phone/desktop layouts.
-Full axe, screen-reader, color-vision-deficiency, Firefox, and WebKit tooling is
-not installed; those broader cross-browser and palette gates remain in Night 7.
+Final Chromium, Firefox, and WebKit checks report zero axe violations. Automated
+protanopia, deuteranopia, tritanopia, grayscale, text-alternative, and contrast
+checks pass. Independent palette-comprehension and live assistive-technology
+reviews remain external approval gates.
+
+## Production runtime and operations
+
+The production shape is two conventional containers: the bounded API installs
+an immutable release bundle by HTTPS URL and SHA-256, while unprivileged nginx
+serves the frontend and proxies same-origin `/api/` traffic. Both containers are
+read-only, drop capabilities, and have CPU, memory, PID, timeout, response,
+concurrency, rate, and cache bounds.
+
+Run the end-to-end local production rehearsal and the non-promoting monthly
+refresh rehearsal with:
+
+```bash
+make operations-check
+make refresh-rehearsal-check
+```
+
+CI builds both images and validates Compose on every change. Separate workflows
+publish SBOM/provenance images only for an authorized release tag, prepare an
+unpromoted monthly data candidate, and monitor a configured production URL.
+Evidence and open external gates are recorded in:
+
+- [`pipeline/reports/m4-production-runtime.json`](./pipeline/reports/m4-production-runtime.json)
+- [`pipeline/reports/m6-production-frontend.md`](./pipeline/reports/m6-production-frontend.md)
+- [`pipeline/reports/m7-review-hardening.md`](./pipeline/reports/m7-review-hardening.md)
+- [`pipeline/reports/m8-operations-readiness.md`](./pipeline/reports/m8-operations-readiness.md)
+- [`pipeline/reports/m8-refresh-rehearsal.json`](./pipeline/reports/m8-refresh-rehearsal.json)
+
+## Recoverable local beta preview
+
+M1 adds a generated preview route without replacing or copying the legacy
+application. Build the frontend, verify every generated artifact, enforce the
+checked frontend transfer budgets, inventory the legacy boundary, and write an
+ignored checksum manifest:
+
+```bash
+make beta-preview-check
+```
+
+The command writes the generated frontend only to ignored `web/dist/` and its
+manifest to ignored `output/m1-beta-preview/manifest.json`. It rejects source
+maps and symbolic links, measures the application separately from MapLibre,
+and leaves all 753 legacy files in `docs/` untouched.
+
+After the official Sicily release has been acquired and normalized, serve the
+replacement, legacy application, and local API on one loopback origin:
+
+```bash
+pipeline/.venv/bin/python -m thermal_drought.preview --port 4173
+```
+
+The local handoff routes are:
+
+- `http://127.0.0.1:4173/preview/` — replacement using the local Sicily release;
+- `http://127.0.0.1:4173/legacy/` — the preserved legacy `docs/` tree served in
+  place;
+- `http://127.0.0.1:4173/api/v1/` — the bounded service behind the preview's
+  same-origin `/api` requests.
+
+Stopping the preview process or returning to `/legacy/` is the complete local
+rollback; no route mutates `docs/`, climate products, or a release pointer.
+This is a local beta handoff with complete local Sicily coverage, not a
+deployment or evidence of production CORS, persistent remote storage, cache
+behavior, monitoring, or production latency. See
+[`pipeline/reports/m1-beta-handoff.md`](./pipeline/reports/m1-beta-handoff.md)
+for the measured preview evidence and remaining M1 gates.

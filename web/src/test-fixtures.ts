@@ -20,6 +20,7 @@ export function artificialCompatibleVariable(
       product_version: "fixture-1",
       reference_period: null,
       license: "Test fixture only",
+      license_url: "https://example.invalid/test-fixture-license",
     },
     aggregation: {
       ...template.aggregation,

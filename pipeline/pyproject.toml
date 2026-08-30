@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "thermal-drought-pipeline"
 version = "0.2.0"
-description = "Data contracts and pipeline for the global UTCI × SPEI-3 map"
+description = "Data contracts and pipeline for the Sicily UTCI × SPEI-3 map"
 requires-python = ">=3.9"
 dependencies = [
   "jsonschema[format]>=4.23,<5"
@@ -48,6 +48,14 @@ thermal-drought-acquire = "thermal_drought.acquire.cli:main"
 thermal-drought-normalize = "thermal_drought.normalize.cli:main"
 thermal-drought-service = "thermal_drought.api.cli:main"
 thermal-drought-storage = "thermal_drought.storage:main"
+thermal-drought-repository-audit = "thermal_drought.repository_audit:main"
+thermal-drought-preview = "thermal_drought.preview:main"
+thermal-drought-format-benchmark = "thermal_drought.format_benchmark:main"
+thermal-drought-structural-validation = "thermal_drought.structural_validation:main"
+thermal-drought-release = "thermal_drought.release_bundle:main"
+thermal-drought-operations = "thermal_drought.operations:main"
+thermal-drought-monitor = "thermal_drought.monitor:main"
+thermal-drought-refresh = "thermal_drought.refresh:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/thermal_drought"]

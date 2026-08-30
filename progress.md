@@ -1,20 +1,23 @@
-# Global Bivariate Map Progress
+# Sicily Thermal Comfort × Drought Progress
 
 This log is updated by the seven-night implementation sprint defined in `SEVEN_DAY_PLAN.md`.
 
 ## Sprint status
 
-- Window: July 23–29, 2026
+- Window: continuous completion after the July 23–29, 2026 beta sprint
 - Nightly start: 2:00 AM America/Phoenix
-- Next night: Night 7 — hardening and beta handoff
+- Active execution plan: `COMPLETION_FOUNDATION.md`
+- Current milestone: M0–M6 engineering gates complete; M7 automated hardening and M8 local operations rehearsals complete. M7 independent review and M8 public cutover/monitored-cycle gates remain open; M9 is correctly gated behind them.
+- Next scheduled run: configure an owner-supplied production endpoint, durable HTTPS bundle, TLS/DNS, alert target, and reviewers; complete one monitored release cycle and only then authorize M9 backfill/legacy cleanup.
 - Completed nights: Nights 1, 2, 3, 4, 5, and 6
 - Night 6 status: acceptance gate complete for fixed univariate/3 × 3 legends, text-identifiable bivariate states, point-linked interpretation, source/quality/retrieval metadata, methodology and limitations, truthful loading/stale/empty/no-data/error/retry states, axis orientation, and the artificial third-variable proof
-- Current blockers: the checked-in service catalogue covers only the four-region, January/July 2024 official sample, so the live UI truthfully disables ten months and has no complete default year; production Zarr, global/full-year backfill, raster tiles/basemap, object storage/CDN, and operations remain incomplete; full axe/screen-reader, color-vision, Firefox/WebKit, production-performance, climate-review, and palette-comprehension gates remain Night 7 or post-sprint work
+- Current blockers: independent climate/licensing approval, palette-comprehension evidence, and live assistive-technology review; plus an owner-supplied public runtime, DNS/TLS, durable bundle URL, alert receiver, registry release, and monitored production cycle. Automated browser, accessibility, color-vision, performance, monitoring, refresh, security, and rollback rehearsals pass locally.
 
 ## Pre-sprint state
 
 - `docs/` contains the legacy Mediterranean Leaflet prototype and generated crop-suitability rasters.
-- `PROJECT_PLAN.md` defines the target global UTCI × SPEI-3 product.
+- `PROJECT_PLAN.md` originally defined a global product; the 2026-08-06 scope
+  decision below supersedes that target with Sicily only.
 - `SEVEN_DAY_PLAN.md` defines the seven-night beta implementation sequence.
 - The legacy application and rasters must remain untouched until the replacement has passed its release gates.
 
@@ -1287,3 +1290,802 @@ Next:
   bundle budgets; add a recoverable preview alongside rather than over the
   legacy app; document setup, refresh, preview, rollback, and the final gap
   report; then close only the beta gates that have trustworthy evidence.
+
+## 2026-08-04 — Completion foundation and schedule continuation
+
+Goal:
+
+- Replace the expired seven-night calendar as the terminal plan with an
+  evidence-gated route from the working Night 1–6 vertical slice to complete
+  global data, production serving, preview, validation, cutover, and operations.
+
+Completed:
+
+- Added `COMPLETION_FOUNDATION.md` as the active execution plan without changing
+  the locked product or scientific requirements in `PROJECT_PLAN.md`.
+- Defined the complete-product gate, immediate source-control checkpoint,
+  source/artifact boundary, immutable data-release structure, one-month
+  processing unit, recent-year-first backfill order, and post-cutover Git-history
+  decision.
+- Recorded the measured 112 MiB legacy site, 187 MiB Git pack, ignored 9.7 MiB
+  official bounded sample, and regenerable local dependency footprint.
+- Turned the storage-policy estimates into a large-file strategy: bounded
+  monthly acquisition and reduction, remote raw/canonical/published layers, at
+  least 25 percent capacity headroom, and no climate products in Git or Git LFS.
+- Added a required production-format benchmark for Zarr/COG layouts,
+  quantization tolerance, remote read behavior, and lossless categorical tile
+  encoding before full-year acquisition.
+- Limited proactive cache warming to 17 approved masks, the default pair, the
+  latest three complete years, and zooms 0–4; arbitrary masks and higher zooms
+  remain bounded on-demand work.
+- Defined milestones M0–M9 with exit gates. M0–M8 complete the initial product;
+  M9 handles reverse-chronological history and legacy cleanup only after a
+  monitored cutover.
+- Updated `README.md`, `PROJECT_PLAN.md`, and `SEVEN_DAY_PLAN.md` to route
+  execution through the completion foundation.
+- Updated the active 2:00 AM automation to continue from the earliest incomplete
+  completion milestone rather than stop after the original seven-night window.
+
+Files changed:
+
+- `COMPLETION_FOUNDATION.md`
+- `PROJECT_PLAN.md`
+- `SEVEN_DAY_PLAN.md`
+- `README.md`
+- `progress.md`
+- Codex automation `seven-night-global-thermal-drought-build-2-00-am`
+
+Checks:
+
+- `make foundation-check` passed: 91 Python tests, two variable manifests, strict
+  TypeScript, and 18 frontend tests.
+- `git diff --check` passed; the new completion document has no trailing
+  whitespace.
+- Documentation links and plan terminology checked locally.
+- Repository source, data, dependency, and Git-pack measurements reconciled with
+  the completion plan.
+- No application behavior, climate data, legacy asset, credential, Git history,
+  commit, push, publication, or deployment changed.
+
+Decisions:
+
+- Keep the scientific/product plan authoritative and make the completion
+  foundation authoritative for execution order and operational architecture.
+- Require two complete recent years for initial completion, then backfill
+  history independently toward 1991.
+- Use a canonical scientific array plus measured published spatial format,
+  rather than assuming one representation is optimal for both processing and
+  tile-serving workloads.
+- Keep nightly work autonomous for safe local implementation and validation,
+  while retaining explicit approval gates for commits, pushes, purchases,
+  external resources, deployment, DNS/CORS changes, external contact, legacy
+  deletion, and history rewriting.
+
+Blockers:
+
+- The current Night 1–6 work remains uncommitted; the automation may prepare a
+  checkpoint but cannot commit or tag without explicit authorization.
+- Production object storage, runtime, basemap, external climate review, palette
+  study, and deployment authority remain undecided or external.
+
+Next:
+
+- M0/Night 7: prepare the reviewable checkpoint inventory, add the missing
+  browser/accessibility/performance hardening that can run locally, create a
+  recoverable preview build without replacing the legacy site, and publish an
+  evidence-based beta gap report.
+
+## 2026-08-05 — M0 baseline safety
+
+Goal:
+
+- Close every independent M0 baseline-safety action with a reproducible
+  source/artifact/secret audit and a complete supported check report, while
+  leaving the authorization-controlled legacy tag untouched.
+
+Completed:
+
+- Re-read the automation memory and all five required repository documents in
+  full; inspected Git state, all user changes, package scripts, source/test
+  inventory, ignored artifacts, legacy files, local dependencies, and current
+  milestone gates before editing.
+- Confirmed that `main` and `origin/main` now both point to checkpoint
+  `30596c27616f62e1cd56598e8970225ecc1a8118`, which contains the Night 1–6
+  source, tests, manifests, evidence, and unchanged legacy app. The prior
+  legacy-only commit is `3d5b600839669cb81d953394359a046378eb7e5c`.
+- Added a deterministic repository audit over Git-tracked files and non-ignored
+  untracked commit candidates. It never opens ignored credentials or climate
+  data, reports path/line/type without secret values, checks high-confidence
+  private-key and service-token patterns, and exits nonzero on a violation.
+- Made the audit verify 16 representative ignore paths for credentials, raw,
+  canonical, published, tile, cache, runtime, dependency, build, coverage, and
+  browser artifacts. Expanded the browser-output ignore from one subdirectory
+  to the complete `output/` boundary.
+- Pinned the raster exception to the 744 already tracked legacy files below
+  `docs/data/crops/`. Any new TIFF or WebP, including one placed in that legacy
+  tree, now fails the audit.
+- Added four behavioral tests, a Makefile command, a Python entry point, and CI
+  enforcement. Documented the command and its no-value-echo behavior.
+- Added `pipeline/reports/m0-baseline-safety.md` with the recoverable source
+  state, logical review groups, exact audit and check evidence, local budgets,
+  remaining controlled action, and M0 disposition.
+- Used the Playwright workflow against the live bounded official service.
+  Phoenix inspection reproduced SPEI-3 `-0.5169` / `No drought` and UTCI
+  `31.8961 °C` / `Heat stress`, with two of two valid months and provider
+  drought quality passing. Desktop and phone views remained readable.
+- Updated the status summary. The independent M0 engineering gate is complete;
+  the legacy tag remains visible as an authorization blocker while Night 7 / M1
+  becomes the next independent work.
+
+Files changed:
+
+- `.github/workflows/checks.yml`
+- `.gitignore`
+- `COMPLETION_FOUNDATION.md`
+- `Makefile`
+- `README.md`
+- `pipeline/pyproject.toml`
+- `pipeline/reports/m0-baseline-safety.md`
+- `pipeline/src/thermal_drought/repository_audit.py`
+- `pipeline/tests/test_repository_audit.py`
+- `progress.md`
+
+Checks:
+
+- `make foundation-check`: 95 Python tests, both manifests, strict TypeScript,
+  and 18 frontend tests passed.
+- Acquisition gate: 26 tests passed; the status probe confirmed the installed
+  client and a non-empty local credential without reading or printing it.
+- Normalization/aggregation gate: 24 tests and the exact bounded official
+  sample replay passed.
+- Service gate: 34 tests, both manifests, the four-product official catalogue,
+  and live service self-check passed.
+- Storage gate: seven tests, policy validation, inventory, and one-year
+  preflight passed with 82.23 GiB free, 63.9783% volume use, and a conservative
+  7.51 GiB processing peak. The projected post-operation use is 67.27%.
+- Repository audit: approved 830 source candidates, comprising 826 tracked and
+  four non-ignored untracked files; scanned 86 text files; skipped 744 known
+  legacy binary rasters; verified all 16 ignore probes; found zero candidate
+  path violations and zero high-confidence secret findings.
+- Ruff lint and format passed across 31 Python files; strict mypy passed across
+  22 source modules; Python dependency consistency passed.
+- Vite build passed: application JavaScript 41.25 kB / 13.53 kB gzip,
+  MapLibre JavaScript 1,053.03 kB / 283.19 kB gzip separately, application CSS
+  11.42 kB / 3.46 kB gzip, and MapLibre CSS 69.92 kB / 10.10 kB gzip.
+- Local npm tree passed; offline npm audit reported zero vulnerabilities;
+  `git diff --check` passed before the final documentation append and again in
+  the final tree audit.
+- Live service measurements: health 277 bytes / 0.530 ms; three Phoenix samples
+  1,731 bytes / 9.607–11.564 ms; three zoom-zero development tiles 47,858 bytes
+  / 35.636–36.323 ms.
+- Chromium local navigation load event: 69.8 ms. Browser semantics found zero
+  duplicate IDs, unnamed buttons, unnamed selects, or focusable descendants of
+  `aria-hidden`; one H1 and three live regions were present. Console review
+  found zero errors and four MapLibre/WebGL readback performance warnings.
+- Visual inspection at 1280 × 800 and 390 × 844 passed for the bounded-data
+  label, map, controls, and point readout. Generated screenshots and browser
+  session files remain ignored below `output/`.
+
+Measurements:
+
+- Legacy boundary: 248 TIFFs plus 496 WebPs, 112,292,952 bytes, all already
+  tracked and preserved.
+- Candidate source boundary: 116,348,088 bytes; 4,055,136 text bytes scanned.
+- The 47,858-byte response is development sparse JSON and is below the 200 kB
+  size target, but it is not production raster-tile evidence.
+- Browser and service timings are localhost development measurements, not
+  production p95 claims. Production cached/uncached, CLS, INP, load, and remote
+  latency targets remain unmet.
+
+Decisions:
+
+- Treat `30596c2` as the current source checkpoint and the legacy-only parent
+  `3d5b600` as the proposed recoverable legacy-tag target. Do not rewrite the
+  large existing checkpoint merely to recreate the foundation's logical commit
+  groups.
+- Enforce the artifact boundary against both tracked and commit-candidate files
+  so an untracked secret or climate raster cannot disappear from the local M0
+  report merely because it has not been staged.
+- Keep the audit no-value-echo and high-confidence. It complements ignored-path
+  enforcement without claiming a dedicated external secret-scanning product is
+  installed.
+- Preserve every locked science and service/frontend contract. No climate
+  value, quality rule, month mask, legacy asset, service route, or UI behavior
+  changed in this M0 slice.
+
+Blockers:
+
+- Creating the recoverable legacy tag is prohibited without explicit
+  authorization; no tag was created. This is the only remaining M0 controlled
+  action.
+- Firefox, WebKit, axe, live screen-reader, color-vision, palette-comprehension,
+  and external climate/licensing review tools or reviewers remain unavailable.
+- Only January and July 2024 across four official regions exist. No global or
+  complete-year data, production Zarr/COG benchmark, lossless raster service,
+  object storage, deployment, monitoring, refresh, or rollback rehearsal exists.
+
+Next:
+
+- Begin Night 7 / M1 independently: exercise the required official and clearly
+  labeled structural location cases, add durable browser/accessibility and
+  performance evidence where local tools permit, produce a recoverable preview
+  alongside the untouched legacy app, and finish the beta gap/refresh/rollback
+  handoff without implying global or production readiness.
+
+## 2026-08-06 — Night 7 / M1 recoverable beta preview
+
+Goal:
+
+- Create and validate a recoverable local beta route beside the untouched
+  legacy application, add durable preview preflight and routing coverage, and
+  measure the bounded replacement in a real browser without implying global or
+  production readiness.
+
+Completed:
+
+- Re-read the automation memory and all five required repository documents in
+  full; inspected Git/user changes, package scripts, source/test inventory,
+  ignored artifacts, legacy files, local dependencies, and milestone gates.
+- Kept M0's recoverable legacy tag visible as an explicit-authorization action
+  and resumed the earliest independent milestone, Night 7 / M1.
+- Added a dependency-light local beta router that serves the generated
+  replacement from `/preview/`, the existing `docs/` tree in place from
+  `/legacy/`, and the bounded data service from the same origin at `/api/v1/`.
+- Added a deterministic preview inspector over every generated file. It records
+  bytes, deterministic gzip bytes, and SHA-256, separates MapLibre from the
+  application budget, rejects source maps and symbolic links, and fails when
+  checked frontend budgets are exceeded.
+- Restricted generated manifest writes to ignored `output/`; the checked
+  command produces `output/m1-beta-preview/manifest.json` and leaves
+  `web/dist/`, browser output, climate products, and caches outside Git.
+- Added path-contained static routing with no directory listing, `GET`/`HEAD`
+  bounds, traversal and unsafe-method rejection, `no-store` HTML/legacy
+  responses, immutable fingerprinted preview assets, and clean Ctrl-C shutdown.
+- Added five preview tests covering inventory/budget separation, preview and
+  legacy routes, same-origin API forwarding, cache headers, `HEAD`, traversal,
+  methods, source maps, and symbolic links. Added `make beta-preview-check` and
+  a Python entry point.
+- Documented build, serve, local refresh, and rollback commands in the README
+  and service notes. Added `pipeline/reports/m1-beta-handoff.md` with measured
+  browser/bundle evidence and an explicit beta/production gap report.
+- Used the Playwright CLI workflow against the combined preview route. Exercised
+  the official Phoenix hot/arid, Paris temperate, Fairbanks cold, and southern
+  provider-quality cases, plus phone, tablet, laptop, and wide layouts.
+- Verified Phoenix SPEI-3 `-0.5169` / `No drought` and UTCI `31.8961 °C` /
+  `Heat stress`; the southern case kept drought as no data after provider
+  quality failed while preserving UTCI `-14.1558 °C` / `Cold stress`.
+
+Files changed:
+
+- `Makefile`
+- `README.md`
+- `pipeline/pyproject.toml`
+- `pipeline/reports/m1-beta-handoff.md`
+- `pipeline/src/thermal_drought/preview.py`
+- `pipeline/tests/test_preview.py`
+- `services/README.md`
+- `progress.md`
+
+Checks:
+
+- `make foundation-check`: 100 Python tests, both manifests, strict TypeScript,
+  and 18 Vitest tests passed.
+- Acquisition gate: 26 tests passed; the secret-safe status probe confirmed the
+  installed CDS client and non-empty local credential without printing values.
+- Normalization/aggregation gate: 24 tests and the exact bounded official
+  replay passed.
+- Service gate: 34 tests, both manifests, the four-product official catalogue,
+  and service self-check passed.
+- Storage gate: seven tests, policy validation, inventory, and one-year
+  preflight passed at 82.00 GiB free and 64.0792% volume use; the conservative
+  7.51 GiB peak projects 67.3709% use.
+- Preview gate: the build and generated manifest passed; five focused preview
+  tests also passed independently.
+- Ruff lint and format passed across 33 Python files; strict mypy passed across
+  23 source modules; Python dependency consistency passed.
+- Vite production build, local npm tree, and offline npm audit with zero
+  vulnerabilities passed. Platform- and feature-specific npm packages remain
+  optional and were not installed.
+- Repository audit approved 833 source candidates: 826 tracked and seven
+  non-ignored untracked. It scanned 89 text files / 4,090,769 bytes, skipped
+  the 744 grandfathered legacy rasters, verified all 16 ignore probes, and
+  found zero path or high-confidence secret violations.
+- `git diff --check` passed. All 753 legacy files remained in place; generated
+  preview, browser, dependency, cache, and climate artifacts remained ignored.
+- Live route checks returned HTTP 200 for preview, legacy, health, and
+  availability. The API remained official evidence true, fixture false, four
+  products, January/July only, and no complete year.
+- Chromium accessibility-oriented DOM audit: zero duplicate IDs, unnamed
+  controls, or hidden focusables; one H1, two status regions, and nine labeled
+  legend buttons.
+- Chromium console: zero errors. Nineteen cumulative MapLibre/WebGL readback
+  warnings followed repeated navigation, resizing, and screenshots; one
+  deprecation warning came from the layout-shift measurement probe.
+- Visual review passed at 390 × 844, 768 × 1024, 1280 × 800, and 1600 × 1000.
+  Screenshots remain ignored below `output/playwright/`.
+
+Measurements:
+
+- Generated preview: five files, 1,176,887 bytes raw and 309,916 deterministic
+  gzip bytes including MapLibre.
+- Application JavaScript: 41,251 bytes / 13,508 deterministic gzip bytes versus
+  the 256,000-byte limit. Initial application data excluding MapLibre: 17,621
+  gzip bytes versus the 1,048,576-byte limit.
+- MapLibre remains separate at 1,053,029 JavaScript bytes / 282,253 gzip and
+  69,918 CSS bytes / 10,042 gzip.
+- Legacy route inventory: 753 files, 744 rasters, and 115,454,861 bytes served
+  in place; no file was copied, moved, or modified.
+- Local Chromium DOM content loaded: 51.4 ms; load event: 59.4 ms; cumulative
+  layout shift: `0`.
+- Uncached single-month development JSON tile: 47,819 bytes / 64.3 ms. Cached
+  Jan/Jul development JSON tile: 47,858 encoded bytes / 0.3 ms with zero
+  transfer bytes. Southern point response: 14.3 ms.
+- Month-control feedback reached the next animation frame in 4.6 ms when
+  deselecting January and 26.1 ms when restoring it.
+- Browser and service timings are local single-run observations, not
+  representative-device or production p95 evidence. Development JSON is not a
+  production raster tile.
+
+Decisions:
+
+- Keep the beta build generated and ignored. Serve it alongside, rather than
+  copy it over, the legacy root until later release gates authorize cutover.
+- Use one loopback origin for preview/API behavior so M1 can validate real
+  same-origin requests without adding permissive CORS or embedding a production
+  endpoint.
+- Treat `/legacy/` and process shutdown as the local rollback. Do not present
+  this as immutable remote release promotion, production rollback, or a
+  deployed preview.
+- Keep M1 active. The preview/build portion is complete, but missing structural
+  locations and unavailable browser/accessibility tools prevent the Night 7
+  exit gate from closing.
+- Preserve all locked UTCI, SPEI-3, selected-month median, 75% validity,
+  provider-quality, missing-data, and one/two-variable behavior. This slice
+  changes routing and validation only, not climate semantics.
+
+Blockers:
+
+- Tropical, coastal, mountain, urban-adjacent, and broader no-data cases are not
+  in the bounded official sample. They need conspicuously structural fixtures
+  or additional official acquisition; no observation was fabricated.
+- Firefox, WebKit, axe, live screen-reader, grayscale, and color-vision tooling
+  remains unavailable. Current evidence is Chromium, semantic DOM checks,
+  keyboard behavior, deterministic text contrast, and responsive visuals.
+- The palette remains developmental; external climate/licensing review and the
+  required palette-comprehension study remain open.
+- No complete/global year, production Zarr/COG benchmark, raster tile, remote
+  store, runtime, basemap, CDN/CORS, monitoring, deployment, refresh, rollback,
+  or production performance evidence exists.
+- Creating the recoverable legacy tag remains prohibited without explicit
+  authorization.
+
+Next:
+
+- Continue M1 with deterministic, conspicuously non-climate structural
+  golden-location coverage for tropical, coastal, mountain, urban-adjacent,
+  and no-data cases. Exercise them through the unchanged aggregation, service,
+  point interpretation, legend, and browser paths, then update the beta gap
+  report without publishing the fixtures as observations.
+
+## 2026-08-06 — Sicily-only scope transition and completion push
+
+Active milestone:
+
+- Scope reset, M2 format architecture, and the independent implementation
+  portions of M3, M4, M5, and M6. Official M3 evidence is the first blocking
+  gate; later official-data gates remain fail-closed behind it.
+
+Goal:
+
+- Replace the global target with Sicily only and carry out every remaining
+  in-scope task that does not require unavailable provider data, external
+  review, deployment authority, or a prohibited release action.
+
+Completed:
+
+- Re-read the five required project documents and automation memory in full;
+  inspected Git status and diffs, all user changes, package scripts, repository
+  inventory, ignored-artifact boundaries, dependencies, credentials without
+  values, storage, and milestone gates before editing.
+- Made `config/scope.json` the geographic contract using Istat's generalized
+  1 January 2026 Sicilia region boundary (`COD_REG=19`). Recorded the official
+  archive URL and SHA-256, source CRS, WGS84 bounds, provider-aligned acquisition
+  box, constrained map view, limitations, and the 44 exact 0.25° ERA5 cell
+  centers whose centers fall inside the multipolygon.
+- Changed the authoritative product, execution foundation, sprint notes,
+  README, storage/service notes, app identity, package identities, schema title,
+  coverage, navigation, and release target from global to Sicily. Historical
+  evidence reports and the untouched legacy app remain explicitly historical.
+- Added strict scope loading and membership validation. Normalization now
+  requires every configured center, writes a `sicily_scope_mask`, masks all
+  other climate cells to no data, preserves quality/count semantics, and emits
+  one checksum-bound product for each of 2024 and 2025 with 24 golden samples.
+- Replaced the current acquisition defaults with an exact 60-request plan: 24
+  UTCI monthly daily-maximum containers, 24 deterministic selected-year SPEI-3
+  containers, and 12 calendar-month provider-quality containers. Capped CDS
+  retries at three attempts, ten seconds maximum delay, and 120 seconds per
+  request while preserving atomic, restartable receipts and exact plan audit.
+- Added the Sicily local-storage policy and two-year preflight. The policy
+  permits only the initial two years locally, blocks a third, keeps every
+  managed directory quota, forbids automatic deletion, and preserves the
+  standard-mask-only prewarm policy.
+- Added and measured a conspicuously structural format benchmark. Selected one
+  compressed NetCDF product per Sicily year plus lossless sparse JSON delivery;
+  Zarr/COG/raster tiles remain future scale triggers, not prerequisites for 44
+  cells. Added the M2 architecture and M3 data-plane reports.
+- Made the service scope-aware: outside-mask cells never enter tiles and points
+  outside the Sicily mask return explicit no data. It validates release mask
+  count and checksum/provenance bindings before serving.
+- Constrained MapLibre to Sicily bounds with no world copies or external
+  basemap, replaced the globe-like empty reference with a regional grid,
+  retained variable-neutral one/two-variable behavior and all 4095 masks, and
+  added Sicily-specific source, methodology, limitation, and accessibility
+  copy. Planned manifests now fail closed instead of presenting target years as
+  partial observations.
+- Exercised authenticated bounded provider probes for Sicily UTCI January 2025
+  and 2024, the previously proven Phoenix UTCI control, and Sicily SPEI-3
+  January 2025. Every probe returned HTTP 500 after the capped retries. No
+  partial response, receipt, official report, or fabricated substitute was
+  accepted.
+
+Files changed:
+
+- Product and execution documents: `PROJECT_PLAN.md`,
+  `COMPLETION_FOUNDATION.md`, `SEVEN_DAY_PLAN.md`, `README.md`, `progress.md`,
+  and `services/README.md`.
+- Contracts and policy: `config/scope.json`, `config/app.json`,
+  `config/manifest.schema.json`, both variable manifests,
+  `config/storage-policy.json`, `.gitignore`, CI, Makefile, and package metadata.
+- Pipeline/service: scope, acquisition, storage, normalization, API, format
+  benchmark, preview/repository audit foundations, M2/M3 reports, and their
+  tests.
+- Frontend: app, data, inspection, map, registry, state, styles, types, HTML,
+  package lock, and tests.
+
+Checks:
+
+- `make foundation-check`: 107 Python tests passed and one official-release
+  integration test skipped because the ignored Sicily products are absent; two
+  manifests validated; TypeScript passed; all 18 Vitest tests passed.
+- Acquisition: 29 tests and secret-safe credential/client status passed. Exact
+  inspection correctly failed with 0 of 60 artifacts and plan SHA-256
+  `61bbffbe2e6d742148c5d1c0f2ff3aee149bd34a7291736f575898bfe74860f6`.
+- Normalization: all 25 scientific/unit tests passed; the production command
+  correctly stopped before creating a report because the exact non-fixture
+  acquisition plan is incomplete.
+- Service: 34 tests passed and one official-release integration test skipped;
+  contract validation passed; startup correctly failed because
+  `pipeline/reports/sicily-release-v1.json` does not exist.
+- Storage: seven tests, validation, status, and two-year preflight passed.
+  Repository audit approved 840 source candidates, scanned 96 text files and
+  4,137,478 bytes, skipped 744 grandfathered legacy rasters, verified all 16
+  ignore probes, and found zero path or high-confidence secret violations.
+- Format benchmark, beta preview inspection, Ruff lint/format, strict mypy over
+  25 modules, Python dependency consistency, npm dependency tree, offline npm
+  audit with zero vulnerabilities, production build, and `git diff --check`
+  passed.
+- Chromium at 1280 × 800 and 390 × 844 showed the bounded regional grid,
+  constrained controls, visible structural-fixture disclosure, correct planned
+  source copy, and zero console warnings/errors under a conspicuously labeled
+  no-observation browser response. The production no-service state separately
+  showed no analysis year and no substituted climate value.
+
+Measurements:
+
+- Scope: Istat WGS84 bbox `11.926367598, 35.493451470,
+  15.653298694, 38.817700907`; acquisition grid 16 × 17; 44 included centers.
+- Storage: 81.90 GiB free; 64.1236% current volume use; conservative two-year
+  peak 654,311,424 bytes; projected 64.3906% use with 81.33 GiB free.
+- Structural format benchmark: 28,629-byte compressed NetCDF; 22,594-byte
+  sparse JSON / 5,610-byte deterministic gzip; exact round-trip parity; 53.233
+  ms local write and 12.285 ms point open/read/close. These are structural local
+  timings, not climate observations or production p95 evidence.
+- Preview: five files, 1,180,050 bytes raw / 311,100 deterministic gzip;
+  application JavaScript 44,210 / 14,647 gzip; initial application data 18,805
+  gzip; MapLibre measured separately at
+  1,053,029 / 282,253 gzip JavaScript and
+  69,918 / 10,042 gzip CSS.
+
+Decisions:
+
+- Sicily is the sole active product scope. Historical global/representative
+  evidence remains labeled and is not reused as Sicily observations.
+- Two complete target years, one NetCDF per year, and sparse JSON are sufficient
+  for the 44-cell release; object storage and raster delivery are not required
+  until measured scale triggers or a third year.
+- Keep manifests `planned`, retrieval timestamps null, service startup
+  fail-closed, and the frontend's production fallback empty until official
+  checksummed products exist.
+- Preserve all locked UTCI, SPEI-3, equal-weight median, 75% validity,
+  provider-quality, no-missing-to-zero, one/two-variable, and month-mask
+  semantics. Do not begin M9, deployment, cutover, or legacy cleanup.
+
+Blockers:
+
+- Copernicus CDS processing returned HTTP 500 for both products and the proven
+  control. This leaves 0/60 official artifacts, 0/24 source pairs, and 0/2
+  complete year products, blocking official M3, M5, service, and preview gates.
+- M0's recoverable legacy tag still requires explicit authorization.
+- Climate/licensing signoff, palette-comprehension research, axe/live
+  screen-reader, color-vision, Firefox/WebKit, representative production
+  performance, deployment authority, monitoring, and rollback rehearsal require
+  unavailable tools, external people, or user authorization.
+
+Next:
+
+- Retry `thermal_drought.acquire fetch`; if CDS succeeds, run
+  `make sicily-release-check`, record exact official bytes/timings and golden
+  values, exercise the official two-year preview, and resume the earliest
+  remaining external/release gate. If CDS still fails, keep the release planned
+  and continue only independent validation work.
+
+## 2026-08-07 — M3/M5 official Sicily release
+
+Active milestone:
+
+- M3 official Sicily data plane and M5 second-year reproducibility. M2's
+  measured format decision is now confirmed with official payloads. M1 remains
+  the earliest independently actionable incomplete milestone because M0's tag
+  and several M1 review/tool gates require authorization or unavailable tools.
+
+Goal:
+
+- Resume the exact bounded provider plan, publish both complete official Sicily
+  years without weakening the scientific or artifact boundaries, validate the
+  release through the service and real browser, and leave one coherent M3/M5
+  handoff rather than advancing to historical backfill.
+
+Completed:
+
+- Re-read the automation memory and all five required project documents in
+  full. Inspected Git state, repository files, scripts, ignores, storage,
+  credential availability without values, and every existing dirty change;
+  no post-run user change was found and all prior work was preserved.
+- Re-ran the conservative two-year capacity preflight before retrieval. The
+  first sandboxed provider attempt stopped after capped DNS failures; the
+  authorized network retry resumed the exact plan and completed all 60 serial,
+  atomic partitions without changing the plan fingerprint.
+- Acquired 24 UTCI monthly containers of daily maxima, 24 deterministic
+  selected-year SPEI-3 containers, and 12 shared reference-period provider-
+  quality containers. Wrote checksum-bound receipts and retained all provider
+  archives below ignored `data/raw/`.
+- Completed the exact source audit with 60/60 artifacts, 24 UTCI/SPEI grid
+  comparisons, 24 SPEI/quality comparisons, official evidence true, and no
+  missing, unexpected, duplicate, fixture, checksum, provenance, coordinate,
+  or unit issue.
+- Normalized one compressed, atomically published NetCDF for each of 2024 and
+  2025. Both contain all 12 monthly layers on the provider box, preserve only
+  the 44 Istat-admitted Sicily cell centers, mask outside cells to no data, and
+  retain daily-valid counts and provider quality state.
+- Found that the first official golden records used the provider-box midpoint,
+  which is outside the Istat mask. Changed Sicily golden selection to the
+  in-scope cell nearest the configured initial map center, added a regression
+  test, regenerated all 24 golden records at 13.75°E / 37.5°N, and isolated the
+  historical representative replay test from the new Sicily raw root.
+- Found a second M5 issue during the final composite rerun: unchanged Sicily
+  products were replaced because decoded fill sentinels made the in-memory and
+  on-disk datasets compare differently. The atomic writer now compares the
+  serialized candidate with the serialized current product before replacement.
+  A repeat-run regression test confirms unchanged checksums and modification
+  times even with outside-scope quality sentinels.
+- Published both variable manifests against `sicily-2024-2025-v1`, their exact
+  2024/2025 coverage, provider retrieval-completion timestamps, and licences.
+  Added a service gate that rejects official products paired with planned
+  manifests, missing retrieval timestamps, or mismatched published years.
+- Exercised the official release locally in Chromium. Verified 2025 and 2024,
+  all-year and disjoint `109` masks, univariate and bivariate modes, source
+  retrieval metadata, official point values, responsive phone/desktop layouts,
+  semantic control names, status regions, and a clean console. Screenshots and
+  browser output remain ignored.
+- Updated the README, service handoff, M1 beta report, M2 architecture record,
+  and M3 data-plane record. M3 and M5 are complete; no deployment, release
+  pointer, DNS/CORS, tag, commit, push, legacy mutation, or M9 work occurred.
+
+Files changed in this run:
+
+- `config/manifest.schema.json`, `config/variables/spei_3.json`, and
+  `config/variables/utci_daymax_median.json`.
+- `pipeline/src/thermal_drought/api/core.py`,
+  `pipeline/src/thermal_drought/normalize/core.py`,
+  `pipeline/tests/test_normalization.py`, `pipeline/tests/test_service.py`, and
+  `web/src/registry.test.ts`.
+- `pipeline/reports/sicily-source-audit-v1.json`,
+  `pipeline/reports/sicily-release-v1.json`, and the M1–M3 reports.
+- `README.md`, `services/README.md`, and `progress.md`.
+
+Checks:
+
+- `make foundation-check`: 111 Python tests, both published manifests, strict
+  TypeScript, and all 18 Vitest tests passed.
+- `make acquisition-check`: 29 tests passed; the secret-safe status probe
+  confirmed the installed CDS client and non-empty credential file. A restart
+  fetch checksum-verified all 60 partitions as `verified-existing` without a
+  new provider request.
+- `make sicily-release-check`: the 60-artifact inspection, 27 normalization and
+  aggregation tests, official normalization, 36 service/aggregation/
+  classification tests, manifest validation, and service self-check passed.
+- Storage: seven tests, policy validation, live inventory, and the two-year
+  preflight passed. Format parity: one structural benchmark test and its exact
+  value/nodata/quality/mask round trip passed.
+- Preview: TypeScript and Vite production build, artifact inspection, legacy
+  inventory, route contract, source-map/symlink rejection, and both transfer
+  budgets passed. Repository audit approved 842 source candidates, skipped the
+  744 grandfathered legacy rasters, verified all 16 ignore probes, and found no
+  path or high-confidence secret violation.
+- Ruff lint and format passed across 37 Python files; strict mypy passed across
+  25 source modules; Python dependency consistency, local npm tree, offline npm
+  audit with zero vulnerabilities, and `git diff --check` passed.
+- Real Chromium returned HTTP 200 for availability and tiles; its console had
+  zero errors and warnings. The DOM audit found zero duplicate IDs, unnamed
+  controls, or hidden focusables, with one H1 and two status regions.
+
+Measurements:
+
+- Acquisition plan SHA-256:
+  `61bbffbe2e6d742148c5d1c0f2ff3aee149bd34a7291736f575898bfe74860f6`.
+  Raw artifacts total 29,780,288 bytes and receipts 674,186 bytes. The provider
+  retrieval window was 09:05:37–09:39:40 UTC; summed retrieval duration was
+  2,081.108 seconds, median 29.507 seconds, and maximum 55.128 seconds.
+- Inspection covered 767 archive members / 29,592,142 expanded bytes and took
+  6.00 seconds. Normalization took 13.57 seconds. The final 2024 product is
+  47,317 bytes with SHA-256
+  `99aed5cd511054b3b4d5d38bb5a4f320752ac3c86565657680dbaa4e56544fc9`;
+  2025 is 47,362 bytes with SHA-256
+  `be458e6db12e9048f4c11bd3b302f7a7daef946f73a87e8e58da33f2303ef8e4`.
+  A subsequent normalization preserved both hashes and mtimes.
+- The 2025 all-year golden point returned SPEI-3 `0.06751701608300209`
+  and UTCI `24.102968215942383 °C`, 12/12 valid months each, and provider
+  drought quality passing 12/12. The 2024 values were `-0.7856411337852478`
+  and `25.4141788482666 °C`.
+- Across 20 calls per year, compact all-year tile medians were 9.997–10.486 ms
+  and point medians 9.665–10.164 ms. WSGI all-year tile bodies were
+  58,197–58,258 bytes; compact deterministic gzip was 2,772–2,791 bytes. These
+  are local measurements, not production p95 evidence.
+- The final preview has five files, 1,180,118 raw bytes / 311,137 deterministic
+  gzip. Application JavaScript is 44,278 bytes / 14,683 gzip and initial
+  application data is 18,842 gzip; both pass their budgets. MapLibre remains
+  separate at 1,053,029 / 282,253 gzip JavaScript bytes and 69,918 / 10,042
+  gzip CSS bytes.
+- Storage reported 80.89 GiB free and 64.5657% volume use. The conservative
+  two-year peak remains 654,311,424 bytes and projects 64.8327% use. The final
+  structural benchmark was 28,629-byte NetCDF, 22,594-byte sparse JSON /
+  5,610-byte gzip, 63.827 ms write, and 13.645 ms point open/read/close.
+- Chromium DOM content loaded in 51.0 ms and the load event in 52.1 ms at the
+  local preview. Phone and desktop screenshots showed readable controls and a
+  useful map without overlap.
+
+Decisions:
+
+- Close M3 and M5. The complete official release confirms M2's one-compressed-
+  NetCDF-per-year plus lossless sparse JSON architecture; no measured scale
+  trigger justifies Zarr, COG, raster tiles, CDN, or object storage for two
+  years and 44 cells.
+- Keep conservative pre-acquisition estimates in the safety policy despite the
+  smaller measured release. They are guardrails, not storage forecasts.
+- Treat the source timestamp as retrieval completion, keep quality layers
+  separate from selected-year SPEI-3, and require published manifests before
+  an official service can start.
+- Preserve official and structural evidence as separate paths. Do not invent
+  tropical or cold Sicily observations, weaken the 75% rule, substitute zero
+  for missing data, reinterpret the SPEI reference period, or start M9.
+
+Blockers:
+
+- M0's recoverable legacy tag still requires explicit authorization.
+- M1 still lacks conspicuously structural tropical, cold, mountain, coastal,
+  urban-adjacent, and broader no-data golden cases. Firefox, WebKit, axe, a live
+  screen reader, grayscale/color-vision tools, independent climate/licensing
+  review, and palette-comprehension research remain unavailable or external.
+- M4 and M6–M8 still require production container/runtime limits, metrics,
+  cache and representative-device performance evidence, hosted artifact
+  authority, deployment/routing decisions, monitoring, refresh, security and
+  rollback rehearsal. No unavailable gate is claimed complete.
+
+Next:
+
+- Resume M1 with a conspicuously labeled structural golden-location matrix and
+  exercise it through the unchanged aggregation, service, point, legend, and
+  browser paths without publishing it as climate observation. If external M1
+  tools remain unavailable, continue the next independent M4 runtime/security
+  slice while preserving the official release and all authorization limits.
+
+## 2026-08-30 — Completion engineering, production readiness, and honest cutover boundary
+
+Goal:
+
+- Execute every remaining engineering and rehearsal step without making a
+  Codex Site, preserve the legacy recovery boundary, and distinguish completed
+  local evidence from production infrastructure and independent human gates.
+
+Completed:
+
+- Created and verified the annotated local tag `legacy-mediterranean-v1` at the
+  last legacy-only commit `3d5b600`; the legacy tree remains unchanged.
+- Added 11 explicitly structural, non-observational scenarios covering all nine
+  bivariate class pairs plus quality failure and no data. The same aggregation,
+  point, map-response, mask, and class paths pass parity without presenting the
+  scenarios as Sicily observations.
+- Reconfirmed the compressed one-NetCDF-per-year and lossless sparse JSON
+  architecture from measured official payloads; no scale trigger justifies
+  Zarr, COG, raster tiles, or a CDN for 44 cells and two years.
+- Added deterministic immutable release bundles; bounded HTTPS/file download;
+  checksum and archive safety validation; versioned install, atomic promote,
+  and rollback; and environment-driven container materialization.
+- Wrapped the WSGI API with bounded concurrency, rate, timeout, response size,
+  cache entries/bytes, atomic file caching, conditional ETags, same-origin or
+  allowlisted CORS, security headers, `/live`, `/ready`, and privacy-safe
+  `/metrics`.
+- Added separate non-root API and Vite/nginx frontend containers, read-only
+  filesystems, capability drops, CPU/memory/PID/temp bounds, same-origin `/api/`
+  proxying, health checks, CSP and browser security headers. No Codex Site was
+  created or used.
+- Rehearsed the exact 17-mask × two-year × zoom-0–4 cache warm; cold/warm tile
+  and point budgets; all-cell map/point parity; invalid method, origin, mask,
+  zoom, and dataset rejection; privacy-safe metrics; and promote/rollback/
+  restore behavior.
+- Added current official dataset/licence links, Istat transformed-boundary
+  attribution, visible Copernicus attribution/disclaimer, methodology, data
+  dictionary, operations runbook, security policy, incident response, and M6–M8
+  evidence reports.
+- Reworked the circular month interaction into twelve 48-pixel native buttons,
+  retained the ordered checklist fallback, made data freshness visible, removed
+  duplicate fallback markers after MapLibre readiness, and preserved URL,
+  variable, year, point, retry, no-data, and quality semantics.
+- Added deterministic protanopia, deuteranopia, tritanopia, grayscale,
+  text-alternative, and contrast checks. Chromium, Firefox, and WebKit load the
+  final official release on desktop/mobile, switch year, inspect a cell, and
+  report zero axe violations. The only axe needs-review result is the map title
+  overlay, manually confirmed as dark text on a solid near-white background.
+- Added non-promoting monthly refresh, production health/freshness, conventional
+  image release, container build/config, dependency audit, SBOM, provenance,
+  and frontend-artifact workflows.
+- Added a fail-closed monitor and refresh rehearsal. The refresh rebuilds both
+  official years below ignored output, proves decoded scientific equivalence,
+  and confirms the active release is unchanged; HDF5 byte differences are
+  explicitly not misrepresented as scientific differences.
+
+Evidence:
+
+- M4 runtime: 170 prewarm requests / 9,831,875 cache bytes; cold tile p95
+  12.483 ms; warm tile p95 0.139 ms; warm point p95 0.119 ms; 58,258-byte
+  maximum body; all budgets pass.
+- Parity: all 44 cells × two years passed (88 map/point comparisons), including
+  class distributions and no-data state.
+- Browser: Chromium/Firefox/WebKit core flows passed with zero application
+  console errors and zero axe violations. Final Chromium DOMContentLoaded was
+  25.0 ms, load 26.9 ms, cached year update 14.7 ms, and observed CLS 0.
+- Frontend: 20 Vitest tests pass. Application JS is 46.45 kB / 15.33 kB gzip;
+  application CSS is 11.81 kB / 3.52 kB gzip. npm reports zero known
+  vulnerabilities.
+- Monitor: official evidence true, latest complete year 2025, source freshness
+  23.25 days against a 120-day limit, 5.204 ms maximum local endpoint latency,
+  privacy contract present, and zero failures.
+- Refresh: 2024 and 2025 each retain 12 months and 44 included cells; both are
+  scientifically equivalent to the active release and the active release is
+  unchanged.
+
+Decisions:
+
+- Close M0–M6 engineering work and the automated portions of M7 and M8. The
+  conventional containers and generated CI artifact replace the earlier
+  static-site assumption; production remains one origin with the API private
+  behind nginx/load balancing.
+- Do not self-approve the explicitly independent climate, licensing,
+  palette-comprehension, or live assistive-technology gates.
+- Do not claim deployment from a local preview. No public endpoint, durable
+  release object, DNS/TLS target, alert receiver, infrastructure credential, or
+  monitored release cycle was supplied.
+- Do not begin M9 backfill or remove `docs/` until independent M7 approvals and
+  a monitored M8 public release are complete.
+
+Remaining:
+
+- Owner/infrastructure: provide the public container target, registry release,
+  durable HTTPS release-bundle URL and digest, DNS/TLS, production variable
+  `PRODUCTION_API_BASE`, and alert receiver; run and observe one release cycle.
+- Independent reviewers: approve climate semantics and golden evidence,
+  licensing/attribution, palette comprehension, and live assistive-technology
+  use.
+- After those gates only: backfill years in reverse chronology, compare each
+  release, then remove the active legacy tree and make the repository-size
+  decision as independently recoverable M9 changes.

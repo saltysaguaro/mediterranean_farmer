@@ -1,6 +1,7 @@
 {
   "schema_version": "1.0",
-  "title": "Global Thermal Comfort × Drought",
+  "title": "Sicily Thermal Comfort × Drought",
+  "scope": "scope.json",
   "variable_schema": "manifest.schema.json",
   "variables": [
     "variables/utci_daymax_median.json",
@@ -15,12 +16,24 @@
   "maximum_active_variables": 2,
   "service": {
     "api_version": "v1",
-    "dataset_version": "night-3-official-sample-v1",
-    "development_api_base": "/api",
-    "palette_version": "development-1",
-    "maximum_zoom": 6,
-    "maximum_product_files": 64,
-    "maximum_development_cells_per_product": 4096,
-    "release_report": "pipeline/reports/night-3-normalization.json"
+    "dataset_version": "sicily-2024-2025-v1",
+    "api_base": "/api",
+    "palette_version": "sicily-bivariate-v1",
+    "maximum_zoom": 9,
+    "maximum_product_files": 8,
+    "maximum_cells_per_product": 512,
+    "release_report": "pipeline/reports/sicily-release-v1.json",
+    "runtime": {
+      "request_timeout_seconds": 5,
+      "maximum_response_bytes": 204800,
+      "maximum_concurrency": 8,
+      "requests_per_minute": 120,
+      "cache_directory": "data/cache/responses",
+      "maximum_cache_entries": 512,
+      "cache_maximum_bytes": 268435456,
+      "allowed_origins": [
+        "same-origin"
+      ]
+    }
   }
 }

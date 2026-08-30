@@ -16,7 +16,7 @@ void startApplication(app).catch((error: unknown) => {
   eyebrow.className = "eyebrow";
   eyebrow.textContent = "Application error";
   const heading = document.createElement("h1");
-  heading.textContent = "Global Thermal Comfort × Drought";
+  heading.textContent = "Sicily Thermal Comfort × Drought";
   const detail = document.createElement("p");
   detail.textContent = message;
   section.append(eyebrow, heading, detail);

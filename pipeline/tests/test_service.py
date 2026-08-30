@@ -11,7 +11,7 @@ import pytest
 import xarray as xr
 
 from thermal_drought.api.app import WsgiApplication, create_app
-from thermal_drought.api.core import DataService, ServiceError
+from thermal_drought.api.core import DataService, ServiceError, _validate_official_publication
 from thermal_drought.months import months_to_mask
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
@@ -160,6 +160,57 @@ def test_health_and_availability_label_fixture_scope(fixture_service: DataServic
     assert availability["maximum_active_variables"] == 2
 
 
+def test_official_release_rejects_planned_manifest(fixture_service: DataService) -> None:
+    spei = fixture_service.registry.variables["spei_3"]
+    registry = replace(
+        fixture_service.registry,
+        variables={
+            **fixture_service.registry.variables,
+            "spei_3": replace(spei, publication_status="planned"),
+        },
+    )
+
+    with pytest.raises(ValueError, match="official release manifest is not published"):
+        _validate_official_publication(registry, {2024, 2025})
+
+
+def test_service_excludes_cells_outside_release_scope_mask(
+    fixture_service: DataService,
+) -> None:
+    product = replace(
+        fixture_service.release.products[0],
+        included_indices=frozenset({(0, 0)}),
+    )
+    scoped = DataService(
+        fixture_service.registry,
+        replace(fixture_service.release, products=(product,)),
+    )
+
+    outside, _ = scoped.sample(
+        ["spei_3", "utci_daymax_median"],
+        2024,
+        months_to_mask([1]),
+        34.0,
+        -112.0,
+    )
+    tile, _ = scoped.tile(
+        "sicily-2024-2025-v1",
+        ["spei_3", "utci_daymax_median"],
+        2024,
+        months_to_mask([1]),
+        0,
+        0,
+        0,
+    )
+
+    assert outside["status"] == "no_data"
+    assert outside["reason"] == "outside_sicily_scope"
+    assert "grid_cell" not in outside
+    assert len(tile["cells"]) == 1
+    assert tile["cells"][0]["row"] == 0
+    assert tile["cells"][0]["column"] == 0
+
+
 def test_point_uses_provider_january_spei_without_recomputation(
     fixture_service: DataService,
 ) -> None:
@@ -177,7 +228,7 @@ def test_point_uses_provider_january_spei_without_recomputation(
     assert spei["class_index"] == 0
     assert spei["class_label"] == "Severe or extreme drought"
     assert spei["quality_state"] == "passes"
-    assert spei["source"]["sample_retrieved_at"].startswith("2026-07-27T23:39:03")
+    assert spei["source"]["sample_retrieved_at"] == "2026-08-07T09:39:40.662926+00:00"
     assert utci["value"] == 8.0
     assert utci["class_label"] == "Cold stress"
 
@@ -194,7 +245,7 @@ def test_point_and_corresponding_tile_cell_are_identical(
         -112.0,
     )
     tile, tile_etag = fixture_service.tile(
-        "night-3-official-sample-v1",
+        "sicily-2024-2025-v1",
         ["spei_3", "utci_daymax_median"],
         2024,
         mask,
@@ -217,7 +268,7 @@ def test_point_and_corresponding_tile_cell_are_identical(
     assert point["variables"][0]["quality_state"] == "low_quality"
     assert point["variables"] == tile_cell["variables"]
     assert point_etag != tile_etag
-    assert tile["format"] == "development_sparse_grid_cells"
+    assert tile["format"] == "lossless_sparse_grid_cells_v1"
 
 
 def test_cache_identity_changes_with_axis_or_classification(
@@ -362,11 +413,11 @@ def test_artificial_third_variable_uses_generic_median_classification_and_sampli
         ),
         (
             lambda service: service.tile(
-                "night-3-official-sample-v1",
+                "sicily-2024-2025-v1",
                 ["spei_3"],
                 2024,
                 0x001,
-                7,
+                10,
                 0,
                 0,
             ),
@@ -432,11 +483,11 @@ def test_wsgi_health_sample_tile_and_bounded_error(fixture_service: DataService)
     )
     tile_status, tile_headers, tile = _request(
         application,
-        "/v1/tiles/night-3-official-sample-v1/spei_3/utci_daymax_median/2024/001/0/0/0",
+        "/v1/tiles/sicily-2024-2025-v1/spei_3/utci_daymax_median/2024/001/0/0/0",
     )
     error_status, _, error = _request(
         application,
-        "/v1/tiles/night-3-official-sample-v1/spei_3/-/2024/001/0/1/0",
+        "/v1/tiles/sicily-2024-2025-v1/spei_3/-/2024/001/0/1/0",
     )
 
     assert health_status == 200
@@ -451,23 +502,23 @@ def test_wsgi_health_sample_tile_and_bounded_error(fixture_service: DataService)
     assert error["error"]["code"] == "invalid_tile_coordinate"
 
 
-def test_official_sample_point_and_tile_agree_when_local_products_exist() -> None:
+def test_official_sicily_point_and_tile_agree_when_local_products_exist() -> None:
     outputs = load_official_output_paths()
     if not outputs or not all(path.is_file() for path in outputs):
-        pytest.skip("ignored official Night 3 products are not present")
+        pytest.skip("ignored official Sicily release products are not present")
     service = DataService.from_repository(REPOSITORY_ROOT)
-    mask = months_to_mask([1, 7])
+    mask = months_to_mask(range(1, 13))
     point, _ = service.sample(
         ["spei_3", "utci_daymax_median"],
-        2024,
+        2025,
         mask,
-        34.0,
-        -112.0,
+        37.5,
+        13.75,
     )
     tile, _ = service.tile(
-        "night-3-official-sample-v1",
+        "sicily-2024-2025-v1",
         ["spei_3", "utci_daymax_median"],
-        2024,
+        2025,
         mask,
         0,
         0,
@@ -476,7 +527,7 @@ def test_official_sample_point_and_tile_agree_when_local_products_exist() -> Non
     matching = next(
         cell
         for cell in tile["cells"]
-        if cell["region_id"] == "hot_arid_phoenix"
+        if cell["region_id"] == "sicily"
         and cell["latitude"] == point["grid_cell"]["latitude"]
         and cell["longitude"] == point["grid_cell"]["longitude"]
     )
@@ -484,11 +535,13 @@ def test_official_sample_point_and_tile_agree_when_local_products_exist() -> Non
     assert service.health()["official_evidence"] is True
     assert point["fixture"] is False
     assert point["variables"] == matching["variables"]
-    assert point["variables"][0]["value"] == pytest.approx(-0.516949, abs=1e-6)
-    assert point["variables"][1]["value"] == pytest.approx(31.896127, abs=1e-5)
+    assert all(variable["value"] is not None for variable in point["variables"])
+    assert all(variable["valid_month_count"] >= 9 for variable in point["variables"])
 
 
 def load_official_output_paths() -> list[Path]:
-    report_path = REPOSITORY_ROOT / "pipeline" / "reports" / "night-3-normalization.json"
+    report_path = REPOSITORY_ROOT / "pipeline" / "reports" / "sicily-release-v1.json"
+    if not report_path.is_file():
+        return []
     report = json.loads(report_path.read_text(encoding="utf-8"))
     return [REPOSITORY_ROOT / output["path"] for output in report["outputs"]]

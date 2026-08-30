@@ -1,0 +1,45 @@
+services:
+  climate-api:
+    build: .
+    environment:
+      THERMAL_DROUGHT_RELEASE_BUNDLE_URL: ${THERMAL_DROUGHT_RELEASE_BUNDLE_URL:?required}
+      THERMAL_DROUGHT_RELEASE_BUNDLE_SHA256: ${THERMAL_DROUGHT_RELEASE_BUNDLE_SHA256:?required}
+    ports:
+      - "127.0.0.1:8000:8000"
+    volumes:
+      - climate-release:/var/lib/thermal-drought
+    read_only: true
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 128
+    mem_limit: 768m
+    cpus: 1.0
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: web/Dockerfile
+    depends_on:
+      climate-api:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8080:8080"
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 64
+    mem_limit: 128m
+    cpus: 0.25
+    restart: unless-stopped
+
+volumes:
+  climate-release:

@@ -23,14 +23,17 @@ from thermal_drought.acquire.inspection import (
 from thermal_drought.acquire.requests import (
     DROUGHT_DATASET_ID,
     REPRESENTATIVE_REGIONS,
+    SICILY_REGION,
     UTCI_DATASET_ID,
     build_representative_requests,
+    build_sicily_requests,
     plan_sha256,
 )
 from thermal_drought.acquire.runner import (
     AcquisitionError,
     execute_request,
     receipt_path,
+    retrieve_with_cdsapi,
     sha256_file,
 )
 from thermal_drought.storage import StorageLimitError, load_storage_policy
@@ -53,6 +56,28 @@ def test_representative_plan_covers_two_seasons_and_all_required_regions() -> No
     }
     assert {request.month for request in requests} == {1, 7}
     assert len({request.request_id for request in requests}) == len(requests)
+
+
+def test_sicily_release_plan_is_bounded_complete_and_reuses_quality() -> None:
+    requests = build_sicily_requests()
+
+    assert SICILY_REGION.cds_area == [39.0, 11.75, 35.25, 15.75]
+    assert {request.region.id for request in requests} == {"sicily"}
+    assert {request.year for request in requests if request.variable_id != "spei_3_quality"} == {
+        2024,
+        2025,
+    }
+    assert {request.month for request in requests} == set(range(1, 13))
+    assert len(requests) == 60
+    assert sum(request.variable_id == "utci_daymax_median" for request in requests) == 24
+    assert sum(request.variable_id == "spei_3" for request in requests) == 24
+    assert sum(request.variable_id == "spei_3_quality" for request in requests) == 12
+    assert len({request.request_id for request in requests}) == len(requests)
+
+
+def test_sicily_release_plan_rejects_duplicate_years() -> None:
+    with pytest.raises(ValueError, match="years must not contain duplicates"):
+        build_sicily_requests(years=(2025, 2025))
 
 
 def test_plan_fingerprint_covers_the_exact_plan_independently_of_order() -> None:
@@ -147,8 +172,40 @@ def test_verified_file_is_not_downloaded_twice(tmp_path: Path) -> None:
     assert receipt["source"]["doi"].startswith("10.")
     assert receipt["source"]["license"]
     assert receipt["source"]["citation"]
-    assert receipt["storage_policy"]["policy_id"] == "local-safe-v1"
+    assert receipt["storage_policy"]["policy_id"] == "sicily-local-safe-v2"
     assert receipt["storage_policy"]["receipt_reservation_bytes"] == 64 * 1024
+
+
+def test_official_client_retries_are_bounded(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    observed: dict[str, object] = {}
+
+    class FakeClient:
+        def __init__(self, **kwargs: object) -> None:
+            observed["client_options"] = kwargs
+
+        def retrieve(self, dataset_id: str, request: object, target: str) -> None:
+            observed["retrieve"] = (dataset_id, request, target)
+
+    class FakeModule:
+        Client = FakeClient
+
+    monkeypatch.setattr(
+        "thermal_drought.acquire.runner.importlib.import_module",
+        lambda name: FakeModule,
+    )
+    target = tmp_path / "response.nc"
+
+    retrieve_with_cdsapi("dataset", {"year": ["2025"]}, target)
+
+    assert observed["client_options"] == {
+        "retry_max": 3,
+        "sleep_max": 10,
+        "timeout": 120,
+    }
+    assert observed["retrieve"] == ("dataset", {"year": ["2025"]}, str(target))
 
 
 def test_verified_existing_artifact_needs_no_new_storage_reservation(

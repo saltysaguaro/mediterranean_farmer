@@ -21,7 +21,7 @@ pipeline/.venv/
 node_modules/
 web/dist/
 coverage/
-output/playwright/
+output/
 .playwright-cli/
 
 # Climate source data and generated products

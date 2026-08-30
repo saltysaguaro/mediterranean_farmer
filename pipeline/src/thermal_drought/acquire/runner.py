@@ -344,5 +344,5 @@ def retrieve_with_cdsapi(
         raise RuntimeError(
             "cdsapi is not installed; install the pipeline data extra before retrieval"
         ) from error
-    client = cdsapi.Client()
+    client = cdsapi.Client(retry_max=3, sleep_max=10, timeout=120)
     client.retrieve(dataset_id, dict(request), str(target))

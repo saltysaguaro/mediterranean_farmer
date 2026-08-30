@@ -1,18 +1,33 @@
-# Seven-Day Global Bivariate Map Build
+# Seven-Day Sicily Bivariate Map Build
 
 Execution window: July 23–29, 2026  
 Nightly start: 2:00 AM America/Phoenix  
 Source of truth: `PROJECT_PLAN.md`
 
+## Post-sprint continuation
+
+Nights 1–6 produced the bounded official-data vertical slice documented in
+`progress.md`; Night 7 remains incomplete. After the Night 7 beta handoff, work
+continues through milestones M2–M8 in
+[`COMPLETION_FOUNDATION.md`](./COMPLETION_FOUNDATION.md). The calendar no longer
+determines progress: the earliest unmet acceptance or milestone gate remains
+active until evidence closes it. Historical backfill and legacy cleanup are M9
+and do not begin before the replacement completes the release and rollback
+gates.
+
+The user changed the geographic product scope to Sicilia on 6 August 2026.
+References below to the original global sprint describe historical work only;
+all continuing implementation and acceptance gates use `config/scope.json`.
+
 ## Sprint outcome
 
-At the end of the seventh nightly session, the repository should contain a working, production-shaped vertical slice of the global Human Thermal Comfort × Drought map:
+At the end of the seventh nightly session, the repository should contain a working, production-shaped vertical slice of the Sicily Human Thermal Comfort × Drought map:
 
 - a maintainable source layout rather than hand-edited generated files;
 - validated, variable-neutral UTCI and SPEI-3 registry entries;
 - reproducible source-acquisition and normalization code;
 - median, missing-data, classification, month-mask, and compatibility logic;
-- a global map shell with an accessible circular month selector;
+- a Sicily-bounded map shell with an accessible circular month selector;
 - univariate and 3 × 3 bivariate legends;
 - point inspection, URL state, and clear source/methodology information;
 - a local sample/tile path backed by real source data when credentials and download capacity permit;
@@ -66,7 +81,7 @@ Create the source-controlled foundation that every later night can build on.
 
 ### Objective
 
-Prove that the selected official products can be acquired and aligned without beginning an uncontrolled global backfill.
+Prove that the selected official products can be acquired and aligned without beginning an uncontrolled full-history backfill.
 
 ### Work
 
@@ -145,7 +160,7 @@ Provide one shared implementation for map tiles and point values.
 - January SPEI-3 remains the source’s three-month index ending in January.
 - Invalid input cannot trigger an unbounded read or computation.
 
-## Day 5 — Monday, July 27: global map and circular month interaction
+## Day 5 — Monday, July 27: map and circular month interaction
 
 ### Objective
 
@@ -153,7 +168,7 @@ Deliver the core user experience against the local data path.
 
 ### Work
 
-- Build the TypeScript frontend and global map shell.
+- Build the TypeScript frontend and map shell.
 - Keep the map visually dominant on desktop and narrow screens.
 - Render variable selectors from the public manifest.
 - Support:
@@ -270,7 +285,7 @@ The sprint is successful if the repository contains a coherent beta vertical sli
 Any of the following must remain clearly labeled as incomplete if not actually achieved:
 
 - official-data access and sample verification;
-- global production data backfill;
+- full-history production data backfill;
 - production tile/storage deployment;
 - independent climate-science review;
 - bivariate-palette comprehension testing;

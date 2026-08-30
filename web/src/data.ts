@@ -2,7 +2,7 @@ import { maskToHex } from "./months";
 import type {
   AppState,
   Availability,
-  DevelopmentTile,
+  LosslessMapResponse,
   LoadStatus,
   PointSample,
 } from "./types";
@@ -39,15 +39,15 @@ function assertAvailability(payload: unknown): asserts payload is Availability {
   }
 }
 
-function assertDevelopmentTile(payload: unknown): asserts payload is DevelopmentTile {
+function assertLosslessMapResponse(payload: unknown): asserts payload is LosslessMapResponse {
   if (
     !isRecord(payload) ||
     (payload.status !== "ok" && payload.status !== "no_data") ||
-    payload.format !== "development_sparse_grid_cells" ||
+    payload.format !== "lossless_sparse_grid_cells_v1" ||
     !Array.isArray(payload.cells) ||
     typeof payload.scope !== "string"
   ) {
-    throw new Error("The data service returned an invalid development map response.");
+    throw new Error("The data service returned an invalid lossless map response.");
   }
 }
 
@@ -80,7 +80,7 @@ export async function fetchAvailability(
   return payload;
 }
 
-export function developmentTileUrl(
+export function mapResponseUrl(
   apiBase: string,
   datasetVersion: string,
   state: AppState,
@@ -110,7 +110,7 @@ export function pointSampleUrl(
 ): string {
   const url = new URL(
     `${apiBase.replace(/\/$/, "")}/v1/sample`,
-    "https://local-development.invalid",
+    "https://local.invalid",
   );
   url.searchParams.set("x", state.xVariable);
   if (state.yVariable) {
@@ -123,12 +123,12 @@ export function pointSampleUrl(
   return `${url.pathname}${url.search}`;
 }
 
-export interface DevelopmentLoaderCallbacks {
+export interface MapLoaderCallbacks {
   onStatus(status: LoadStatus): void;
-  onData(payload: DevelopmentTile): void;
+  onData(payload: LosslessMapResponse): void;
 }
 
-export class DevelopmentTileLoader {
+export class MapResponseLoader {
   private active: AbortController | null = null;
   private sequence = 0;
   private hasLastValidMap = false;
@@ -136,7 +136,7 @@ export class DevelopmentTileLoader {
   constructor(
     private readonly apiBase: string,
     private readonly datasetVersion: string,
-    private readonly callbacks: DevelopmentLoaderCallbacks,
+    private readonly callbacks: MapLoaderCallbacks,
     private readonly fetchImplementation: FetchImplementation = globalThis.fetch.bind(globalThis),
   ) {}
 
@@ -172,7 +172,7 @@ export class DevelopmentTileLoader {
     try {
       const request = this.fetchImplementation;
       const response = await request(
-        developmentTileUrl(this.apiBase, this.datasetVersion, state),
+        mapResponseUrl(this.apiBase, this.datasetVersion, state),
         {
           signal: controller.signal,
           headers: { Accept: "application/json" },
@@ -182,7 +182,7 @@ export class DevelopmentTileLoader {
         throw new Error(await errorDetail(response));
       }
       const payload: unknown = await response.json();
-      assertDevelopmentTile(payload);
+      assertLosslessMapResponse(payload);
       if (sequence !== this.sequence) {
         return;
       }
@@ -194,7 +194,7 @@ export class DevelopmentTileLoader {
         message:
           payload.status === "no_data"
             ? "No published sample cells intersect this view."
-            : "Bounded official sample is ready.",
+            : "Official Sicily data are ready.",
       });
     } catch (error) {
       if (controller.signal.aborted || sequence !== this.sequence) {

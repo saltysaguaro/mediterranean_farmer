@@ -22,6 +22,7 @@ export interface VariableManifest {
     product_version: string;
     reference_period: string | null;
     license: string;
+    license_url: string;
   };
   coverage: {
     bbox: [number, number, number, number];
@@ -51,6 +52,7 @@ export interface VariableManifest {
 
 export interface AppConfiguration {
   title: string;
+  scope: string;
   maximum_active_variables: number;
   default_view: {
     x_variable: string;
@@ -61,9 +63,37 @@ export interface AppConfiguration {
   service: {
     api_version: string;
     dataset_version: string;
-    development_api_base: string;
+    api_base: string;
     maximum_zoom: number;
   };
+}
+
+export interface ScopeConfiguration {
+  scope_id: string;
+  name: string;
+  country: string;
+  analysis_grid: {
+    grid_id: string;
+    resolution_degrees: number;
+    acquisition_bbox: [number, number, number, number];
+    included_cell_centers: [number, number][];
+  };
+  map: {
+    bounds: [number, number, number, number];
+    initial_center: [number, number];
+    initial_zoom: number;
+    minimum_zoom: number;
+    maximum_zoom: number;
+  };
+  boundary_source: {
+    authority: string;
+    dataset: string;
+    dataset_url: string;
+    license: string;
+    license_url: string;
+    retrieved_at: string;
+  };
+  limitations: string[];
 }
 
 export interface AvailabilityYear {
@@ -138,9 +168,9 @@ export interface TileCell {
   variables: TileVariableRecord[];
 }
 
-export interface DevelopmentTile {
+export interface LosslessMapResponse {
   status: "ok" | "no_data";
-  format: "development_sparse_grid_cells";
+  format: "lossless_sparse_grid_cells_v1";
   dataset_version: string;
   year: number;
   month_mask: string;

@@ -1,0 +1,208 @@
+{
+  "bundle": {
+    "bundle": "output/m4-runtime/sicily-2024-2025-v1.zip",
+    "bundle_bytes": 63073,
+    "bundle_sha256": "a9b1266deaf3935e3f32ddde5bd6267a0193281dadf3a3fd49bbdc6449b94682",
+    "dataset_version": "sicily-2024-2025-v1",
+    "file_count": 10,
+    "files": [
+      {
+        "bytes": 1093,
+        "path": "config/app.json",
+        "sha256": "7728d41d4dd469791a0ce126ae851def2bb5089ba33523e0f49208bfc7f7f9e9"
+      },
+      {
+        "bytes": 7714,
+        "path": "config/manifest.schema.json",
+        "sha256": "8732c8677fb75383d0f315bc25605866375df2a95e3e2ef2fa7cb59fb3a206bd"
+      },
+      {
+        "bytes": 2777,
+        "path": "config/scope.json",
+        "sha256": "d8ecaf71e1c49f85052178cc92995a34b935820312cb4b8b5fb6eae319c2d85e"
+      },
+      {
+        "bytes": 2766,
+        "path": "config/storage-policy.json",
+        "sha256": "5dc8d2dba247138665a52082a9db0752793af3f18c64fdc348f1e55076dba539"
+      },
+      {
+        "bytes": 2105,
+        "path": "config/variables/spei_3.json",
+        "sha256": "fdf70425dc4726b258a5ab4ecafd9db0c2c8aafbea072a9255d63e85702ef902"
+      },
+      {
+        "bytes": 1999,
+        "path": "config/variables/utci_daymax_median.json",
+        "sha256": "6f0d81d292a79f213d2be2173826083f1736d57a8db8ea2730a883264303d15f"
+      },
+      {
+        "bytes": 47317,
+        "path": "data/published/sicily-release-v1/v1/2024/sicily.nc",
+        "sha256": "99aed5cd511054b3b4d5d38bb5a4f320752ac3c86565657680dbaa4e56544fc9"
+      },
+      {
+        "bytes": 47362,
+        "path": "data/published/sicily-release-v1/v1/2025/sicily.nc",
+        "sha256": "be458e6db12e9048f4c11bd3b302f7a7daef946f73a87e8e58da33f2303ef8e4"
+      },
+      {
+        "bytes": 15668,
+        "path": "pipeline/reports/sicily-release-v1.json",
+        "sha256": "6fb4ce5e6d9dc84f7f6c1e27b4d8d5a6f4e2f2a7edf5b2ac89d7eb143c12ff81"
+      },
+      {
+        "bytes": 725548,
+        "path": "pipeline/reports/sicily-source-audit-v1.json",
+        "sha256": "fff134523c14667f6a952e56e68fdda59a805f13b47331e8890fa082084b1030"
+      }
+    ],
+    "schema_version": "1.0",
+    "status": "complete"
+  },
+  "dataset_version": "sicily-2024-2025-v1",
+  "installed_release": "a9b1266deaf3935e3f32ddde5bd6267a0193281dadf3a3fd49bbdc6449b94682",
+  "metrics": {
+    "cache": {
+      "bytes": 9831875,
+      "entries": 170
+    },
+    "counts": {
+      "cache_hit_total": 170,
+      "cache_miss_total": 3,
+      "cors_rejected_total": 1,
+      "requests_total": 173,
+      "response_bytes_total": 343,
+      "status_400_total": 2,
+      "status_404_total": 1
+    },
+    "latency_ms": {
+      "/v1/tiles": {
+        "count": 173,
+        "maximum": 1.514,
+        "p50": 0.248,
+        "p95": 0.39
+      }
+    },
+    "privacy": "Metrics contain route classes and timings only; coordinates are not recorded.",
+    "schema_version": "1.0",
+    "status": "ok",
+    "uptime_seconds": 2.021
+  },
+  "milestone": "M4-production-service",
+  "official_evidence": true,
+  "parity": {
+    "all_year_class_distributions": {
+      "2024": {
+        "Moderate drought \u00d7 Heat stress": 3,
+        "Moderate drought \u00d7 No thermal stress": 4,
+        "No data \u00d7 No thermal stress": 1,
+        "No drought \u00d7 Heat stress": 14,
+        "No drought \u00d7 No thermal stress": 22
+      },
+      "2025": {
+        "No data \u00d7 No thermal stress": 1,
+        "No drought \u00d7 No thermal stress": 43
+      }
+    },
+    "comparisons": 88,
+    "scope_cells_per_year": 44,
+    "status": "complete"
+  },
+  "performance": {
+    "budgets": {
+      "cold_p95_ms": 2000.0,
+      "maximum_response_bytes": 200000,
+      "warm_p95_ms": 500.0,
+      "warm_point_p95_ms": 500.0
+    },
+    "cold_p50_ms": 12.1,
+    "cold_p95_ms": 12.483,
+    "cold_samples": 20,
+    "maximum_response_bytes": 58258,
+    "passed": true,
+    "status": "complete",
+    "warm_p50_ms": 0.096,
+    "warm_p95_ms": 0.139,
+    "warm_point_p50_ms": 0.071,
+    "warm_point_p95_ms": 0.119,
+    "warm_point_samples": 40,
+    "warm_samples": 40
+  },
+  "prewarm": {
+    "cache": {
+      "bytes": 9831875,
+      "entries": 170
+    },
+    "mask_count": 17,
+    "masks": [
+      "001",
+      "002",
+      "004",
+      "008",
+      "010",
+      "020",
+      "040",
+      "080",
+      "100",
+      "200",
+      "400",
+      "800",
+      "803",
+      "01c",
+      "0e0",
+      "700",
+      "fff"
+    ],
+    "p95_ms": 0.394,
+    "request_count": 170,
+    "response_bytes": 9831875,
+    "status": "complete",
+    "year_count": 2,
+    "zoom_levels": [
+      0,
+      1,
+      2,
+      3,
+      4
+    ]
+  },
+  "rollback": {
+    "rehearsal_release": "rollback-rehearsal-a9b1266deaf3935e",
+    "releases_retained": [
+      "3628918482756075d2c536e557fd036d397f9a5bcabd8a44bc599d9dd0d94bf6",
+      "a9b1266deaf3935e3f32ddde5bd6267a0193281dadf3a3fd49bbdc6449b94682",
+      "dbe8ad2fed8c508596f4b80fe9d913d73f1b27bcbd587eab006acffb6f7d6c2f",
+      "rollback-rehearsal-3628918482756075",
+      "rollback-rehearsal-a9b1266deaf3935e",
+      "rollback-rehearsal-dbe8ad2fed8c5085"
+    ],
+    "rolled_back_to": "a9b1266deaf3935e3f32ddde5bd6267a0193281dadf3a3fd49bbdc6449b94682",
+    "starting_release": "a9b1266deaf3935e3f32ddde5bd6267a0193281dadf3a3fd49bbdc6449b94682",
+    "status": "complete"
+  },
+  "runtime_limits": {
+    "allowed_origins": [
+      "same-origin"
+    ],
+    "cache_maximum_bytes": 268435456,
+    "maximum_cache_entries": 512,
+    "maximum_concurrency": 8,
+    "maximum_response_bytes": 204800,
+    "request_timeout_seconds": 5.0,
+    "requests_per_minute": 120
+  },
+  "schema_version": "1.0",
+  "security": {
+    "passed": true,
+    "probes": {
+      "invalid_mask": 400,
+      "invalid_zoom": 400,
+      "method": 405,
+      "origin": 403,
+      "unknown_dataset": 404
+    },
+    "status": "complete"
+  },
+  "status": "complete"
+}

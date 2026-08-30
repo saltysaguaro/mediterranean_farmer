@@ -5,6 +5,8 @@ export interface StateConstraints {
   variableIds: readonly string[];
   years: readonly number[];
   monthsByYear: ReadonlyMap<number, readonly number[]>;
+  mapBounds: readonly [number, number, number, number];
+  minimumZoom: number;
   maximumZoom: number;
 }
 
@@ -28,15 +30,17 @@ function finiteNumber(value: string | null, fallback: number, name: string, warn
 function validView(
   candidate: MapView,
   fallback: MapView,
+  mapBounds: readonly [number, number, number, number],
+  minimumZoom: number,
   maximumZoom: number,
   warnings: string[],
 ): MapView {
   if (
-    candidate.longitude < -180 ||
-    candidate.longitude >= 180 ||
-    candidate.latitude < -85 ||
-    candidate.latitude > 85 ||
-    candidate.zoom < 0 ||
+    candidate.longitude < mapBounds[0] ||
+    candidate.longitude > mapBounds[2] ||
+    candidate.latitude < mapBounds[1] ||
+    candidate.latitude > mapBounds[3] ||
+    candidate.zoom < minimumZoom ||
     candidate.zoom > maximumZoom
   ) {
     warnings.push("Invalid map location or zoom; restored the previous view.");
@@ -47,6 +51,8 @@ function validView(
 
 export function constraintsFromAvailability(
   availability: Availability,
+  mapBounds: readonly [number, number, number, number],
+  minimumZoom: number,
   maximumZoom: number,
 ): StateConstraints {
   return {
@@ -55,6 +61,8 @@ export function constraintsFromAvailability(
     monthsByYear: new Map(
       availability.years.map(({ year, months }) => [year, months] as const),
     ),
+    mapBounds,
+    minimumZoom,
     maximumZoom,
   };
 }
@@ -133,6 +141,8 @@ export function parseUrlState(
       zoom: finiteNumber(url.searchParams.get("zoom"), fallback.view.zoom, "zoom", warnings),
     },
     fallback.view,
+    constraints.mapBounds,
+    constraints.minimumZoom,
     constraints.maximumZoom,
     warnings,
   );

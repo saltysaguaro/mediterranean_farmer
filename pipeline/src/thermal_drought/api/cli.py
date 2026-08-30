@@ -6,10 +6,19 @@ import argparse
 import json
 from collections.abc import Sequence
 from pathlib import Path
-from wsgiref.simple_server import make_server
+from socketserver import ThreadingMixIn
+from wsgiref.simple_server import WSGIServer, make_server
 
 from thermal_drought.api.app import create_app
 from thermal_drought.api.core import DataService
+from thermal_drought.api.runtime import RuntimeSettings, create_production_app
+from thermal_drought.release_bundle import materialize_environment_release
+
+
+class ThreadingWSGIServer(ThreadingMixIn, WSGIServer):
+    """Serve independent bounded requests concurrently."""
+
+    daemon_threads = True
 
 
 def repository_root() -> Path:
@@ -35,7 +44,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         print("Service startup failed: port must be between 1 and 65535")
         return 2
     try:
-        service = DataService.from_repository(args.repository_root)
+        active_root = materialize_environment_release(args.repository_root.resolve())
+        service = DataService.from_repository(active_root)
+        runtime_settings = RuntimeSettings.load(
+            active_root / "config" / "app.json",
+            active_root,
+        )
     except (OSError, RuntimeError, ValueError) as error:
         print(f"Service startup failed: {error}")
         return 2
@@ -45,6 +59,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 {
                     "health": service.health(),
                     "availability": service.availability(),
+                    "runtime": runtime_settings.public_metadata(),
                 },
                 indent=2,
                 sort_keys=True,
@@ -52,8 +67,17 @@ def main(argv: Sequence[str] | None = None) -> int:
         )
         return 0
 
-    application = create_app(service)
-    with make_server(args.host, args.port, application) as server:
+    application = create_production_app(
+        create_app(service),
+        runtime_settings,
+        readiness=lambda: bool(service.release.products),
+    )
+    with make_server(
+        args.host,
+        args.port,
+        application,
+        server_class=ThreadingWSGIServer,
+    ) as server:
         print(f"Serving on http://{args.host}:{args.port}")
         server.serve_forever()
     return 0

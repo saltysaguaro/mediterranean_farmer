@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { APP_CONFIG, VARIABLES, compatibilityReason } from "./registry";
+import {
+  APP_CONFIG,
+  SCOPE_CONFIG,
+  VARIABLES,
+  compatibilityReason,
+  publishedFallbackYears,
+} from "./registry";
 
 describe("manifest-driven registry", () => {
   it("loads the two public variables without hard-coded control copies", () => {
@@ -8,7 +14,12 @@ describe("manifest-driven registry", () => {
       "utci_daymax_median",
     ]);
     expect(APP_CONFIG.maximum_active_variables).toBe(2);
-    expect(APP_CONFIG.service.development_api_base).toBe("/api");
+    expect(APP_CONFIG.service.api_base).toBe("/api");
+    expect(SCOPE_CONFIG.name).toBe("Sicilia");
+    expect(SCOPE_CONFIG.analysis_grid.included_cell_centers).toHaveLength(44);
+    expect(VARIABLES.every(({ publication }) => publication.status === "published")).toBe(true);
+    expect(VARIABLES.every(({ publication }) => publication.sample_retrieved_at !== null)).toBe(true);
+    expect(publishedFallbackYears()).toEqual([2024, 2025]);
   });
 
   it("rejects duplicate axes and accepts the configured pair", () => {

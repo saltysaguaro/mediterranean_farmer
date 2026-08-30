@@ -68,6 +68,7 @@ class DiskCapacity:
 class StoragePolicy:
     schema_version: str
     policy_id: str
+    scope_id: str
     minimum_free_reserve_bytes: int
     maximum_volume_used_fraction: float
     processing_peak_multiplier: float
@@ -134,6 +135,9 @@ def load_storage_policy(path: Path | None = None) -> StoragePolicy:
     policy_id = root.get("policy_id")
     if not isinstance(policy_id, str) or not policy_id:
         raise StoragePolicyError("policy_id must be a non-empty string")
+    scope_id = root.get("scope_id")
+    if scope_id != "sicily_istat_2026_grid_centers":
+        raise StoragePolicyError("storage policy must be bound to the Sicily scope contract")
 
     raw_directories = _object(root.get("managed_directories"), "managed_directories")
     directories: dict[str, DirectoryPolicy] = {}
@@ -257,11 +261,24 @@ def load_storage_policy(path: Path | None = None) -> StoragePolicy:
     )
     if used_fraction > 1:
         raise StoragePolicyError("maximum_volume_used_fraction cannot exceed one")
-    if root.get("object_storage_required_before_multi_year_backfill") is not True:
-        raise StoragePolicyError("object storage must be required before a multi-year backfill")
+    maximum_local_backfill_years = _integer(
+        root.get("maximum_local_backfill_years"),
+        "maximum_local_backfill_years",
+        minimum=1,
+    )
+    object_storage_required = root.get("object_storage_required_before_multi_year_backfill")
+    if not isinstance(object_storage_required, bool):
+        raise StoragePolicyError(
+            "object_storage_required_before_multi_year_backfill must be boolean"
+        )
+    if not object_storage_required and maximum_local_backfill_years > 2:
+        raise StoragePolicyError(
+            "no more than the two-year Sicily release may run locally without object storage"
+        )
     return StoragePolicy(
         schema_version="1.0",
         policy_id=policy_id,
+        scope_id=scope_id,
         minimum_free_reserve_bytes=_integer(
             root.get("minimum_free_reserve_bytes"),
             "minimum_free_reserve_bytes",
@@ -273,11 +290,7 @@ def load_storage_policy(path: Path | None = None) -> StoragePolicy:
             "processing_peak_multiplier",
             minimum=1,
         ),
-        maximum_local_backfill_years=_integer(
-            root.get("maximum_local_backfill_years"),
-            "maximum_local_backfill_years",
-            minimum=1,
-        ),
+        maximum_local_backfill_years=maximum_local_backfill_years,
         maximum_acquisition_partition_bytes=_integer(
             root.get("maximum_acquisition_partition_bytes"),
             "maximum_acquisition_partition_bytes",
@@ -311,7 +324,7 @@ def load_storage_policy(path: Path | None = None) -> StoragePolicy:
         prewarm_month_masks=tuple(masks),
         arbitrary_month_masks=arbitrary,
         automatic_deletion=automatic_deletion,
-        object_storage_required_before_multi_year_backfill=True,
+        object_storage_required_before_multi_year_backfill=object_storage_required,
     )
 
 
@@ -424,6 +437,7 @@ def storage_status(
         "status": "ok" if not violations else "blocked",
         "approved": not violations,
         "policy_id": policy.policy_id,
+        "scope_id": policy.scope_id,
         "disk": _disk_report(capacity),
         "minimum_free_reserve_bytes": policy.minimum_free_reserve_bytes,
         "maximum_volume_used_fraction": policy.maximum_volume_used_fraction,
@@ -447,6 +461,7 @@ def storage_policy_report(policy: StoragePolicy) -> dict[str, object]:
         "status": "valid",
         "approved": True,
         "policy_id": policy.policy_id,
+        "scope_id": policy.scope_id,
         "maximum_local_backfill_years": policy.maximum_local_backfill_years,
         "minimum_free_reserve_bytes": policy.minimum_free_reserve_bytes,
         "maximum_volume_used_fraction": policy.maximum_volume_used_fraction,
@@ -537,6 +552,7 @@ def preflight_managed_write(
         "status": "approved" if not violations else "blocked",
         "approved": not violations,
         "policy_id": policy.policy_id,
+        "scope_id": policy.scope_id,
         "operation": operation,
         "managed_directory": managed_id,
         "current_bytes": current,

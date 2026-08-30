@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import os
 import statistics
 import zipfile
 from dataclasses import replace
@@ -11,12 +12,22 @@ import numpy as np
 import pytest
 import xarray as xr
 
-from thermal_drought.acquire.requests import AcquisitionRequest, build_representative_requests
+from thermal_drought.acquire.requests import (
+    SICILY_REGION,
+    AcquisitionRequest,
+    build_representative_requests,
+)
+from thermal_drought.acquire.runner import sha256_file
 from thermal_drought.normalize.core import (
     NormalizationError,
+    NormalizedPeriod,
+    _dataset_for_region,
+    _sample_records,
+    _write_dataset_atomic,
     normalize_period,
     normalize_representative_sample,
 )
+from thermal_drought.scope import load_scope
 from thermal_drought.storage import StorageLimitError, load_storage_policy
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
@@ -222,6 +233,101 @@ def test_quality_field_rejects_values_outside_provider_contract(
         normalize_period(*paths, *requests)
 
 
+def test_sicily_scope_masks_every_outside_grid_center_without_zero_substitution() -> None:
+    latitudes = np.arange(39.0, 35.24, -0.25)
+    longitudes = np.arange(11.75, 15.76, 0.25)
+    shape = (len(latitudes), len(longitudes))
+    period = NormalizedPeriod(
+        region=SICILY_REGION,
+        year=2025,
+        month=1,
+        utci_celsius=np.full(shape, 20.0),
+        utci_valid_day_count=np.full(shape, 31, dtype=np.uint8),
+        spei_source=np.full(shape, -1.25),
+        spei_quality=np.ones(shape, dtype=np.uint8),
+        spei_published=np.full(shape, -1.25),
+        latitudes=latitudes,
+        longitudes=longitudes,
+    )
+
+    dataset = _dataset_for_region(
+        [period],
+        "0" * 64,
+        scope=load_scope(REPOSITORY_ROOT / "config" / "scope.json"),
+    )
+    mask = dataset["sicily_scope_mask"].values.astype(bool)
+
+    assert int(mask.sum()) == 44
+    assert np.all(np.isfinite(dataset["utci_daymax_median"].values[:, mask]))
+    assert np.all(np.isnan(dataset["utci_daymax_median"].values[:, ~mask]))
+    assert np.all(np.isnan(dataset["spei_3"].values[:, ~mask]))
+    assert np.all(dataset["spei_3_quality"].values[:, ~mask] == 255)
+    assert not np.any(dataset["spei_3"].values[:, ~mask] == 0)
+
+
+def test_sicily_product_write_preserves_identical_existing_bytes(tmp_path: Path) -> None:
+    latitudes = np.arange(39.0, 35.24, -0.25)
+    longitudes = np.arange(11.75, 15.76, 0.25)
+    shape = (len(latitudes), len(longitudes))
+    period = NormalizedPeriod(
+        region=SICILY_REGION,
+        year=2025,
+        month=1,
+        utci_celsius=np.full(shape, 20.0),
+        utci_valid_day_count=np.full(shape, 31, dtype=np.uint8),
+        spei_source=np.full(shape, -1.25),
+        spei_quality=np.ones(shape, dtype=np.uint8),
+        spei_published=np.full(shape, -1.25),
+        latitudes=latitudes,
+        longitudes=longitudes,
+    )
+    dataset = _dataset_for_region(
+        [period],
+        "0" * 64,
+        scope=load_scope(REPOSITORY_ROOT / "config" / "scope.json"),
+    )
+    target = tmp_path / "sicily.nc"
+
+    _write_dataset_atomic(dataset, target)
+    first_checksum = sha256_file(target)
+    fixed_timestamp_ns = 1_000_000_000
+    os.utime(target, ns=(fixed_timestamp_ns, fixed_timestamp_ns))
+    _write_dataset_atomic(dataset, target)
+
+    assert sha256_file(target) == first_checksum
+    assert target.stat().st_mtime_ns == fixed_timestamp_ns
+
+
+def test_sicily_golden_record_uses_an_in_scope_cell() -> None:
+    latitudes = np.arange(39.0, 35.24, -0.25)
+    longitudes = np.arange(11.75, 15.76, 0.25)
+    shape = (len(latitudes), len(longitudes))
+    period = NormalizedPeriod(
+        region=SICILY_REGION,
+        year=2025,
+        month=1,
+        utci_celsius=np.full(shape, 20.0),
+        utci_valid_day_count=np.full(shape, 31, dtype=np.uint8),
+        spei_source=np.full(shape, -1.25),
+        spei_quality=np.ones(shape, dtype=np.uint8),
+        spei_published=np.full(shape, -1.25),
+        latitudes=latitudes,
+        longitudes=longitudes,
+    )
+    scope = load_scope(REPOSITORY_ROOT / "config" / "scope.json")
+
+    records = _sample_records(
+        [period],
+        REPOSITORY_ROOT / "config" / "variables",
+        scope=scope,
+    )
+
+    assert len(records) == 1
+    assert records[0]["longitude"] == 13.75
+    assert records[0]["latitude"] == 37.5
+    assert scope.includes(records[0]["longitude"], records[0]["latitude"])
+
+
 def _independent_center_value(path: Path, variable: str) -> float:
     with zipfile.ZipFile(path) as archive, TemporaryDirectory() as temp:
         values: list[float] = []
@@ -242,15 +348,24 @@ def test_official_sample_matches_independent_center_calculation_and_is_idempoten
     if not expected_probe.is_file():
         pytest.skip("bounded official sample is not present in this checkout")
 
+    isolated_raw_root = tmp_path / "representative-raw"
+    for request in build_representative_requests():
+        source = OFFICIAL_RAW_ROOT / request.target_relative_path
+        target = isolated_raw_root / request.target_relative_path
+        target.parent.mkdir(parents=True, exist_ok=True)
+        os.link(source, target)
+        source_receipt = source.with_suffix(f"{source.suffix}.receipt.json")
+        target_receipt = target.with_suffix(f"{target.suffix}.receipt.json")
+        os.link(source_receipt, target_receipt)
     output_root = tmp_path / "published"
     report = normalize_representative_sample(
-        OFFICIAL_RAW_ROOT,
+        isolated_raw_root,
         output_root,
         manifests_root=REPOSITORY_ROOT / "config" / "variables",
     )
     first_checksums = {output["region_id"]: output["sha256"] for output in report["outputs"]}
     second_report = normalize_representative_sample(
-        OFFICIAL_RAW_ROOT,
+        isolated_raw_root,
         output_root,
         manifests_root=REPOSITORY_ROOT / "config" / "variables",
     )

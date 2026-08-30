@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.invalid/global-thermal-drought/variable-manifest.schema.json",
-  "title": "Global Thermal Comfort × Drought variable manifest",
+  "$id": "https://example.invalid/sicily-thermal-drought/variable-manifest.schema.json",
+  "title": "Sicily Thermal Comfort × Drought variable manifest",
   "type": "object",
   "additionalProperties": false,
   "required": [
@@ -60,7 +60,8 @@
         "doi",
         "product_version",
         "reference_period",
-        "license"
+        "license",
+        "license_url"
       ],
       "properties": {
         "dataset": {
@@ -90,6 +91,11 @@
         "license": {
           "type": "string",
           "minLength": 1
+        },
+        "license_url": {
+          "type": "string",
+          "format": "uri",
+          "pattern": "^https://"
         }
       }
     },
@@ -313,7 +319,7 @@
           "uniqueItems": true
         },
         "sample_retrieved_at": {
-          "description": "UTC retrieval timestamp for this bounded publication; null until a sample is acquired.",
+          "description": "UTC source-retrieval completion timestamp for this bounded publication; null until acquired.",
           "type": ["string", "null"],
           "format": "date-time"
         }

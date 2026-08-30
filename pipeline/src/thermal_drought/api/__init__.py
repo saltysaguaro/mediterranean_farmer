@@ -1,4 +1,4 @@
-"""Bounded local aggregation and development-tile service."""
+"""Sicily aggregation and lossless map-response service."""
 
 from thermal_drought.api.core import DataService, ServiceError
 

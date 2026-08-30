@@ -1,0 +1,55 @@
+{
+  "active_release_unchanged": true,
+  "candidate_years": [
+    2025,
+    2024
+  ],
+  "comparison": {
+    "outputs": [
+      {
+        "byte_identical": false,
+        "byte_size": 47317,
+        "included_scope_cells": 44,
+        "month_count": 12,
+        "scientifically_equivalent": true,
+        "sha256": "d1bba97b7555e7b6425086bc0d6b1b68585cd5afc3c64702ab4a8a08f45e72a8",
+        "year": 2024
+      },
+      {
+        "byte_identical": false,
+        "byte_size": 47362,
+        "included_scope_cells": 44,
+        "month_count": 12,
+        "scientifically_equivalent": true,
+        "sha256": "65d20f5c6acf3c66ad30cfcf744802f654f79b7e1dad7f35989a92db801b72fc",
+        "year": 2025
+      }
+    ],
+    "status": "complete",
+    "years": [
+      2024,
+      2025
+    ]
+  },
+  "fixture": false,
+  "milestone": "M8-refresh-rehearsal",
+  "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "official_evidence": true,
+  "plan_sha256": "61bbffbe2e6d742148c5d1c0f2ff3aee149bd34a7291736f575898bfe74860f6",
+  "rehearsal_output": "output/m8-refresh-rehearsal/published",
+  "schema_version": "1.0",
+  "status": "complete"
+}

@@ -15,6 +15,7 @@ from thermal_drought.acquire.requests import (
     SOURCE_METADATA,
     AcquisitionRequest,
     build_representative_requests,
+    build_sicily_requests,
     plan_sha256,
 )
 from thermal_drought.acquire.runner import (
@@ -67,21 +68,23 @@ def build_parser() -> argparse.ArgumentParser:
     subparsers = parser.add_subparsers(dest="command", required=True)
     subparsers.add_parser("status", help="show only secret-safe access availability")
 
-    plan_parser = subparsers.add_parser("plan", help="emit representative request metadata")
-    plan_parser.add_argument("--year", type=int, default=2024)
-    plan_parser.add_argument("--months", type=int, nargs="+", default=[1, 7])
+    plan_parser = subparsers.add_parser("plan", help="emit bounded request metadata")
+    plan_parser.add_argument("--scope", choices=["sicily", "representative"], default="sicily")
+    plan_parser.add_argument("--years", type=int, nargs="+", default=[2025, 2024])
+    plan_parser.add_argument("--months", type=int, nargs="+", default=list(range(1, 13)))
     plan_parser.add_argument("--output", type=Path)
 
-    fetch_parser = subparsers.add_parser("fetch", help="retrieve the bounded representative plan")
-    fetch_parser.add_argument("--year", type=int, default=2024)
-    fetch_parser.add_argument("--months", type=int, nargs="+", default=[1, 7])
-    fetch_parser.add_argument("--raw-root", type=Path, default=Path("data/raw"))
+    fetch_parser = subparsers.add_parser("fetch", help="retrieve a bounded acquisition plan")
+    fetch_parser.add_argument("--scope", choices=["sicily", "representative"], default="sicily")
+    fetch_parser.add_argument("--years", type=int, nargs="+", default=[2025, 2024])
+    fetch_parser.add_argument("--months", type=int, nargs="+", default=list(range(1, 13)))
+    fetch_parser.add_argument("--raw-root", type=Path, default=Path("data/raw/sicily-release-v1"))
     fetch_parser.add_argument("--storage-policy", type=Path)
     fetch_parser.add_argument(
         "--dataset-id",
         choices=sorted(SOURCE_METADATA),
         help=(
-            "retrieve only one official dataset from the exact representative plan; "
+            "retrieve only one official dataset from the exact bounded plan; "
             "the default retrieves both"
         ),
     )
@@ -90,19 +93,37 @@ def build_parser() -> argparse.ArgumentParser:
         "inspect",
         help="inspect verified official NetCDF headers and compare paired grids",
     )
-    inspect_parser.add_argument("--year", type=int, default=2024)
-    inspect_parser.add_argument("--months", type=int, nargs="+", default=[1, 7])
-    inspect_parser.add_argument("--raw-root", type=Path, default=Path("data/raw"))
+    inspect_parser.add_argument("--scope", choices=["sicily", "representative"], default="sicily")
+    inspect_parser.add_argument("--years", type=int, nargs="+", default=[2025, 2024])
+    inspect_parser.add_argument("--months", type=int, nargs="+", default=list(range(1, 13)))
+    inspect_parser.add_argument("--raw-root", type=Path, default=Path("data/raw/sicily-release-v1"))
     inspect_parser.add_argument("--output", type=Path)
     return parser
 
 
-def _plan_json(year: int, months: tuple[int, ...]) -> str:
-    requests = build_representative_requests(year=year, months=months)
+def _build_requests(
+    scope: str,
+    years: tuple[int, ...],
+    months: tuple[int, ...],
+) -> tuple[AcquisitionRequest, ...]:
+    if scope == "sicily":
+        return build_sicily_requests(years=years, months=months)
+    if len(years) != 1:
+        raise ValueError("the representative evidence scope requires exactly one year")
+    return build_representative_requests(year=years[0], months=months)
+
+
+def _plan_json(scope: str, years: tuple[int, ...], months: tuple[int, ...]) -> str:
+    requests = _build_requests(scope, years, months)
     plan = {
         "schema_version": "1.0",
         "fixture": False,
-        "purpose": "bounded official-data access proof",
+        "scope": scope,
+        "purpose": (
+            "Sicily-only official release acquisition"
+            if scope == "sicily"
+            else "bounded representative official-data access proof"
+        ),
         "plan_sha256": plan_sha256(requests),
         "requests": [request.as_dict() for request in requests],
     }
@@ -130,8 +151,9 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     if args.command == "inspect":
         try:
-            expected_requests = build_representative_requests(
-                year=args.year,
+            expected_requests = _build_requests(
+                args.scope,
+                tuple(args.years),
                 months=tuple(args.months),
             )
             report = inspect_raw_root(
@@ -164,8 +186,9 @@ def main(argv: Sequence[str] | None = None) -> int:
         return 0 if report["complete"] is True else 2
 
     months = tuple(args.months)
+    years = tuple(args.years)
     if args.command == "plan":
-        plan = _plan_json(args.year, months)
+        plan = _plan_json(args.scope, years, months)
         if args.output is None:
             print(plan, end="")
         else:
@@ -188,7 +211,7 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
             return 2
         requests = _select_dataset(
-            build_representative_requests(year=args.year, months=months),
+            _build_requests(args.scope, years, months),
             args.dataset_id,
         )
         try:

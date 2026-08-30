@@ -8,7 +8,7 @@ const fallback: AppState = {
   yVariable: "utci_daymax_median",
   year: 2024,
   monthMask: monthsToMask([1, 7]),
-  view: { longitude: 12.5, latitude: 18, zoom: 1.1 },
+  view: { longitude: 13.75, latitude: 37.5, zoom: 6.3 },
 };
 
 const constraints: StateConstraints = {
@@ -18,7 +18,9 @@ const constraints: StateConstraints = {
     [2024, [1, 7]],
     [2025, Array.from({ length: 12 }, (_, index) => index + 1)],
   ]),
-  maximumZoom: 6,
+  mapBounds: [11.4, 35.1, 16.1, 39.1],
+  minimumZoom: 5.5,
+  maximumZoom: 9,
 };
 
 describe("URL state", () => {
@@ -28,7 +30,7 @@ describe("URL state", () => {
       yVariable: "spei_3",
       year: 2025,
       monthMask: monthsToMask([1, 4, 9]),
-      view: { longitude: -112.25, latitude: 34.25, zoom: 3.5 },
+      view: { longitude: 14.25, latitude: 37.75, zoom: 7.5 },
     };
     const url = stateUrl(expected, new URL("https://example.test/map?ignored=kept"));
     const parsed = parseUrlState(url, fallback, constraints);

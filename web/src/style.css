@@ -50,7 +50,7 @@ summary:focus-visible {
   background: #dce8e5;
 }
 
-.global-map {
+.climate-map {
   position: absolute;
   inset: 0;
   z-index: 1;
@@ -61,10 +61,10 @@ summary:focus-visible {
   z-index: 0;
   top: 50%;
   left: 50%;
-  width: min(72vmin, 48rem);
-  aspect-ratio: 1;
+  width: min(76vw, 48rem);
+  aspect-ratio: 1.175;
   border: 1px solid #799088;
-  border-radius: 50%;
+  border-radius: 0.8rem;
   background:
     linear-gradient(
       to bottom,
@@ -81,7 +81,7 @@ summary:focus-visible {
       transparent 0 calc(12.5% - 1px),
       rgb(95 125 113 / 28%) calc(12.5% - 1px) 12.5%
     ),
-    radial-gradient(circle at 42% 35%, #e7f1ec, #b8d0c5);
+    linear-gradient(145deg, #e7f1ec, #b8d0c5);
   box-shadow:
     inset -1.1rem -0.8rem 2.3rem rgb(52 82 68 / 17%),
     0 1.1rem 3rem rgb(40 69 55 / 12%);
@@ -92,7 +92,7 @@ summary:focus-visible {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  border-radius: 50%;
+  border-radius: 0.8rem;
 }
 
 .reference-sample-marker {
@@ -111,7 +111,7 @@ summary:focus-visible {
   position: absolute;
   z-index: 2;
   border: 1px solid rgb(23 34 28 / 18%);
-  background: rgb(250 252 248 / 93%);
+  background: #fafcf8;
   box-shadow: 0 0.4rem 1.4rem rgb(23 34 28 / 16%);
   backdrop-filter: blur(0.45rem);
 }
@@ -126,6 +126,7 @@ summary:focus-visible {
 
 .map-heading h1 {
   margin: 0.12rem 0 0;
+  background: #fafcf8;
   font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(1.25rem, 2vw, 2rem);
   line-height: 1.05;
@@ -136,6 +137,13 @@ summary:focus-visible {
   color: #40554a;
   font-size: 0.9rem;
   font-weight: 650;
+}
+
+.data-freshness {
+  margin: 0.24rem 0 0;
+  color: #52665b;
+  font-size: 0.72rem;
+  line-height: 1.35;
 }
 
 .eyebrow {
@@ -161,7 +169,7 @@ summary:focus-visible {
 
 .map-status[data-state="error"] {
   border-color: #9d3c2f;
-  background: rgb(255 245 241 / 95%);
+  background: #fff5f1;
 }
 
 .map-status[data-state="updating"]::before {
@@ -312,6 +320,7 @@ select {
 }
 
 .month-ring {
+  --ring-radius: 7rem;
   position: relative;
   width: min(18.2rem, 78vw);
   aspect-ratio: 1;
@@ -330,39 +339,24 @@ select {
 .month-wedge {
   --rotation: calc(var(--month-index) * 30deg);
   position: absolute;
-  top: 0;
-  left: 37%;
-  width: 26%;
-  height: 50%;
+  top: 50%;
+  left: 50%;
+  width: 3rem;
+  height: 3rem;
   padding: 0;
-  border: 0;
-  clip-path: polygon(50% 100%, 0 0, 100% 0);
+  border: 1px solid #b4c4ba;
+  border-radius: 50%;
   color: #29493a;
   background: #eef3ef;
-  transform: rotate(var(--rotation));
-  transform-origin: 50% 100%;
+  box-shadow: 0 0.12rem 0.25rem rgb(33 56 43 / 12%);
+  transform: translate(-50%, -50%) rotate(var(--rotation))
+    translateY(calc(var(--ring-radius) * -1)) rotate(calc(var(--rotation) * -1));
   cursor: pointer;
 }
 
-.month-wedge::after {
-  position: absolute;
-  top: 0;
-  right: 0;
-  width: 1px;
-  height: 100%;
-  background: #b4c4ba;
-  content: "";
-  transform: rotate(-15deg);
-  transform-origin: top;
-}
-
 .month-wedge span {
-  position: absolute;
-  top: 1.03rem;
-  left: 50%;
   font-size: 0.72rem;
   font-weight: 800;
-  transform: translateX(-50%) rotate(calc(var(--rotation) * -1));
 }
 
 .month-wedge[aria-pressed="true"] {
@@ -732,18 +726,43 @@ select {
 }
 
 .information-content a {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
   color: #1f5c45;
   text-decoration-thickness: 0.12em;
   text-underline-offset: 0.16em;
 }
 
+.source-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.8rem;
+}
+
+.source-attribution {
+  border-left: 3px solid #326c56;
+  padding-left: 0.65rem;
+  color: #263c31;
+  font-weight: 650;
+}
+
 .fatal-error,
 .noscript-message {
-  display: grid;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  align-items: center;
+  justify-content: center;
   min-height: 100vh;
-  place-content: center;
   padding: 2rem;
   text-align: center;
+}
+
+.fatal-error > *,
+.noscript-message > * {
+  max-width: 42rem;
+  margin: 0;
 }
 
 .maplibregl-ctrl button {
@@ -822,7 +841,11 @@ select {
   }
 
   .scope-badge {
-    display: none;
+    right: 0.65rem;
+    bottom: 4.7rem;
+    max-width: calc(100% - 1.3rem);
+    font-size: 0.64rem;
+    text-align: center;
   }
 
   .month-ring {

@@ -29,10 +29,12 @@ from thermal_drought.acquire.requests import (
     AcquisitionRequest,
     Region,
     build_representative_requests,
+    build_sicily_requests,
     plan_sha256,
 )
 from thermal_drought.acquire.runner import sha256_file
 from thermal_drought.classification import FixedClassification
+from thermal_drought.scope import SicilyScope, load_scope
 from thermal_drought.storage import (
     StoragePolicy,
     load_storage_policy,
@@ -427,6 +429,8 @@ def _classification_label(manifest: Mapping[str, Any], value: float | None) -> s
 def _dataset_for_region(
     periods: Sequence[NormalizedPeriod],
     plan_fingerprint: str,
+    *,
+    scope: SicilyScope | None = None,
 ) -> Any:
     xr = _optional_module("xarray")
     ordered = sorted(periods, key=lambda period: period.month)
@@ -446,52 +450,104 @@ def _dataset_for_region(
             for period in ordered
         ]
     )
+    utci_values = np.stack([period.utci_celsius for period in ordered]).astype(np.float32)
+    valid_day_counts = np.stack([period.utci_valid_day_count for period in ordered])
+    spei_source_values = np.stack([period.spei_source for period in ordered]).astype(np.float32)
+    spei_quality_values = np.stack([period.spei_quality for period in ordered])
+    spei_published_values = np.stack([period.spei_published for period in ordered]).astype(
+        np.float32
+    )
+    scope_mask: NDArray[np.bool_] | None = None
+    if scope is not None:
+        if representative.region.id != "sicily":
+            raise NormalizationError("the Sicily mask can only be applied to the Sicily region")
+        if scope.grid_id != CANONICAL_GRID:
+            raise NormalizationError("the configured Sicily mask does not use the canonical grid")
+        scope_mask = np.asarray(
+            [
+                [
+                    scope.includes(float(longitude), float(latitude))
+                    for longitude in representative.longitudes
+                ]
+                for latitude in representative.latitudes
+            ],
+            dtype=np.bool_,
+        )
+        observed_centers = {
+            (round(float(longitude), 10), round(float(latitude), 10))
+            for latitude in representative.latitudes
+            for longitude in representative.longitudes
+            if scope.includes(float(longitude), float(latitude))
+        }
+        if observed_centers != scope.included_cell_centers:
+            raise NormalizationError(
+                "the provider response does not contain every configured Sicily grid center"
+            )
+        utci_values = np.where(scope_mask[None, :, :], utci_values, np.nan)
+        valid_day_counts = np.where(scope_mask[None, :, :], valid_day_counts, 0)
+        spei_source_values = np.where(scope_mask[None, :, :], spei_source_values, np.nan)
+        spei_quality_values = np.where(scope_mask[None, :, :], spei_quality_values, 255)
+        spei_published_values = np.where(scope_mask[None, :, :], spei_published_values, np.nan)
+
+    data_vars: dict[str, Any] = {
+        "utci_daymax_median": (
+            ("time", "latitude", "longitude"),
+            utci_values,
+            {
+                "long_name": "Monthly median of daily maximum UTCI",
+                "units": "degree_Celsius",
+                "source_variable": UTCI_VARIABLE,
+                "source_unit_contract": "ERA5-HEAT v1.1 Kelvin",
+            },
+        ),
+        "utci_valid_day_count": (
+            ("time", "latitude", "longitude"),
+            valid_day_counts,
+            {"long_name": "Valid daily maximum UTCI observations in monthly median"},
+        ),
+        "spei_3_source": (
+            ("time", "latitude", "longitude"),
+            spei_source_values,
+            {
+                "long_name": "Provider deterministic SPEI-3 before quality masking",
+                "units": "1",
+                "source_variable": SPEI_VARIABLE,
+            },
+        ),
+        "spei_3_quality": (
+            ("time", "latitude", "longitude"),
+            spei_quality_values,
+            {
+                "long_name": "Provider SPEI normality quality flag",
+                "flag_values": np.asarray([0, 1, 255], dtype=np.uint8),
+                "flag_meanings": "low_quality passes_normality_test no_data",
+                "source_variable": QUALITY_VARIABLE,
+            },
+        ),
+        "spei_3": (
+            ("time", "latitude", "longitude"),
+            spei_published_values,
+            {
+                "long_name": "Provider deterministic SPEI-3 after quality masking",
+                "units": "1",
+                "quality_rule": "publish only where significance equals 1",
+            },
+        ),
+    }
+    if scope_mask is not None:
+        data_vars["sicily_scope_mask"] = (
+            ("latitude", "longitude"),
+            scope_mask.astype(np.uint8),
+            {
+                "long_name": "Sicilia administrative-scope grid-center mask",
+                "flag_values": np.asarray([0, 1], dtype=np.uint8),
+                "flag_meanings": "outside_scope inside_scope",
+                "mask_rule": "cell center inside Istat 2026 Sicilia regional boundary",
+            },
+        )
+
     dataset = xr.Dataset(
-        data_vars={
-            "utci_daymax_median": (
-                ("time", "latitude", "longitude"),
-                np.stack([period.utci_celsius for period in ordered]).astype(np.float32),
-                {
-                    "long_name": "Monthly median of daily maximum UTCI",
-                    "units": "degree_Celsius",
-                    "source_variable": UTCI_VARIABLE,
-                    "source_unit_contract": "ERA5-HEAT v1.1 Kelvin",
-                },
-            ),
-            "utci_valid_day_count": (
-                ("time", "latitude", "longitude"),
-                np.stack([period.utci_valid_day_count for period in ordered]),
-                {"long_name": "Valid daily maximum UTCI observations in monthly median"},
-            ),
-            "spei_3_source": (
-                ("time", "latitude", "longitude"),
-                np.stack([period.spei_source for period in ordered]).astype(np.float32),
-                {
-                    "long_name": "Provider deterministic SPEI-3 before quality masking",
-                    "units": "1",
-                    "source_variable": SPEI_VARIABLE,
-                },
-            ),
-            "spei_3_quality": (
-                ("time", "latitude", "longitude"),
-                np.stack([period.spei_quality for period in ordered]),
-                {
-                    "long_name": "Provider SPEI normality quality flag",
-                    "flag_values": np.asarray([0, 1, 255], dtype=np.uint8),
-                    "flag_meanings": "low_quality passes_normality_test no_data",
-                    "source_variable": QUALITY_VARIABLE,
-                },
-            ),
-            "spei_3": (
-                ("time", "latitude", "longitude"),
-                np.stack([period.spei_published for period in ordered]).astype(np.float32),
-                {
-                    "long_name": "Provider deterministic SPEI-3 after quality masking",
-                    "units": "1",
-                    "quality_rule": "publish only where significance equals 1",
-                },
-            ),
-        },
+        data_vars=data_vars,
         coords={
             "time": ("time", times, {"standard_name": "time"}),
             "latitude": (
@@ -516,7 +572,11 @@ def _dataset_for_region(
         attrs={
             "schema_version": "1.0",
             "fixture": "false",
-            "evidence_scope": "bounded representative official sample; not a global backfill",
+            "evidence_scope": (
+                "official Sicily-only release"
+                if scope is not None
+                else "bounded representative official sample; not a production release"
+            ),
             "region_id": representative.region.id,
             "analysis_year": representative.year,
             "grid_id": CANONICAL_GRID,
@@ -535,6 +595,10 @@ def _dataset_for_region(
                 "archive outside local serving storage after checksum and "
                 "monthly-product validation"
             ),
+            "scope_id": scope.scope_id if scope is not None else "representative_sample",
+            "scope_boundary_archive_sha256": (
+                scope.boundary_archive_sha256 if scope is not None else "not_applicable"
+            ),
         },
     )
     return dataset
@@ -544,14 +608,6 @@ def _write_dataset_atomic(dataset: Any, target: Path) -> None:
     xr = _optional_module("xarray")
     _optional_module("h5netcdf")
     target.parent.mkdir(parents=True, exist_ok=True)
-    if target.is_file():
-        try:
-            with xr.open_dataset(target) as current:
-                loaded = current.load()
-            if loaded.identical(dataset):
-                return
-        except Exception:
-            pass
     temporary = target.with_suffix(f"{target.suffix}.part")
     temporary.unlink(missing_ok=True)
     encoding = {
@@ -561,8 +617,19 @@ def _write_dataset_atomic(dataset: Any, target: Path) -> None:
         "utci_valid_day_count": {"dtype": "uint8", "_FillValue": 255},
         "spei_3_quality": {"dtype": "uint8", "_FillValue": 255},
     }
+    if "sicily_scope_mask" in dataset.data_vars:
+        encoding["sicily_scope_mask"] = {"dtype": "uint8", "_FillValue": 255}
     try:
         dataset.to_netcdf(temporary, engine="h5netcdf", encoding=encoding)
+        if target.is_file():
+            try:
+                with xr.open_dataset(target) as current, xr.open_dataset(temporary) as candidate:
+                    current_loaded = current.load()
+                    candidate_loaded = candidate.load()
+                if current_loaded.identical(candidate_loaded):
+                    return
+            except Exception:
+                pass
         os.replace(temporary, target)
     finally:
         temporary.unlink(missing_ok=True)
@@ -578,13 +645,37 @@ def _load_manifest(path: Path) -> dict[str, Any]:
 def _sample_records(
     periods: Sequence[NormalizedPeriod],
     manifests_root: Path,
+    *,
+    scope: SicilyScope | None = None,
 ) -> list[dict[str, Any]]:
     utci_manifest = _load_manifest(manifests_root / "utci_daymax_median.json")
     spei_manifest = _load_manifest(manifests_root / "spei_3.json")
     records: list[dict[str, Any]] = []
-    for period in sorted(periods, key=lambda value: (value.region.id, value.month)):
-        row = len(period.latitudes) // 2
-        column = len(period.longitudes) // 2
+    for period in sorted(periods, key=lambda value: (value.year, value.region.id, value.month)):
+        if scope is None:
+            row = len(period.latitudes) // 2
+            column = len(period.longitudes) // 2
+        else:
+            target_longitude, target_latitude = min(
+                scope.included_cell_centers,
+                key=lambda center: (
+                    (center[0] - scope.initial_center[0]) ** 2
+                    + (center[1] - scope.initial_center[1]) ** 2,
+                    center,
+                ),
+            )
+            latitude_matches = np.flatnonzero(
+                np.isclose(period.latitudes, target_latitude, rtol=0, atol=1e-10)
+            )
+            longitude_matches = np.flatnonzero(
+                np.isclose(period.longitudes, target_longitude, rtol=0, atol=1e-10)
+            )
+            if len(latitude_matches) != 1 or len(longitude_matches) != 1:
+                raise NormalizationError(
+                    "the configured Sicily golden cell is absent from a normalized period"
+                )
+            row = int(latitude_matches[0])
+            column = int(longitude_matches[0])
         utci_value = float(period.utci_celsius[row, column])
         source_spei_value = float(period.spei_source[row, column])
         published_spei_value = float(period.spei_published[row, column])
@@ -714,5 +805,118 @@ def normalize_representative_sample(
         "publication_note": (
             "NetCDF is the local development representation for this bounded sample. "
             "Production Zarr publication remains pending its declared dependency."
+        ),
+    }
+
+
+def normalize_sicily_release(
+    raw_root: Path,
+    output_root: Path,
+    years: tuple[int, ...] = (2025, 2024),
+    months: tuple[int, ...] = tuple(range(1, 13)),
+    *,
+    manifests_root: Path = Path("config/variables"),
+    scope_path: Path = Path("config/scope.json"),
+    storage_policy: StoragePolicy | None = None,
+) -> dict[str, Any]:
+    """Normalize the exact two-year official plan into Sicily-masked products."""
+
+    policy = storage_policy or load_storage_policy()
+    storage_preflight = preflight_normalization(policy, output_root)
+    scope = load_scope(scope_path)
+    requests = build_sicily_requests(years=years, months=months)
+    audit = inspect_raw_root(raw_root, expected_requests=requests)
+    if audit["complete"] is not True or audit["official_evidence"] is not True:
+        raise NormalizationError(
+            "the exact non-fixture Sicily acquisition plan must pass before normalization"
+        )
+    indexed = {
+        (request.region.id, request.year, request.month, request.variable_id): request
+        for request in requests
+    }
+    quality = {
+        (request.region.id, request.month): request
+        for request in requests
+        if request.variable_id == "spei_3_quality"
+    }
+    periods: list[NormalizedPeriod] = []
+    for year in sorted(set(years)):
+        for month in sorted(set(months)):
+            key = ("sicily", year, month)
+            utci_request = indexed[(*key, "utci_daymax_median")]
+            spei_request = indexed[(*key, "spei_3")]
+            quality_request = quality[("sicily", month)]
+            periods.append(
+                normalize_period(
+                    raw_root / utci_request.target_relative_path,
+                    raw_root / spei_request.target_relative_path,
+                    raw_root / quality_request.target_relative_path,
+                    utci_request,
+                    spei_request,
+                    quality_request,
+                )
+            )
+
+    fingerprint = plan_sha256(requests)
+    outputs: list[dict[str, Any]] = []
+    for year in sorted(set(years)):
+        year_periods = [period for period in periods if period.year == year]
+        dataset = _dataset_for_region(year_periods, fingerprint, scope=scope)
+        target = output_root / "v1" / str(year) / "sicily.nc"
+        _write_dataset_atomic(dataset, target)
+        outputs.append(
+            {
+                "region_id": "sicily",
+                "path": str(target),
+                "byte_size": target.stat().st_size,
+                "sha256": sha256_file(target),
+                "months": sorted(months),
+                "shape": [
+                    len(year_periods),
+                    len(year_periods[0].latitudes),
+                    len(year_periods[0].longitudes),
+                ],
+                "included_scope_cells": len(scope.included_cell_centers),
+            }
+        )
+    return {
+        "schema_version": "1.0",
+        "status": "complete",
+        "fixture": False,
+        "scope": "official Sicilia administrative extent on included 0.25-degree cell centers",
+        "scope_id": scope.scope_id,
+        "boundary_archive_sha256": scope.boundary_archive_sha256,
+        "years": sorted(set(years)),
+        "latest_complete_year": max(years),
+        "months": sorted(months),
+        "plan_sha256": fingerprint,
+        "source_audit_complete": True,
+        "source_official_evidence": True,
+        "storage_preflight": storage_preflight,
+        "temporal_retention": dict(policy.temporal_retention),
+        "canonical_contract": {
+            "grid_id": CANONICAL_GRID,
+            "crs": CANONICAL_CRS,
+            "latitude_order": "north_to_south",
+            "longitude_convention": "[-180, 180)",
+            "calendar": "gregorian",
+            "time": "calendar month start",
+            "scope_mask": (
+                "Istat 2026 Sicilia regional boundary; include exact provider-grid "
+                "cell centers inside its polygons"
+            ),
+            "utci": "ERA5-HEAT v1.1 utci_daily_max Kelvin to Celsius, then monthly median",
+            "spei": "ERA5-Drought v1.0 deterministic provider SPEI3; no recomputation",
+            "quality": "mask published SPEI-3 unless provider significance equals 1",
+        },
+        "outputs": outputs,
+        "golden_center_cell_samples": _sample_records(
+            periods,
+            manifests_root,
+            scope=scope,
+        ),
+        "publication_note": (
+            "Compressed NetCDF is the measured local Sicily serving representation. "
+            "The immutable report and checksums identify this release."
         ),
     }

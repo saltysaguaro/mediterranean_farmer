@@ -1,0 +1,561 @@
+{
+  "boundary_archive_sha256": "b011a590656c3a3ebc297fba80726a376aa843b6f164641cf6a4a990021a81d6",
+  "canonical_contract": {
+    "calendar": "gregorian",
+    "crs": "EPSG:4326",
+    "grid_id": "era5_latlon_0_25",
+    "latitude_order": "north_to_south",
+    "longitude_convention": "[-180, 180)",
+    "quality": "mask published SPEI-3 unless provider significance equals 1",
+    "scope_mask": "Istat 2026 Sicilia regional boundary; include exact provider-grid cell centers inside its polygons",
+    "spei": "ERA5-Drought v1.0 deterministic provider SPEI3; no recomputation",
+    "time": "calendar month start",
+    "utci": "ERA5-HEAT v1.1 utci_daily_max Kelvin to Celsius, then monthly median"
+  },
+  "fixture": false,
+  "golden_center_cell_samples": [
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 1,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "Severe or extreme drought",
+      "spei_3_published": -1.536816,
+      "spei_3_source": -1.536816,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "No thermal stress",
+      "utci_daymax_median_celsius": 17.508569,
+      "year": 2024
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 2,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": -0.773027,
+      "spei_3_source": -0.773027,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "No thermal stress",
+      "utci_daymax_median_celsius": 18.444696,
+      "year": 2024
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 3,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": -0.415461,
+      "spei_3_source": -0.415461,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "No thermal stress",
+      "utci_daymax_median_celsius": 21.157007,
+      "year": 2024
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 4,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "Moderate drought",
+      "spei_3_published": -1.039835,
+      "spei_3_source": -1.039835,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "No thermal stress",
+      "utci_daymax_median_celsius": 23.343317,
+      "year": 2024
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 5,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": -0.903495,
+      "spei_3_source": -0.903495,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "Heat stress",
+      "utci_daymax_median_celsius": 28.710718,
+      "year": 2024
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 6,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": -0.941963,
+      "spei_3_source": -0.941963,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "Heat stress",
+      "utci_daymax_median_celsius": 34.789819,
+      "year": 2024
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 7,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": -0.632028,
+      "spei_3_source": -0.632028,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "Heat stress",
+      "utci_daymax_median_celsius": 39.40954,
+      "year": 2024
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 8,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "Moderate drought",
+      "spei_3_published": -1.127721,
+      "spei_3_source": -1.127721,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "Heat stress",
+      "utci_daymax_median_celsius": 38.888025,
+      "year": 2024
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 9,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": 0.162262,
+      "spei_3_source": 0.162262,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "Heat stress",
+      "utci_daymax_median_celsius": 29.935434,
+      "year": 2024
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 10,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": 0.333563,
+      "spei_3_source": 0.333563,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "Heat stress",
+      "utci_daymax_median_celsius": 27.48504,
+      "year": 2024
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 11,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": -0.010799,
+      "spei_3_source": -0.010799,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "No thermal stress",
+      "utci_daymax_median_celsius": 21.704843,
+      "year": 2024
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 12,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": -0.798256,
+      "spei_3_source": -0.798256,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "No thermal stress",
+      "utci_daymax_median_celsius": 16.925378,
+      "year": 2024
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 1,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": -0.541388,
+      "spei_3_source": -0.541388,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "No thermal stress",
+      "utci_daymax_median_celsius": 18.319727,
+      "year": 2025
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 2,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": 0.445194,
+      "spei_3_source": 0.445194,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "No thermal stress",
+      "utci_daymax_median_celsius": 19.642282,
+      "year": 2025
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 3,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": 1.022633,
+      "spei_3_source": 1.022633,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "No thermal stress",
+      "utci_daymax_median_celsius": 19.932916,
+      "year": 2025
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 4,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": 0.953057,
+      "spei_3_source": 0.953057,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "No thermal stress",
+      "utci_daymax_median_celsius": 23.994577,
+      "year": 2025
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 5,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": 1.245914,
+      "spei_3_source": 1.245914,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "Heat stress",
+      "utci_daymax_median_celsius": 28.192163,
+      "year": 2025
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 6,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": 0.39018,
+      "spei_3_source": 0.39018,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "Heat stress",
+      "utci_daymax_median_celsius": 36.270685,
+      "year": 2025
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 7,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": 0.209273,
+      "spei_3_source": 0.209273,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "Heat stress",
+      "utci_daymax_median_celsius": 37.603632,
+      "year": 2025
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 8,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "Moderate drought",
+      "spei_3_published": -1.29893,
+      "spei_3_source": -1.29893,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "Heat stress",
+      "utci_daymax_median_celsius": 35.925165,
+      "year": 2025
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 9,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "Moderate drought",
+      "spei_3_published": -1.362717,
+      "spei_3_source": -1.362717,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "Heat stress",
+      "utci_daymax_median_celsius": 34.789346,
+      "year": 2025
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 10,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": -0.636188,
+      "spei_3_source": -0.636188,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "No thermal stress",
+      "utci_daymax_median_celsius": 24.211359,
+      "year": 2025
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 11,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": -0.800091,
+      "spei_3_source": -0.800091,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "No thermal stress",
+      "utci_daymax_median_celsius": 20.899911,
+      "year": 2025
+    },
+    {
+      "latitude": 37.5,
+      "longitude": 13.75,
+      "month": 12,
+      "precision_tolerance": {
+        "spei_3": 1e-06,
+        "utci_celsius": 1e-05
+      },
+      "region_id": "sicily",
+      "spei_3_class": "No drought",
+      "spei_3_published": -0.074239,
+      "spei_3_source": -0.074239,
+      "spei_quality_flag": 1,
+      "spei_quality_state": "passes_normality_test",
+      "utci_class": "No thermal stress",
+      "utci_daymax_median_celsius": 18.496729,
+      "year": 2025
+    }
+  ],
+  "latest_complete_year": 2025,
+  "months": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12
+  ],
+  "outputs": [
+    {
+      "byte_size": 47317,
+      "included_scope_cells": 44,
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "path": "data/published/sicily-release-v1/v1/2024/sicily.nc",
+      "region_id": "sicily",
+      "sha256": "99aed5cd511054b3b4d5d38bb5a4f320752ac3c86565657680dbaa4e56544fc9",
+      "shape": [
+        12,
+        16,
+        17
+      ]
+    },
+    {
+      "byte_size": 47362,
+      "included_scope_cells": 44,
+      "months": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "path": "data/published/sicily-release-v1/v1/2025/sicily.nc",
+      "region_id": "sicily",
+      "sha256": "be458e6db12e9048f4c11bd3b302f7a7daef946f73a87e8e58da33f2303ef8e4",
+      "shape": [
+        12,
+        16,
+        17
+      ]
+    }
+  ],
+  "plan_sha256": "61bbffbe2e6d742148c5d1c0f2ff3aee149bd34a7291736f575898bfe74860f6",
+  "publication_note": "Compressed NetCDF is the measured local Sicily serving representation. The immutable report and checksums identify this release.",
+  "schema_version": "1.0",
+  "scope": "official Sicilia administrative extent on included 0.25-degree cell centers",
+  "scope_id": "sicily_istat_2026_grid_centers",
+  "source_audit_complete": true,
+  "source_official_evidence": true,
+  "status": "complete",
+  "storage_preflight": {
+    "approved": true,
+    "policy_id": "sicily-local-safe-v2",
+    "published_output": {
+      "managed_directory": "published",
+      "planned_bytes": 536870912,
+      "quota_bytes": 5368709120
+    },
+    "schema_version": "1.0",
+    "status": "approved",
+    "temporal_retention": {
+      "daily_source_policy": "Archive outside local serving storage after checksum and monthly-product validation.",
+      "serving_store_policy": "Monthly layers only; selected UI months receive equal weight.",
+      "spei_published_frequency": "monthly",
+      "spei_source_frequency": "provider monthly SPEI-3",
+      "utci_published_frequency": "monthly median of daily maximum",
+      "utci_source_frequency": "daily maximum"
+    },
+    "working_space": {
+      "planned_bytes": 1610612736
+    }
+  },
+  "temporal_retention": {
+    "daily_source_policy": "Archive outside local serving storage after checksum and monthly-product validation.",
+    "serving_store_policy": "Monthly layers only; selected UI months receive equal weight.",
+    "spei_published_frequency": "monthly",
+    "spei_source_frequency": "provider monthly SPEI-3",
+    "utci_published_frequency": "monthly median of daily maximum",
+    "utci_source_frequency": "daily maximum"
+  },
+  "years": [
+    2024,
+    2025
+  ]
+}

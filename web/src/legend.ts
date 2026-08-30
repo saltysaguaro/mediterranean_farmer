@@ -1,6 +1,6 @@
 import type { VariableManifest } from "./types";
 
-export const DEVELOPMENT_BIVARIATE_COLORS = [
+export const SICILY_BIVARIATE_COLORS_V1 = [
   "#d9f0d3",
   "#addd8e",
   "#78c679",
@@ -12,7 +12,7 @@ export const DEVELOPMENT_BIVARIATE_COLORS = [
   "#756bb1",
 ] as const;
 
-export const DEVELOPMENT_UNIVARIATE_COLORS = ["#d9f0d3", "#78c679", "#238443"] as const;
+export const SICILY_UNIVARIATE_COLORS_V1 = ["#d9f0d3", "#78c679", "#238443"] as const;
 export const NO_DATA_COLOR = "#5f6862";
 
 export interface ClassPair {
@@ -88,9 +88,9 @@ export function colorForClasses(xClass: number | null, yClass: number | null): s
     return NO_DATA_COLOR;
   }
   if (yClass === null) {
-    return DEVELOPMENT_UNIVARIATE_COLORS[xClass] ?? NO_DATA_COLOR;
+    return SICILY_UNIVARIATE_COLORS_V1[xClass] ?? NO_DATA_COLOR;
   }
-  return DEVELOPMENT_BIVARIATE_COLORS[yClass * 3 + xClass] ?? NO_DATA_COLOR;
+  return SICILY_BIVARIATE_COLORS_V1[yClass * 3 + xClass] ?? NO_DATA_COLOR;
 }
 
 export function legendModel(

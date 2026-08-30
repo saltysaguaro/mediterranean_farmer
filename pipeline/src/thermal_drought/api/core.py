@@ -1,4 +1,4 @@
-"""Shared aggregation core for point samples and bounded development tiles."""
+"""Shared aggregation core for point samples and bounded lossless map responses."""
 
 from __future__ import annotations
 
@@ -52,7 +52,7 @@ class ServiceSettings:
     maximum_active_variables: int
     maximum_zoom: int
     maximum_product_files: int
-    maximum_development_cells_per_product: int
+    maximum_cells_per_product: int
     release_report: str
 
 
@@ -72,6 +72,7 @@ class VariableSpec:
     quality_policy: str
     quality_field: str | None
     quality_pass_values: tuple[int, ...]
+    publication_status: str
     data_version: str
     published_years: tuple[int, ...]
     sample_retrieved_at: str | None
@@ -102,6 +103,7 @@ class VariableSpec:
             quality_policy=str(quality["policy"]),
             quality_field=None if field is None else str(field),
             quality_pass_values=tuple(int(value) for value in quality["pass_values"]),
+            publication_status=str(publication["status"]),
             data_version=str(publication["data_version"]),
             published_years=tuple(int(value) for value in publication["published_years"]),
             sample_retrieved_at=(
@@ -161,13 +163,11 @@ class Registry:
             maximum_active_variables=maximum_active,
             maximum_zoom=int(service["maximum_zoom"]),
             maximum_product_files=int(service["maximum_product_files"]),
-            maximum_development_cells_per_product=int(
-                service["maximum_development_cells_per_product"]
-            ),
+            maximum_cells_per_product=int(service["maximum_cells_per_product"]),
             release_report=str(service["release_report"]),
         )
         if not 0 <= settings.maximum_zoom <= 12:
-            raise ValueError("maximum development zoom must be between zero and twelve")
+            raise ValueError("maximum zoom must be between zero and twelve")
         if settings.maximum_product_files < 1:
             raise ValueError("maximum product files must be positive")
         for spec in specs.values():
@@ -237,6 +237,7 @@ class ReleaseProduct:
     path: Path
     latitudes: tuple[float, ...]
     longitudes: tuple[float, ...]
+    included_indices: frozenset[tuple[int, int]] | None = None
 
     def contains(self, latitude: float, longitude: float, resolution: float) -> bool:
         half_cell = resolution / 2
@@ -244,6 +245,9 @@ class ReleaseProduct:
             min(self.latitudes) - half_cell <= latitude <= max(self.latitudes) + half_cell
             and min(self.longitudes) - half_cell <= longitude < max(self.longitudes) + half_cell
         )
+
+    def includes_index(self, row: int, column: int) -> bool:
+        return self.included_indices is None or (row, column) in self.included_indices
 
 
 @dataclass(frozen=True)
@@ -441,6 +445,15 @@ class DataService:
         aggregated = self._aggregate_product(product, specs, month_mask)
         row = int(np.argmin(np.abs(np.asarray(product.latitudes) - latitude)))
         column = int(np.argmin(np.abs(np.asarray(product.longitudes) - longitude)))
+        if not product.includes_index(row, column):
+            base.update(
+                {
+                    "status": "no_data",
+                    "reason": "outside_sicily_scope",
+                    "variables": [_empty_variable(spec) for spec in specs],
+                }
+            )
+            return base, etag
         variable_records = [
             _cell_variable(variable, row, column, include_source=True)
             for variable in aggregated.variables
@@ -502,7 +515,7 @@ class DataService:
             specs,
             year,
             month_mask,
-            "development_sparse_json_tile",
+            "lossless_sparse_json_tile_v1",
             {"zoom": zoom, "tile_x": tile_x, "tile_y": tile_y},
         )
         cells: list[dict[str, object]] = []
@@ -513,6 +526,8 @@ class DataService:
             for row, latitude in enumerate(product.latitudes):
                 for column, longitude in enumerate(product.longitudes):
                     if _web_mercator_tile(latitude, longitude, zoom) != (tile_x, tile_y):
+                        continue
+                    if not product.includes_index(row, column):
                         continue
                     cells.append(
                         {
@@ -531,7 +546,7 @@ class DataService:
             {
                 "status": "ok" if cells else "no_data",
                 "schema_version": "1.0",
-                "format": "development_sparse_grid_cells",
+                "format": "lossless_sparse_grid_cells_v1",
                 "dataset_version": self.registry.settings.dataset_version,
                 "year": year,
                 "month_mask": mask_to_hex(month_mask),
@@ -723,12 +738,32 @@ def _load_release(
             if len(set(months)) != len(months):
                 raise ValueError(f"{product_path}: duplicate product months")
             cell_count = len(latitudes) * len(longitudes)
-            if cell_count > registry.settings.maximum_development_cells_per_product:
-                raise ValueError(f"{product_path}: product exceeds the development cell bound")
+            if cell_count > registry.settings.maximum_cells_per_product:
+                raise ValueError(f"{product_path}: product exceeds the configured cell bound")
             if not latitudes or not longitudes:
                 raise ValueError(f"{product_path}: product grid is empty")
             if int(raw_output.get("shape", [0, 0, 0])[0]) != len(months):
                 raise ValueError(f"{product_path}: report shape does not match product time")
+            included_indices: frozenset[tuple[int, int]] | None = None
+            if "sicily_scope_mask" in dataset.data_vars:
+                mask = np.asarray(dataset["sicily_scope_mask"].values)
+                if mask.shape != (len(latitudes), len(longitudes)):
+                    raise ValueError(f"{product_path}: Sicily scope mask shape is invalid")
+                if not np.all(np.isin(mask, [0, 1])):
+                    raise ValueError(f"{product_path}: Sicily scope mask must contain only 0 or 1")
+                included_indices = frozenset(
+                    (row, column)
+                    for row in range(mask.shape[0])
+                    for column in range(mask.shape[1])
+                    if mask[row, column] == 1
+                )
+                if not included_indices:
+                    raise ValueError(f"{product_path}: Sicily scope mask contains no cells")
+                reported_count = raw_output.get("included_scope_cells")
+                if reported_count is not None and int(reported_count) != len(included_indices):
+                    raise ValueError(
+                        f"{product_path}: report Sicily cell count does not match product mask"
+                    )
         products.append(
             ReleaseProduct(
                 region_id=region_id,
@@ -737,10 +772,13 @@ def _load_release(
                 path=product_path,
                 latitudes=latitudes,
                 longitudes=longitudes,
+                included_indices=included_indices,
             )
         )
     if len({(product.region_id, product.year) for product in products}) != len(products):
         raise ValueError(f"{report_path}: duplicate region-year products")
+    if official:
+        _validate_official_publication(registry, {product.year for product in products})
     return Release(
         fixture=fixture,
         official_evidence=official,
@@ -748,6 +786,16 @@ def _load_release(
         fingerprint=fingerprint,
         products=tuple(products),
     )
+
+
+def _validate_official_publication(registry: Registry, release_years: set[int]) -> None:
+    for spec in registry.variables.values():
+        if spec.publication_status != "published":
+            raise ValueError(f"{spec.id}: official release manifest is not published")
+        if spec.sample_retrieved_at is None:
+            raise ValueError(f"{spec.id}: official release retrieval timestamp is missing")
+        if set(spec.published_years) != release_years:
+            raise ValueError(f"{spec.id}: manifest years do not match official release products")
 
 
 def _common_resolution(specs: Sequence[VariableSpec]) -> float:

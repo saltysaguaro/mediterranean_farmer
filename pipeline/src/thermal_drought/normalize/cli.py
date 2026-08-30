@@ -11,20 +11,23 @@ from thermal_drought.acquire.inspection import InspectionError
 from thermal_drought.normalize.core import (
     NormalizationError,
     normalize_representative_sample,
+    normalize_sicily_release,
 )
 from thermal_drought.storage import StorageLimitError, StoragePolicyError
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--year", type=int, default=2024)
-    parser.add_argument("--months", type=int, nargs="+", default=[1, 7])
-    parser.add_argument("--raw-root", type=Path, default=Path("data/raw"))
+    parser.add_argument("--scope", choices=["sicily", "representative"], default="sicily")
+    parser.add_argument("--years", type=int, nargs="+", default=[2025, 2024])
+    parser.add_argument("--months", type=int, nargs="+", default=list(range(1, 13)))
+    parser.add_argument("--raw-root", type=Path, default=Path("data/raw/sicily-release-v1"))
     parser.add_argument(
         "--output-root",
         type=Path,
-        default=Path("data/published/night-3-official-sample"),
+        default=Path("data/published/sicily-release-v1"),
     )
+    parser.add_argument("--scope-path", type=Path, default=Path("config/scope.json"))
     parser.add_argument("--report", type=Path)
     return parser
 
@@ -32,12 +35,23 @@ def build_parser() -> argparse.ArgumentParser:
 def main(argv: Sequence[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
-        report = normalize_representative_sample(
-            raw_root=args.raw_root,
-            output_root=args.output_root,
-            year=args.year,
-            months=tuple(args.months),
-        )
+        if args.scope == "sicily":
+            report = normalize_sicily_release(
+                raw_root=args.raw_root,
+                output_root=args.output_root,
+                years=tuple(args.years),
+                months=tuple(args.months),
+                scope_path=args.scope_path,
+            )
+        else:
+            if len(args.years) != 1:
+                raise ValueError("the representative scope requires exactly one year")
+            report = normalize_representative_sample(
+                raw_root=args.raw_root,
+                output_root=args.output_root,
+                year=args.years[0],
+                months=tuple(args.months),
+            )
     except (
         InspectionError,
         NormalizationError,

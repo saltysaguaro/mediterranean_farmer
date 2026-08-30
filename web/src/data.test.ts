@@ -1,24 +1,24 @@
 import { describe, expect, it, vi } from "vitest";
 import {
-  DevelopmentTileLoader,
+  MapResponseLoader,
   PointSampleLoader,
-  developmentTileUrl,
+  mapResponseUrl,
   pointSampleUrl,
 } from "./data";
 import { monthsToMask } from "./months";
-import type { AppState, DevelopmentTile, LoadStatus, PointSample } from "./types";
+import type { AppState, LoadStatus, LosslessMapResponse, PointSample } from "./types";
 
 const state: AppState = {
   xVariable: "spei_3",
   yVariable: "utci_daymax_median",
   year: 2024,
   monthMask: monthsToMask([1, 7]),
-  view: { longitude: 12.5, latitude: 18, zoom: 1.1 },
+  view: { longitude: 13.75, latitude: 37.5, zoom: 6.3 },
 };
 
-const tile: DevelopmentTile = {
+const tile: LosslessMapResponse = {
   status: "ok",
-  format: "development_sparse_grid_cells",
+  format: "lossless_sparse_grid_cells_v1",
   dataset_version: "sample-v1",
   year: 2024,
   month_mask: "041",
@@ -44,16 +44,16 @@ const point: PointSample = {
   variables: [],
 };
 
-describe("development map loading", () => {
+describe("lossless map loading", () => {
   it("builds variable-neutral bivariate and univariate URLs", () => {
-    expect(developmentTileUrl("/api", "sample-v1", state)).toBe(
+    expect(mapResponseUrl("/api", "sample-v1", state)).toBe(
       "/api/v1/tiles/sample-v1/spei_3/utci_daymax_median/2024/041/0/0/0",
     );
     expect(
-      developmentTileUrl("/api", "sample-v1", { ...state, yVariable: null }),
+      mapResponseUrl("/api", "sample-v1", { ...state, yVariable: null }),
     ).toContain("/spei_3/-/2024/");
-    expect(pointSampleUrl("/api", state, -112.25, 34.25)).toBe(
-      "/api/v1/sample?x=spei_3&y=utci_daymax_median&year=2024&months=041&lng=-112.25&lat=34.25",
+    expect(pointSampleUrl("/api", state, 13.75, 37.5)).toBe(
+      "/api/v1/sample?x=spei_3&y=utci_daymax_median&year=2024&months=041&lng=13.75&lat=37.5",
     );
     expect(
       pointSampleUrl(
@@ -67,7 +67,7 @@ describe("development map loading", () => {
 
   it("retains the last valid map when a replacement request fails", async () => {
     const statuses: LoadStatus[] = [];
-    const maps: DevelopmentTile[] = [];
+    const maps: LosslessMapResponse[] = [];
     let calls = 0;
     const fetchImplementation = vi.fn(async () => {
       calls += 1;
@@ -82,7 +82,7 @@ describe("development map loading", () => {
         { status: 422, headers: { "Content-Type": "application/json" } },
       );
     }) as unknown as typeof fetch;
-    const loader = new DevelopmentTileLoader(
+    const loader = new MapResponseLoader(
       "/api",
       "sample-v1",
       {

@@ -1,10 +1,11 @@
 {
   "schema_version": "1.0",
-  "policy_id": "local-safe-v1",
+  "policy_id": "sicily-local-safe-v2",
+  "scope_id": "sicily_istat_2026_grid_centers",
   "minimum_free_reserve_bytes": 21474836480,
   "maximum_volume_used_fraction": 0.8,
   "processing_peak_multiplier": 3.0,
-  "maximum_local_backfill_years": 1,
+  "maximum_local_backfill_years": 2,
   "maximum_acquisition_partition_bytes": 536870912,
   "acquisition_receipt_reservation_bytes": 65536,
   "fixture_partition_reservation_bytes": 16777216,
@@ -14,7 +15,7 @@
     "raw": {
       "path": "data/raw",
       "maximum_bytes": 3221225472,
-      "retention": "Archive externally after monthly products validate; keep at most one full-year proof locally."
+      "retention": "Keep the two complete Sicily release years locally until a reviewed remote archive exists."
     },
     "canonical": {
       "path": "data/canonical",
@@ -38,10 +39,10 @@
     }
   },
   "annual_estimates": {
-    "daily_utci_source_bytes": 2523293286,
-    "monthly_spei_source_bytes": 83047219,
-    "monthly_canonical_utci_spei_bytes": 83047219,
-    "basis": "Conservative uncompressed planning estimates for the common 0.25-degree grid; not measured provider compression."
+    "daily_utci_source_bytes": 67108864,
+    "monthly_spei_source_bytes": 8388608,
+    "monthly_canonical_utci_spei_bytes": 33554432,
+    "basis": "Conservative pre-acquisition Sicily estimates for a 16 by 17 provider grid; replace with measured release bytes after retrieval."
   },
   "temporal_retention": {
     "utci_source_frequency": "daily maximum",
@@ -75,5 +76,5 @@
     "arbitrary_month_masks": "on_demand_only",
     "automatic_deletion": false
   },
-  "object_storage_required_before_multi_year_backfill": true
+  "object_storage_required_before_multi_year_backfill": false
 }

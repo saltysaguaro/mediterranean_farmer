@@ -1,0 +1,71 @@
+name: Monthly Sicily refresh candidate
+
+on:
+  schedule:
+    - cron: "17 5 8 * *"
+  workflow_dispatch:
+    inputs:
+      years:
+        description: "Two complete calendar years, newest first (for example: 2025 2024)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sicily-monthly-refresh
+  cancel-in-progress: false
+
+jobs:
+  candidate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    env:
+      CDSAPI_URL: ${{ secrets.CDSAPI_URL }}
+      CDSAPI_KEY: ${{ secrets.CDSAPI_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pipeline/pyproject.toml
+      - run: python -m pip install -e './pipeline[data,dev]'
+      - name: Select complete-year candidates
+        id: years
+        env:
+          REQUESTED_YEARS: ${{ inputs.years }}
+        run: |
+          if [ -n "$REQUESTED_YEARS" ]; then
+            selected="$REQUESTED_YEARS"
+          else
+            python -m thermal_drought.refresh plan > refresh-plan.json
+            selected="$(jq -r '.candidate_years | join(" ")' refresh-plan.json)"
+          fi
+          count="$(printf '%s\n' "$selected" | wc -w | tr -d ' ')"
+          test "$count" = "2"
+          printf 'years=%s\n' "$selected" >> "$GITHUB_OUTPUT"
+      - name: Verify provider credentials
+        run: |
+          test -n "$CDSAPI_URL"
+          test -n "$CDSAPI_KEY"
+          python -m thermal_drought.acquire status
+      - run: python -m thermal_drought.storage validate
+      - name: Acquire bounded official inputs
+        run: python -m thermal_drought.acquire fetch --years ${{ steps.years.outputs.years }}
+      - name: Inspect exact paired plan
+        run: python -m thermal_drought.acquire inspect --years ${{ steps.years.outputs.years }} --output output/refresh-source-audit.json
+      - name: Normalize immutable candidate
+        run: python -m thermal_drought.normalize --years ${{ steps.years.outputs.years }} --output-root output/refresh-candidate/published --report output/refresh-candidate/release.json
+      - name: Preserve review candidate without promotion
+        uses: actions/upload-artifact@v4
+        with:
+          name: sicily-refresh-candidate-${{ github.run_id }}
+          path: |
+            refresh-plan.json
+            output/refresh-source-audit.json
+            output/refresh-candidate
+            data/raw/sicily-release-v1
+          if-no-files-found: error
+          retention-days: 30
